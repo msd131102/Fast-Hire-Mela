@@ -162,9 +162,16 @@ const Footer = () => {
                 placeholder="Enter your email"
                 className="flex-1 px-4 py-2 sm:py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
-              <button className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
-                Subscribe
-              </button>
+              <a
+                href="https://www.linkedin.com/company/fasthiremela"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
+                  Subscribe
+                </button>
+              </a>
+
             </div>
           </div>
         </div>
