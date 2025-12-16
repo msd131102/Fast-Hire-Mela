@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
-import { 
-  Search, 
-  TrendingUp, 
-  Building2, 
-  MapPin, 
-  Clock, 
+import {
+  Search,
+  TrendingUp,
+  Building2,
+  MapPin,
+  Clock,
   ArrowRight,
   Star,
   Users,
@@ -142,27 +142,55 @@ const Home = () => {
       </section>
 
       {/* AI Features Section */}
-      <section className="bg-gradient-to-r from-blue-50 to-indigo-50 py-12 sm:py-16">
-        <div className="container mx-auto px-4">
+      <section className="bg-gradient-to-r from-blue-50 to-indigo-50 py-16">
+        <div className="max-w-4xl mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto text-center"
           >
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-blue-100 p-3 rounded-full">
-                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
+              <Sparkles className="w-8 h-8 text-blue-600" />
+            </div>
+
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              AI-Powered Job Updates
+            </h2>
+
+            <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+              Our AI automatically finds and verifies new jobs every day at 8:00 PM, 
+              so you always get fresh, real opportunities.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="text-center">
+                <div className="text-3xl mb-2">🤖</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Smart Search</h3>
+                <p className="text-gray-600 text-sm">AI finds the best jobs for you</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl mb-2">✅</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Verified Jobs</h3>
+                <p className="text-gray-600 text-sm">All jobs are checked for quality</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl mb-2">🕘</div>
+                <h3 className="font-semibold text-gray-900 mb-1">Daily Updates</h3>
+                <p className="text-gray-600 text-sm">New jobs every evening</p>
               </div>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-              🤖 100% AI-Driven Job Updates
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              New job listings are automatically added every day at 8:00 PM using intelligent AI systems, so you always get the latest and most relevant opportunities.
-            </p>
-            <div className="mt-6 inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full font-medium">
-              Your next career move starts here
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/user-guidance"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                📘 Learn how it works
+              </Link>
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-600">
+                <strong>New here?</strong> Get started guide
+              </span>
             </div>
           </motion.div>
         </div>
@@ -247,7 +275,7 @@ const Home = () => {
                   <CardContent>
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 gap-2 sm:gap-0">
                       <div className="flex items-center">
-                        {job.salary_min && job.salary_max 
+                        {job.salary_min && job.salary_max
                           ? `₹${job.salary_min}L - ₹${job.salary_max}L`
                           : 'Not disclosed'
                         }

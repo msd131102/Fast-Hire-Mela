@@ -131,10 +131,10 @@ const Footer = () => {
                   </address>
                 </div>
               </div>
-              <div className="flex items-center space-x-3">
+              {/* <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-blue-400 flex-shrink-0" />
                 <p className="text-gray-400 text-sm">+91 900-XXX-XXX</p>
-              </div>
+              </div> */}
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
                 <p className="text-gray-400 text-sm">fasthiremela@gmail.com</p>
