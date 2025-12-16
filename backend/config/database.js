@@ -24,8 +24,8 @@ const pool = new Pool({
   min: 10, // Minimum connections to maintain
   idleTimeoutMillis: 10000, // Shorter idle timeout for better resource management
   
-  // Connection management
-  connectionTimeoutMillis: 10000, // Increased timeout for better reliability
+  // Connection management - Increased for serverless cold starts
+  connectionTimeoutMillis: 15000, // Increased timeout for better reliability
   query_timeout: 15000, // Shorter query timeout for better responsiveness
   
   // Performance optimizations
