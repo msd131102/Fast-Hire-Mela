@@ -42,6 +42,7 @@ import adminSettingsRoutes from './routes/admin-settings.js';
 import databaseRoutes from './routes/database.js';
 import otpRoutes from './routes/otp.js';
 import sessionsRoutes from './routes/sessions.js';
+import referralRoutes from './routes/referrals.js';
 
 // Load environment variables
 dotenv.config();
@@ -70,7 +71,7 @@ app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'cache-control']
 }));
 
 app.use(compression());
@@ -163,6 +164,7 @@ app.use('/api/contact', contactsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/sessions', sessionsRoutes);
+app.use('/api/referral', referralRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

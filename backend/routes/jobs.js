@@ -547,8 +547,14 @@ router.get('/', optionalAuth, async (req, res) => {
 // =============================================
 router.post('/:jobId/save', authenticateToken, checkUserActive, async (req, res) => {
   try {
+    console.log('🔧 Save job endpoint called');
+    console.log('🔧 req.user:', req.user);
+    console.log('🔧 req.params:', req.params);
+    
     const { jobId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId || req.user.id;
+
+    console.log('🔧 Processing save job - userId:', userId, 'jobId:', jobId);
 
     // Check if job exists
     const jobCheck = await query(
@@ -611,7 +617,7 @@ router.post('/:jobId/save', authenticateToken, checkUserActive, async (req, res)
 router.get('/:jobId/saved', authenticateToken, checkUserActive, async (req, res) => {
   try {
     const { jobId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId || req.user.id;
 
     const result = await query(
       'SELECT id FROM saved_jobs WHERE user_id = $1 AND job_id = $2',
@@ -639,7 +645,7 @@ router.get('/:jobId/saved', authenticateToken, checkUserActive, async (req, res)
 router.get('/save/:jobId/check', authenticateToken, checkUserActive, async (req, res) => {
   try {
     const { jobId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId || req.user.id;
 
     const result = await query(
       'SELECT id FROM saved_jobs WHERE user_id = $1 AND job_id = $2',
@@ -667,7 +673,7 @@ router.get('/save/:jobId/check', authenticateToken, checkUserActive, async (req,
 // =============================================
 router.get('/saved/list', authenticateToken, checkUserActive, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId || req.user.id;
     const {
       page = 1,
       limit = 10,
@@ -770,7 +776,7 @@ router.get('/saved/list', authenticateToken, checkUserActive, async (req, res) =
 // =============================================
 router.get('/recommendations/:userId?', authenticateToken, checkUserActive, async (req, res) => {
   try {
-    const userId = req.params.userId || req.user.id;
+    const userId = req.params.userId || req.user.userId || req.user.id;
     const { limit = 10 } = req.query;
 
     // Get user's application history to understand preferences

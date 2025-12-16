@@ -32,6 +32,8 @@ import Terms from './pages/Terms';
 import FAQ from './pages/FAQ';
 import Categories from './pages/Categories';
 import Companies from './pages/Companies';
+import UserGuidance from './pages/UserGuidance';
+import Referral from './pages/Premium/Referral';
 import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient({
@@ -65,6 +67,12 @@ function App() {
                       <Route path="forgot-password" element={<ForgotPassword />} />
                       <Route path="reset-password" element={<ResetPassword />} />
                       <Route path="premium" element={<PremiumPlans />} />
+                      <Route path="premium/plans" element={<PremiumPlans />} />
+                      <Route path="premium/checkout" element={
+                        <ProtectedRoute>
+                          <PremiumCheckout />
+                        </ProtectedRoute>
+                      } />
                       <Route path="premium-checkout" element={
                         <ProtectedRoute>
                           <PremiumCheckout />
@@ -75,11 +83,17 @@ function App() {
                       <Route path="privacy" element={<Privacy />} />
                       <Route path="terms" element={<Terms />} />
                       <Route path="faq" element={<FAQ />} />
+                      <Route path="user-guidance" element={<UserGuidance />} />
 
                       {/* Protected Routes */}
                       <Route path="dashboard" element={
                         <ProtectedRoute>
                           <Dashboard />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="dashboard/saved-jobs" element={
+                        <ProtectedRoute>
+                          <SavedJobs />
                         </ProtectedRoute>
                       } />
                       <Route path="saved-jobs" element={
@@ -100,6 +114,11 @@ function App() {
                       <Route path="premium/dashboard" element={
                         <ProtectedRoute>
                           <Premium />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="premium/referral" element={
+                        <ProtectedRoute>
+                          <Referral />
                         </ProtectedRoute>
                       } />
 

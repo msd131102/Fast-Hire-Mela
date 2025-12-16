@@ -34,6 +34,7 @@ const MediaManagement = lazy(() => import('./pages/MediaManagement'));
 const Support = lazy(() => import('./pages/Support'));
 const FAQManagement = lazy(() => import('./pages/FAQManagement'));
 const ContactManagement = lazy(() => import('./pages/ContactManagement'));
+const ReferralsManagement = lazy(() => import('./pages/ReferralsManagement'));
 
 // Loading component for lazy loaded routes
 const LoadingSpinner = () => (
@@ -98,6 +99,7 @@ function App() {
                 <Route path="support" element={<Suspense fallback={<LoadingSpinner />}><Support /></Suspense>} />
                 <Route path="faq" element={<Suspense fallback={<LoadingSpinner />}><FAQManagement /></Suspense>} />
                 <Route path="contact" element={<Suspense fallback={<LoadingSpinner />}><ContactManagement /></Suspense>} />
+                <Route path="referrals" element={<Suspense fallback={<LoadingSpinner />}><ReferralsManagement /></Suspense>} />
                 <Route path="analytics" element={<Suspense fallback={<LoadingSpinner />}><Analytics /></Suspense>} />
                 <Route path="settings" element={<Suspense fallback={<LoadingSpinner />}><Settings /></Suspense>} />
               </Route>

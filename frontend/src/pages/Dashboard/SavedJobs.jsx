@@ -63,7 +63,7 @@ const SavedJobs = () => {
       job.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.location.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesFilter = filterType === 'all' || job.type === filterType;
+    const matchesFilter = filterType === 'all' || job.job_type === filterType;
 
     return matchesSearch && matchesFilter;
   });
@@ -170,7 +170,7 @@ const SavedJobs = () => {
                 transition={{ delay: 0.7 }}
                 className="flex flex-col sm:flex-row gap-4 justify-center"
               >
-                <Link to="/premium-checkout">
+                <Link to="/premium/plans">
                   <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-3 text-lg font-semibold shadow-lg">
                     <Crown className="w-5 h-5 mr-2" />
                     Upgrade to Premium
@@ -342,12 +342,12 @@ const SavedJobs = () => {
                                   <span className="truncate">{job.company_name}</span>
                                 </div>
                               </div>
-                              <span className={`px-2 py-1 text-xs rounded-full ml-2 flex-shrink-0 ${job.type === 'Full-time' ? 'bg-green-100 text-green-800' :
-                                  job.type === 'Part-time' ? 'bg-blue-100 text-blue-800' :
-                                    job.type === 'Remote' ? 'bg-purple-100 text-purple-800' :
+                              <span className={`px-2 py-1 text-xs rounded-full ml-2 flex-shrink-0 ${job.job_type === 'Full-time' ? 'bg-green-100 text-green-800' :
+                                  job.job_type === 'Part-time' ? 'bg-blue-100 text-blue-800' :
+                                    job.job_type === 'Remote' ? 'bg-purple-100 text-purple-800' :
                                       'bg-gray-100 text-gray-800'
                                 }`}>
-                                {job.type}
+                                {job.job_type}
                               </span>
                             </div>
 
@@ -366,9 +366,9 @@ const SavedJobs = () => {
                               </div>
                             </div>
 
-                            {job.skills && job.skills.length > 0 && (
+                            {job.skills_required && job.skills_required.length > 0 && (
                               <div className="flex flex-wrap gap-2 mb-3">
-                                {job.skills.slice(0, 4).map((skill, skillIndex) => (
+                                {job.skills_required.slice(0, 4).map((skill, skillIndex) => (
                                   <span
                                     key={skillIndex}
                                     className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
@@ -376,9 +376,9 @@ const SavedJobs = () => {
                                     {skill}
                                   </span>
                                 ))}
-                                {job.skills.length > 4 && (
+                                {job.skills_required.length > 4 && (
                                   <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                    +{job.skills.length - 4} more
+                                    +{job.skills_required.length - 4} more
                                   </span>
                                 )}
                               </div>

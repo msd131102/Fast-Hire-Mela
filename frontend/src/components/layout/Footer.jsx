@@ -110,6 +110,11 @@ const Footer = () => {
                   FAQ
                 </Link>
               </li>
+              <li>
+                <Link to="/user-guidance" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  User Guidance
+                </Link>
+              </li>
             </ul>
           </div>
 

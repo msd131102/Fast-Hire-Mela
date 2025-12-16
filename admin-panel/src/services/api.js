@@ -408,6 +408,18 @@ export const paymentsAPI = {
   }),
 };
 
+// Referrals API - Note: Using main API for referral endpoints since they're not under /admin
+export const referralsAPI = {
+  getReferrals: (params) => api.get('/referral/admin', { params }),
+  getReferral: (id) => api.get(`/referral/${id}`),
+  updateReferralStatus: (id, statusData) => api.put(`/referral/${id}`, statusData),
+  getReferralStats: () => api.get('/referral/stats'),
+  exportReferrals: (params) => api.get('/referral/export', { 
+    params, 
+    responseType: 'blob' 
+  }),
+};
+
 // Export all APIs as a default object
 export default {
   adminApi,
@@ -428,4 +440,5 @@ export default {
   contact: contactAPI,
   applications: applicationsAPI,
   payments: paymentsAPI,
+  referrals: referralsAPI,
 };

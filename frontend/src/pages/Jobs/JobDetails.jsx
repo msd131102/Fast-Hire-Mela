@@ -39,11 +39,11 @@ const JobDetails = () => {
   const { data: savedJobsData } = useQuery({
     queryKey: ['savedJobs'],
     queryFn: () => {
-      // Mocking localStorage for saved status until server implementation is verified
-      const savedJobs = localStorage.getItem('savedJobs');
-      return savedJobs ? JSON.parse(savedJobs) : [];
+      // Use the proper API endpoint to get saved jobs
+      return getSavedJobs();
     },
     enabled: !!user,
+    select: (data) => data?.data?.saved_jobs || [],
   });
 
   // Ensure id is an integer for comparison
@@ -56,6 +56,10 @@ const JobDetails = () => {
     onSuccess: (data) => {
       toast.success(data.message || 'Job saved successfully!');
       queryClient.invalidateQueries(['savedJobs']);
+      // Navigate to saved jobs page after successful save
+      setTimeout(() => {
+        navigate('/dashboard/saved-jobs');
+      }, 1500); // Small delay to let user see the toast
     },
     onError: (error) => {
       // Using a more robust error message pattern
@@ -145,14 +149,16 @@ const JobDetails = () => {
       return;
     }
 
-    // NOTE: Re-enabling premium check based on original intent
-    if (!user.is_premium) {
-      // Redirect to premium checkout instead of showing modal
+    // Check if user is premium - check both possible properties
+    const isUserPremium = user.is_premium || user.isPremium;
+    
+    if (!isUserPremium) {
+      toast.info('Saving jobs is a premium feature. Please upgrade to premium!');
       navigate('/premium-checkout');
-      toast.info('Saving jobs is a premium feature. Please upgrade!');
       return;
     }
 
+    // User is premium, proceed with save/unsave operation
     if (isJobSaved) {
       unsaveJobMutation.mutate(id);
     } else {

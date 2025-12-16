@@ -108,7 +108,12 @@ const Profile = () => {
             profile_visibility: userData.profile_visibility || 'public',
 
             // Profile Picture
-            profile_picture: userData.profile_picture || ''
+            profile_picture: userData.profile_picture || '',
+
+            // Date fields for member since calculation
+            created_at: userData.created_at,
+            premium_expiry: userData.premium_expiry,
+            is_premium: userData.is_premium
           });
         } else {
           console.log('⚠️ Profile API response:', response);
@@ -140,7 +145,12 @@ const Profile = () => {
               salary_currency: user.salary_currency || 'USD',
               is_open_to_work: user.is_open_to_work || false,
               profile_visibility: user.profile_visibility || 'public',
-              profile_picture: user.profile_picture || ''
+              profile_picture: user.profile_picture || '',
+
+              // Date fields for member since calculation
+              created_at: user.created_at,
+              premium_expiry: user.premium_expiry,
+              is_premium: user.is_premium
             });
           }
         }
@@ -174,7 +184,12 @@ const Profile = () => {
             salary_currency: user.salary_currency || 'USD',
             is_open_to_work: user.is_open_to_work || false,
             profile_visibility: user.profile_visibility || 'public',
-            profile_picture: user.profile_picture || ''
+            profile_picture: user.profile_picture || '',
+
+            // Date fields for member since calculation
+            created_at: user.created_at,
+            premium_expiry: user.premium_expiry,
+            is_premium: user.is_premium
           });
         }
       } finally {
@@ -204,24 +219,42 @@ const Profile = () => {
 
   // Safe date formatting function
   const getMemberSinceDate = (user) => {
-    if (!user) return 'Unknown';
-
+    console.log('🔍 getMemberSinceDate called with user:', user);
+    
+    if (!user) {
+      console.log('❌ No user provided');
+      return 'Unknown';
+    }
+    
+    console.log('📊 User data:', {
+      is_premium: user.is_premium,
+      premium_expiry: user.premium_expiry,
+      created_at: user.created_at
+    });
+    
     // For premium users, use premium_expiry date from database
     if (user.is_premium && user.premium_expiry) {
       const date = new Date(user.premium_expiry);
+      console.log('💎 Premium user, expiry date:', user.premium_expiry, 'parsed:', date);
       if (!isNaN(date.getTime())) {
         return date.toLocaleDateString();
+      } else {
+        console.log('❌ Invalid premium_expiry date');
       }
     }
-
+    
     // For regular users, use created_at date
     if (user.created_at) {
       const date = new Date(user.created_at);
+      console.log('👤 Regular user, created_at:', user.created_at, 'parsed:', date);
       if (!isNaN(date.getTime())) {
         return date.toLocaleDateString();
+      } else {
+        console.log('❌ Invalid created_at date');
       }
     }
-
+    
+    console.log('❌ No valid date found, returning Unknown');
     return 'Unknown';
   };
 
@@ -278,7 +311,7 @@ const Profile = () => {
           <div className="flex-1">
             <h3 className="text-lg font-semibold">{user?.name}</h3>
             <p className="text-gray-500">{user?.email}</p>
-            <p className="text-sm text-gray-400">Member since {getMemberSinceDate(user)}</p>
+            <p className="text-sm text-gray-400">Member since {getMemberSinceDate(profileData)}</p>
             <div className="mt-3">
               <label className="block text-sm font-medium text-gray-700 mb-2">Profile Picture URL</label>
               <input

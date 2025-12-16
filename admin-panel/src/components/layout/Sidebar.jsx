@@ -122,6 +122,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         { name: 'Users', href: '/admin/users', icon: Users, description: 'Manage user accounts' },
         { name: 'User Roles', href: '/admin/roles', icon: Shield, description: 'Manage user roles and permissions' },
         { name: 'Applications', href: '/admin/applications', icon: FileText, description: 'View job applications' },
+        { name: 'Referrals', href: '/admin/referrals', icon: UserPlus, description: 'Manage referral program' },
       ]
     },
     // Financial Management

@@ -168,7 +168,7 @@ export const categoriesAPI = {
 export const userAPI = {
   getSavedJobs: () => api.get('/users/saved-jobs'),
   saveJob: (jobId) => api.post(`/jobs/${jobId}/save`),
-  unsaveJob: (jobId) => api.delete(`/jobs/${jobId}/save`),
+  unsaveJob: (jobId) => api.post(`/jobs/${jobId}/save`), // Use POST to match backend
   getViewedJobs: () => api.get('/users/viewed-jobs'),
   getJobAlerts: () => api.get('/users/job-alerts'),
   createJobAlert: (alertData) => api.post('/users/job-alerts', alertData),
@@ -261,7 +261,7 @@ export const getSimilarJobs = (id) => jobsAPI.getSimilarJobs(id);
 
 // User functions
 export const getSavedJobs = () => userAPI.getSavedJobs();
-export const unsaveJob = (jobId) => userAPI.unsaveJob(jobId);
+export const unsaveJob = (jobId) => api.post(`/jobs/${jobId}/save`); // Use POST instead of DELETE to match backend
 
 // Simplified API functions for Home component
 export const getJobs = (params) => api.get('/jobs', { params });
@@ -350,7 +350,7 @@ export const applicationAPI = {
 export const savedJobAPI = {
   getSavedJobs: () => api.get('/users/saved-jobs'),
   saveJob: (jobId) => api.post(`/jobs/${jobId}/save`),
-  unsaveJob: (jobId) => api.delete(`/jobs/${jobId}/save`),
+  unsaveJob: (jobId) => api.post(`/jobs/${jobId}/save`), // Use POST to match backend
   checkIfSaved: (jobId) => api.get(`/jobs/${jobId}/saved`),
 };
 
@@ -360,6 +360,14 @@ export const companyAPI = {
   getCompany: (id) => api.get(`/companies/${id}`),
   getCompanyJobs: (id, params) => api.get(`/companies/${id}/jobs`, { params }),
   getFeaturedCompanies: () => api.get('/companies/featured'),
+};
+
+// Referral API
+export const referralAPI = {
+  submitReferral: (referralData) => api.post('/referral', referralData),
+  getReferralStatus: (email) => api.get('/referral/status', { params: { email } }),
+  getAllReferrals: () => api.get('/referral/admin'),
+  updateReferralStatus: (id, statusData) => api.put(`/referral/${id}`, statusData),
 };
 
 export default api;

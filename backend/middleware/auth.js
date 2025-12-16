@@ -94,13 +94,22 @@ export const checkUserActive = async (req, res, next) => {
       return next();
     }
 
+    // Get user ID from JWT token (should be userId from JWT payload)
+    const userId = req.user.userId;
+
+    console.log('🔍 checkUserActive - Looking for user ID:', userId);
+    console.log('🔍 checkUserActive - Full req.user:', req.user);
+
     // Get user from database to check current status
     const userResult = await query(
       'SELECT id, is_active FROM app_users WHERE id = $1',
-      [req.user.id]
+      [userId]
     );
 
+    console.log('🔍 checkUserActive - DB query result rows:', userResult.rows.length);
+
     if (userResult.rows.length === 0) {
+      console.log('❌ checkUserActive - User not found in database');
       return res.status(401).json({
         success: false,
         message: 'User not found'
