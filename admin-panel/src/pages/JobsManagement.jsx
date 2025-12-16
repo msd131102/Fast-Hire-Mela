@@ -40,6 +40,20 @@ const JobsManagement = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
 
+  // Read URL parameters on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const jobTypeParam = urlParams.get('jobType') || urlParams.get('job_type');
+    const statusParam = urlParams.get('status');
+    
+    if (jobTypeParam && jobTypeParam !== 'all') {
+      setTypeFilter(jobTypeParam);
+    }
+    if (statusParam && statusParam !== 'all') {
+      setStatusFilter(statusParam);
+    }
+  }, []);
+
   useEffect(() => {
     fetchJobs();
   }, [currentPage, searchTerm, statusFilter, typeFilter]);
@@ -52,7 +66,7 @@ const JobsManagement = () => {
         limit: 10,
         search: searchTerm || undefined,
         status: statusFilter !== 'all' ? statusFilter : undefined,
-        type: typeFilter !== 'all' ? typeFilter : undefined
+        job_type: typeFilter !== 'all' ? typeFilter : undefined
       };
 
       // Remove undefined values
@@ -65,20 +79,6 @@ const JobsManagement = () => {
       console.error('Error fetching jobs:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleStatusChange = async (jobId, newStatus) => {
-    try {
-      await jobsAPI.updateStatus(jobId, newStatus);
-      fetchJobs();
-    } catch (error) {
-      console.error('Error updating job status:', error);
-    }
-  };
-
-  const handleDeleteJob = async (jobId) => {
-    if (window.confirm('Are you sure you want to delete this job?')) {
       try {
         await jobsAPI.deleteJob(jobId);
         fetchJobs();
@@ -299,14 +299,33 @@ const JobsManagement = () => {
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <Building className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm">{job.company_name || job.company}</span>
+                        <div className="flex items-center gap-3">
+                          {job.company_logo ? (
+                            <img 
+                              src={job.company_logo} 
+                              alt={job.company_name || job.company}
+                              className="h-8 w-8 object-contain rounded border border-gray-200"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.classList.remove('hidden');
+                              }}
+                            />
+                          ) : (
+                            <div className="h-8 w-8 bg-gray-100 rounded flex items-center justify-center">
+                              <Building className="h-4 w-4 text-gray-400" />
+                            </div>
+                          )}
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-gray-900">{job.company_name || job.company}</span>
+                            {job.company_logo && (
+                              <span className="text-xs text-green-600">Logo</span>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="p-4">
                         <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                          {job.job_type || job.type}
+                          {job.job_type}
                         </span>
                       </td>
                       <td className="p-4">
@@ -499,6 +518,7 @@ const JobForm = ({ initialData, onSubmit, onCancel }) => {
     title: '',
     description: '',
     company_id: '',
+    company_logo: '',
     category_id: '',
     location: '',
     job_type: 'full-time',
@@ -560,6 +580,7 @@ const JobForm = ({ initialData, onSubmit, onCancel }) => {
         title: initialData.title || '',
         description: initialData.description || '',
         company_id: initialData.company_id || '',
+        company_logo: initialData.company_logo || '',
         category_id: initialData.category_id || '',
         location: initialData.location || '',
         job_type: initialData.job_type || initialData.type || 'full-time',
@@ -646,6 +667,46 @@ const JobForm = ({ initialData, onSubmit, onCancel }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Optional - Leave empty if not associated with a company"
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Company Logo URL
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="url"
+              name="company_logo"
+              value={formData.company_logo}
+              onChange={handleChange}
+              placeholder="https://example.com/company-logo.png"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            {formData.company_logo && (
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, company_logo: '' }))}
+                className="px-3 py-2 text-sm text-red-600 border border-red-300 rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          {formData.company_logo && (
+            <div className="mt-2">
+              <img 
+                src={formData.company_logo} 
+                alt="Company Logo" 
+                className="h-16 w-auto max-w-xs object-contain border rounded border-gray-200"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <div className="text-sm text-red-600 mt-1" style={{display: 'none'}}>
+                Invalid image URL or failed to load image
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

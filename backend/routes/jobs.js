@@ -1410,7 +1410,7 @@ router.get('/:jobId/similar', async (req, res) => {
       LEFT JOIN app_users u ON j.posted_by = u.id
       WHERE ${whereConditions.join(' AND ')}
       ORDER BY similarity_score DESC, j.posted_date DESC
-      LIMIT $${paramCount + 1}
+      LIMIT $${paramCount + 2}
     `;
 
     queryParams.push(parseInt(limit));

@@ -31,21 +31,21 @@ const Footer = () => {
               Connect with top companies and accelerate your career journey.
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+              {/* <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
                 <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+              </a> */}
+              {/* <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
                 <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />
-              </a>
+              </a> */}
               <a href="https://www.linkedin.com/company/fasthiremela/" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
                 <Linkedin className="h-4 w-4 sm:h-5 sm:w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+              {/* <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
                 <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+              </a> */}
+              {/* <a href="#" className="text-gray-400 hover:text-white transition-colors p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
                 <Youtube className="h-4 w-4 sm:h-5 sm:w-5" />
-              </a>
+              </a> */}
             </div>
           </div>
 

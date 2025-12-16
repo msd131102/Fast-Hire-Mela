@@ -89,10 +89,10 @@ const Header = () => {
 
   const dashboardNavigation = [
     { name: 'Home', href: '/', icon: '🏠', mobileOnly: false },
-    { name: 'Dashboard', href: '/dashboard', icon: '📊', mobileOnly: false },
     { name: 'Jobs', href: '/jobs', icon: '💼', mobileOnly: false },
-    { name: 'Profile', href: '/profile', icon: '👤', mobileOnly: false },
     { name: 'Saved Jobs', href: '/saved-jobs', icon: '⭐', mobileOnly: false },
+    { name: 'Dashboard', href: '/dashboard', icon: '📊', mobileOnly: false },
+    { name: 'Profile', href: '/profile', icon: '👤', mobileOnly: false },
     ...(isPremium ? [{ name: 'Premium', href: '/premium', icon: '🌟', mobileOnly: false }] : []),
   ];
 

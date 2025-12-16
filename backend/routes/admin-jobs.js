@@ -203,6 +203,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', [
   body('title').trim().isLength({ min: 3 }).withMessage('Title must be at least 3 characters'),
   body('description').trim().isLength({ min: 10 }).withMessage('Description must be at least 10 characters'),
+  body('company_name').optional().trim().isLength({ min: 2 }).withMessage('Company name must be at least 2 characters'),
   body('location').trim().isLength({ min: 2 }).withMessage('Location must be at least 2 characters'),
   body('job_type').isIn(['full-time', 'part-time', 'contract', 'internship', 'remote', 'hybrid']).withMessage('Invalid job type'),
   body('experience_level').optional().isIn(['fresher', 'entry', 'mid', 'senior', 'lead', 'executive']).withMessage('Invalid experience level'),
@@ -248,6 +249,7 @@ router.post('/', [
       experience_level,
       job_type,
       skills_required,
+      responsibilities,
       category_id,
       company_id,
       application_deadline,
@@ -263,7 +265,15 @@ router.post('/', [
       const companyResult = await query('SELECT name FROM companies WHERE id = $1', [company_id]);
       if (companyResult.rows.length > 0) {
         finalCompanyName = companyResult.rows[0].name;
+      } else {
+        // If company_id is provided but company doesn't exist, use a default name
+        finalCompanyName = 'Unknown Company';
       }
+    }
+    
+    // Ensure company_name is never null
+    if (!finalCompanyName || finalCompanyName.trim() === '') {
+      finalCompanyName = 'Unknown Company';
     }
 
     // Generate apply_link if not provided

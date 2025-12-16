@@ -13,6 +13,10 @@ import {
   XCircle,
   ArrowLeft,
   Bookmark,
+  Calendar,
+  TrendingUp,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -32,21 +36,20 @@ const JobDetails = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('description');
+  const [isSaving, setIsSaving] = useState(false);
   const queryClient = useQueryClient();
 
-  // Check if job is saved
+  // Get saved jobs
   const { data: savedJobsData } = useQuery({
     queryKey: ['savedJobs'],
     queryFn: () => {
-      // Use the proper API endpoint to get saved jobs
       return getSavedJobs();
     },
     enabled: !!user,
     select: (data) => data?.data?.saved_jobs || [],
   });
 
-  // Ensure id is an integer for comparison
   const jobId = parseInt(id);
   const isJobSaved = savedJobsData?.some(savedJob => savedJob.id === jobId);
 
@@ -56,13 +59,11 @@ const JobDetails = () => {
     onSuccess: (data) => {
       toast.success(data.message || 'Job saved successfully!');
       queryClient.invalidateQueries(['savedJobs']);
-      // Navigate to saved jobs page after successful save
       setTimeout(() => {
         navigate('/dashboard/saved-jobs');
-      }, 1500); // Small delay to let user see the toast
+      }, 1500);
     },
     onError: (error) => {
-      // Using a more robust error message pattern
       const errorMessage = error.response?.data?.message || 'Failed to save job';
       toast.error(errorMessage);
     },
@@ -86,7 +87,6 @@ const JobDetails = () => {
     queryKey: ['job', id],
     queryFn: () => getJobDetails(id),
     enabled: !!id,
-    // Use 'select' to normalize the data shape
     select: (data) => data?.data?.job, 
   });
 
@@ -103,7 +103,6 @@ const JobDetails = () => {
   // Track job view
   useEffect(() => {
     if (job) {
-      // Track job view analytics
       console.log('Job viewed:', job.id);
     }
   }, [job]);
@@ -116,11 +115,9 @@ const JobDetails = () => {
     }
 
     if (job?.apply_link) {
-      // User is authenticated, open the application link
       window.open(job.apply_link, '_blank');
     } else {
-      // Handle case where no application URL exists
-      toast.error('No external application URL available for this job');
+      toast.error('No application URL available for this job');
     }
   };
 
@@ -136,20 +133,18 @@ const JobDetails = () => {
         console.log('Error sharing:', error);
       }
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
       toast.success('Link copied to clipboard!');
     }
   };
 
-  const handleSaveJob = () => {
+  const handleSaveJob = async () => {
     if (!user) {
       toast.error('Please login to save jobs');
       navigate('/login');
       return;
     }
 
-    // Check if user is premium - check both possible properties
     const isUserPremium = user.is_premium || user.isPremium;
     
     if (!isUserPremium) {
@@ -158,13 +153,27 @@ const JobDetails = () => {
       return;
     }
 
-    // User is premium, proceed with save/unsave operation
-    if (isJobSaved) {
-      unsaveJobMutation.mutate(id);
-    } else {
-      saveJobMutation.mutate(id);
+    setIsSaving(true);
+    try {
+      if (isJobSaved) {
+        await unsaveJobMutation.mutateAsync(id);
+      } else {
+        await saveJobMutation.mutateAsync(id);
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
+
+  // Calculate days until deadline
+  const getDaysUntilDeadline = (deadline) => {
+    if (!deadline) return null;
+    const days = Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24));
+    return days;
+  };
+
+  const daysUntilDeadline = getDaysUntilDeadline(job?.application_deadline);
+  const isUrgent = daysUntilDeadline && daysUntilDeadline <= 7;
 
   if (isLoading) {
     return (
@@ -177,12 +186,12 @@ const JobDetails = () => {
   if (error || !job) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-6 bg-white rounded-lg shadow-lg">
+        <div className="text-center p-8 bg-white rounded-xl shadow-lg max-w-md">
           <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Job Not Found</h2>
           <p className="text-gray-600 mb-6">The job you're looking for doesn't exist or has been removed.</p>
           <Link to="/jobs">
-            <Button>Browse Other Jobs</Button>
+            <Button className="w-full">Browse Other Jobs</Button>
           </Link>
         </div>
       </div>
@@ -190,16 +199,24 @@ const JobDetails = () => {
   }
 
   return (
-    // Added padding-bottom for sticky mobile footer
     <div className="min-h-screen bg-gray-50 pb-20 lg:pb-8">
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-10">
-        {/* Made header sticky */}
         <div className="container mx-auto px-4 py-4">
-          <Link to="/jobs" className="inline-flex items-center text-gray-600 hover:text-gray-900">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Jobs
-          </Link>
+          <div className="flex items-center justify-between">
+            <Link to="/jobs" className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Jobs
+            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleShare}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <Share2 className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -212,87 +229,75 @@ const JobDetails = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              {/* Job Header */}
-              <Card className="mb-6">
+              {/* Job Header Card */}
+              <Card className="mb-6 overflow-hidden">
                 <CardContent className="p-6">
-                  {/* IMPROVEMENT: Better responsive header layout */}
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6">
-                    
-                    {/* Left Side (Logo & Info) */}
                     <div className="flex items-start space-x-4 mb-4 sm:mb-0">
                       <img
                         src={job.company_logo || '/api/placeholder/80/80'}
                         alt={job.company_name}
-                        className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                        className="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-gray-200"
                       />
-                      <div>
+                      <div className="flex-1">
                         <h1 className="text-2xl font-bold text-gray-900 mb-2">{job.title}</h1>
-                        <div className="flex items-center text-gray-600 mb-1">
-                          <Building2 className="w-4 h-4 mr-2 flex-shrink-0" />
-                          <span className="truncate">{job.company_name}</span>
-                        </div>
-                        <div className="flex items-center text-gray-600">
-                          <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-                          <span className="truncate">{job.location}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-gray-600">
+                          <div className="flex items-center">
+                            <Building2 className="w-4 h-4 mr-1" />
+                            {job.company_name}
+                          </div>
+                          <div className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {job.location}
+                          </div>
                         </div>
                       </div>
                     </div>
                     
-                    {/* Right Side (Actions) - Hidden on mobile, visible on desktop/tablet */}
-                    <div className="hidden sm:flex flex-col space-y-2 mt-2 sm:mt-0 sm:items-end">
+                    <div className="hidden sm:flex items-center space-x-2">
                       <Button
-                        variant={isJobSaved ? "secondary" : "outline"}
+                        variant={isJobSaved ? "default" : "outline"}
                         size="sm"
                         onClick={handleSaveJob}
-                        disabled={saveJobMutation.isLoading || unsaveJobMutation.isLoading}
+                        disabled={isSaving || saveJobMutation.isLoading || unsaveJobMutation.isLoading}
                       >
                         <Bookmark 
-                          className={`w-4 h-4 mr-2 ${isJobSaved ? 'fill-yellow-500 text-yellow-500' : 'text-gray-500'}`} 
+                          className={`w-4 h-4 mr-2 ${isJobSaved ? 'fill-white' : ''}`} 
                         />
-                        {isJobSaved ? 'Job Saved' : 'Save Job'}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleShare}
-                      >
-                        <Share2 className="w-4 h-4 mr-2" />
-                        Share
+                        {isJobSaved ? 'Saved' : 'Save'}
                       </Button>
                     </div>
                   </div>
 
-                  {/* Job Meta (remains the same) */}
+                  {/* Key Information Cards */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    {/* Salary */}
-                    <div className="text-center p-3 bg-gray-100 rounded-lg">
-                      <span className="text-2xl text-green-600 mx-auto mb-1 block">₹</span>
-                      <div className="text-sm font-semibold text-gray-900 truncate">
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                      <TrendingUp className="w-5 h-5 text-green-600 mb-2" />
+                      <div className="text-sm font-semibold text-gray-900">
                         {utils.formatSalary(job.salary_min, job.salary_max)}
                       </div>
-                      <div className="text-xs text-gray-500">Salary</div>
+                      <div className="text-xs text-gray-600">Salary (India)</div>
                     </div>
-                    {/* Job Type */}
-                    <div className="text-center p-3 bg-gray-100 rounded-lg">
-                      <Briefcase className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-                      <div className="text-sm font-semibold text-gray-900 truncate">{job.job_type || 'N/A'}</div>
-                      <div className="text-xs text-gray-500">Job Type</div>
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <Briefcase className="w-5 h-5 text-blue-600 mb-2" />
+                      <div className="text-sm font-semibold text-gray-900 capitalize">{job.job_type || 'N/A'}</div>
+                      <div className="text-xs text-gray-600">Job Type</div>
                     </div>
-                    {/* Posted */}
-                    <div className="text-center p-3 bg-gray-100 rounded-lg">
-                      <Clock className="w-5 h-5 text-purple-600 mx-auto mb-1" />
-                      <div className="text-sm font-semibold text-gray-900 truncate">
-                        {utils.formatPostedDate(job.posted_at)}
-                      </div>
-                      <div className="text-xs text-gray-500">Posted</div>
-                    </div>
-                    {/* Experience */}
-                    <div className="text-center p-3 bg-gray-100 rounded-lg">
-                      <Users className="w-5 h-5 text-orange-600 mx-auto mb-1" />
-                      <div className="text-sm font-semibold text-gray-900 truncate">
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                      <Users className="w-5 h-5 text-purple-600 mb-2" />
+                      <div className="text-sm font-semibold text-gray-900">
                         {utils.formatExperience(job.experience_min, job.experience_max)}
                       </div>
-                      <div className="text-xs text-gray-500">Experience</div>
+                      <div className="text-xs text-gray-600">Experience</div>
+                    </div>
+                    <div className={`p-4 rounded-lg border ${isUrgent ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
+                      <Calendar className={`w-5 h-5 mb-2 ${isUrgent ? 'text-red-600' : 'text-gray-600'}`} />
+                      <div className="text-sm font-semibold text-gray-900">
+                        {job.application_deadline ? (
+                          isUrgent ? `${daysUntilDeadline} days left` : utils.formatPostedDate(job.application_deadline)
+                        ) : 'No deadline'}
+                      </div>
+                      <div className="text-xs text-gray-600">Deadline</div>
                     </div>
                   </div>
 
@@ -313,37 +318,46 @@ const JobDetails = () => {
                     </div>
                   )}
 
-                  {/* Job Description, Requirements, Benefits (Using Tailwind Prose for readability) */}
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">Job Description</h3>
-                    <div 
-                      className="prose prose-gray max-w-none leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: job.description }}
-                    />
+                  {/* Job Details Tabs */}
+                  <div className="border-b border-gray-200 mb-6">
+                    <nav className="flex space-x-8">
+                      {['description', 'requirements', 'benefits'].map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setActiveTab(tab)}
+                          className={`py-2 px-1 border-b-2 font-medium text-sm capitalize transition-colors ${
+                            activeTab === tab
+                              ? 'border-blue-500 text-blue-600'
+                              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          }`}
+                        >
+                          {tab}
+                        </button>
+                      ))}
+                    </nav>
                   </div>
 
-                  {job.requirements && (
-                    <div className="mb-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">Requirements</h3>
+                  {/* Tab Content */}
+                  <div className="prose prose-gray max-w-none">
+                    {activeTab === 'description' && job.description && (
                       <div 
-                        className="prose prose-gray max-w-none leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: job.requirements }}
+                        dangerouslySetInnerHTML={{ __html: job.description }}
                       />
-                    </div>
-                  )}
-
-                  {job.benefits && (
-                    <div className="mb-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">Benefits</h3>
+                    )}
+                    {activeTab === 'requirements' && job.responsibilities && (
                       <div 
-                        className="prose prose-gray max-w-none leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: job.benefits }}
+                        dangerouslySetInnerHTML={{ __html: job.responsibilities }}
                       />
-                    </div>
-                  )}
+                    )}
+                    {activeTab === 'benefits' && job.skills_required && (
+                      <div 
+                        dangerouslySetInnerHTML={{ __html: job.skills_required }}
+                      />
+                    )}
+                  </div>
 
-                  {/* Apply Button - Visible only on Desktop/Tablet (hidden on mobile to use sticky footer) */}
-                  <div className="hidden lg:flex flex-col sm:flex-row gap-4 pt-4 border-t border-gray-100">
+                  {/* Apply Button - Desktop */}
+                  <div className="hidden lg:flex mt-6 pt-6 border-t border-gray-200">
                     <Button
                       size="lg"
                       onClick={handleApply}
@@ -366,23 +380,23 @@ const JobDetails = () => {
                     <img
                       src={job.company_logo || '/api/placeholder/60/60'}
                       alt={job.company_name}
-                      className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                      className="w-12 h-12 rounded-lg object-cover"
                     />
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{job.company_name}</h3>
-                      <p className="text-gray-600 text-sm">{job.industry}</p>
+                      <p className="text-gray-600 text-sm">{job.industry || 'Technology'}</p>
                     </div>
                   </div>
                   {job.company_description && (
                     <div 
-                      className="prose prose-gray max-w-none leading-relaxed"
+                      className="prose prose-gray max-w-none text-sm"
                       dangerouslySetInnerHTML={{ __html: job.company_description }}
                     />
                   )}
                   <div className="mt-4">
                     <Link to={`/jobs?company=${job.company_id}`}>
-                      <Button variant="outline">
-                        View All Jobs at {job.company_name}
+                      <Button variant="outline" size="sm">
+                        View All Jobs
                       </Button>
                     </Link>
                   </div>
@@ -398,35 +412,30 @@ const JobDetails = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              {/* IMPROVEMENT: Make sidebar sticky on large screens */}
-              <div className="lg:sticky lg:top-[6.5rem]">
-                {/* Adjusted top value to account for main header */}
-
+              <div className="lg:sticky lg:top-24 space-y-6">
                 {/* Job Summary */}
-                <Card className="mb-6">
+                <Card>
                   <CardHeader>
                     <CardTitle>Job Summary</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      <div className="flex justify-between border-b pb-2">
+                      <div className="flex justify-between">
                         <span className="text-gray-600">Posted:</span>
-                        <span className="font-medium">{utils.formatPostedDate(job.posted_at)}</span>
+                        <span className="font-medium">{utils.formatPostedDate(job.posted_date)}</span>
                       </div>
-                      <div className="flex justify-between border-b pb-2">
+                      <div className="flex justify-between">
                         <span className="text-gray-600">Views:</span>
-                        <span className="font-medium">{job.views || 0}</span>
+                        <span className="font-medium">{job.view_count || 0}</span>
                       </div>
-                      <div className="flex justify-between border-b pb-2">
-                        <span className="text-gray-600">Applications:</span>
-                        <span className="font-medium">{job.application_count || 0}</span>
-                      </div>
-                      <div className="flex justify-between pt-1">
-                        <span className="text-gray-600">Deadline:</span>
-                        <span className={`font-medium ${job.deadline && new Date(job.deadline) < new Date() ? 'text-red-500' : 'text-gray-900'}`}>
-                          {job.deadline ? utils.formatPostedDate(job.deadline) : 'No deadline'}
-                        </span>
-                      </div>
+                      {job.application_deadline && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Deadline:</span>
+                          <span className={`font-medium ${isUrgent ? 'text-red-600' : 'text-gray-900'}`}>
+                            {utils.formatPostedDate(job.application_deadline)}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -438,7 +447,7 @@ const JobDetails = () => {
                       <CardTitle>Similar Jobs</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {similarJobs.slice(0, 3).map((similarJob) => (
                           <Link
                             key={similarJob.id}
@@ -472,7 +481,7 @@ const JobDetails = () => {
         </div>
       </div>
 
-      {/* === IMPROVEMENT: STICKY MOBILE/TABLET FOOTER === */}
+      {/* Mobile Sticky Footer */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t shadow-2xl z-50">
         <div className="flex gap-3 items-center">
           <Button
@@ -480,7 +489,7 @@ const JobDetails = () => {
             size="lg"
             onClick={handleSaveJob}
             className="w-1/4 flex-shrink-0"
-            disabled={saveJobMutation.isLoading || unsaveJobMutation.isLoading}
+            disabled={isSaving || saveJobMutation.isLoading || unsaveJobMutation.isLoading}
           >
             <Bookmark
               className={`w-6 h-6 ${isJobSaved ? 'fill-white text-white' : 'text-gray-500'}`}
