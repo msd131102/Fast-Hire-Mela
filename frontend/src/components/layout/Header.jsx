@@ -19,7 +19,7 @@ const Header = () => {
   const mobileProfileRef = useRef(null);
   const menuRef = useRef(null);
 
-  // Handle scroll effect
+  // Handle scroll effect - Preserved
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -28,20 +28,15 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle click outside for dropdowns
+  // Handle click outside for dropdowns - Preserved
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Desktop profile dropdown
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setIsProfileDropdownOpen(false);
       }
-      
-      // Mobile profile dropdown
       if (mobileProfileRef.current && !mobileProfileRef.current.contains(event.target)) {
         setIsMobileProfileOpen(false);
       }
-      
-      // Mobile menu
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
       }
@@ -51,7 +46,7 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle escape key
+  // Handle escape key - Preserved
   useEffect(() => {
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape') {
@@ -60,25 +55,21 @@ const Header = () => {
         setIsMenuOpen(false);
       }
     };
-
     document.addEventListener('keydown', handleEscapeKey);
     return () => document.removeEventListener('keydown', handleEscapeKey);
   }, []);
 
-  // Handle body scroll lock when mobile menu is open
+  // Handle body scroll lock - Preserved
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-    
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    return () => { document.body.style.overflow = 'unset'; };
   }, [isMenuOpen]);
 
-  // Navigation items
+  // Navigation items - Preserved
   const navigation = [
     { name: 'Find Jobs', href: '/jobs', icon: '💼', mobileOnly: false },
     { name: 'Companies', href: '/companies', icon: '🏢', mobileOnly: false },
@@ -96,12 +87,10 @@ const Header = () => {
     ...(isPremium ? [{ name: 'Premium', href: '/premium', icon: '🌟', mobileOnly: false }] : []),
   ];
 
-  // Check if path is active
   const isActivePath = useCallback((path) => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   }, [location.pathname]);
 
-  // Handle logout
   const handleLogout = useCallback(() => {
     logout();
     navigate('/');
@@ -115,164 +104,150 @@ const Header = () => {
     });
   }, [logout, navigate, toast]);
 
-  // Close all menus
   const closeAllMenus = useCallback(() => {
     setIsMenuOpen(false);
     setIsProfileDropdownOpen(false);
     setIsMobileProfileOpen(false);
   }, []);
 
-  // Handle mobile menu toggle
   const toggleMobileMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
     setIsProfileDropdownOpen(false);
     setIsMobileProfileOpen(false);
   }, []);
 
-  // Handle profile dropdown toggle
   const toggleProfileDropdown = useCallback(() => {
     setIsProfileDropdownOpen(prev => !prev);
     setIsMobileProfileOpen(false);
     setIsMenuOpen(false);
   }, []);
 
-  // Handle mobile profile toggle
   const toggleMobileProfile = useCallback(() => {
     setIsMobileProfileOpen(prev => !prev);
     setIsProfileDropdownOpen(false);
     setIsMenuOpen(false);
   }, []);
 
-  // Header background classes
+  // Visual classes
   const headerBgClass = isScrolled
-    ? 'bg-gray-900/95 backdrop-blur-md border-b border-gray-800 shadow-lg'
-    : 'bg-gray-900 border-b border-gray-800 shadow-sm';
+    ? 'bg-gray-900/90 backdrop-blur-xl border-b border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+    : 'bg-gray-900 border-b border-gray-800';
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${headerBgClass}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${headerBgClass}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Main Header Row */}
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-20">
             
-            {/* Logo */}
+            {/* Logo Section */}
             <Link 
               to="/" 
               className="flex items-center gap-3 group flex-shrink-0" 
               onClick={closeAllMenus}
             >
               <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
                 <img
                   src={logo}
                   alt="Fast Hire Mela Logo"
-                  className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  className="relative h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
                 />
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-gray-900 animate-pulse" />
               </div>
-              <span className="hidden sm:block text-white font-bold text-lg group-hover:text-blue-400 transition-colors">
-                {/* Fast Hire Mela */}
-              </span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-1 flex-1 justify-center ml-8">
+            {/* Desktop Navigation - Centered */}
+            <nav className="hidden lg:flex items-center space-x-2 flex-1 justify-center mx-8">
               {(isAuthenticated ? dashboardNavigation : navigation)
                 .filter(item => !item.mobileOnly)
                 .map(item => (
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`relative px-4 py-2 rounded-lg transition-all duration-200 group ${
+                    className={`relative px-4 py-2.5 rounded-xl transition-all duration-300 group ${
                       isActivePath(item.href)
-                        ? 'text-blue-400 bg-gray-800/50'
-                        : 'text-gray-300 hover:text-blue-400 hover:bg-gray-800/30'
+                        ? 'text-white bg-white/10'
+                        : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }`}
                   >
-                    <span className="flex items-center gap-2">
-                      <span className="text-lg">{item.icon}</span>
-                      <span className="font-medium text-sm">{item.name}</span>
+                    <span className="flex items-center gap-2.5">
+                      <span className={`text-xl transition-transform duration-300 group-hover:scale-125 ${isActivePath(item.href) ? 'scale-110' : ''}`}>
+                        {item.icon}
+                      </span>
+                      <span className="font-semibold text-sm tracking-wide">{item.name}</span>
                     </span>
-                    <div
-                      className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-blue-400 rounded-full transition-all duration-200 ${
-                        isActivePath(item.href)
-                          ? 'opacity-100 scale-x-100'
-                          : 'opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100'
-                      }`}
-                    />
+                    {isActivePath(item.href) && (
+                      <motion.div 
+                        layoutId="nav-underline"
+                        className="absolute bottom-1 left-1/2 -translate-x-1/2 w-6 h-1 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                      />
+                    )}
                   </Link>
                 ))}
             </nav>
 
             {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
+            <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
               {isAuthenticated ? (
                 <div className="relative" ref={profileRef}>
                   <button
                     type="button"
                     onClick={toggleProfileDropdown}
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800/50 transition-all duration-200 group"
+                    className={`flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-full border transition-all duration-300 ${
+                      isProfileDropdownOpen ? 'bg-gray-800 border-gray-600' : 'bg-gray-800/40 border-gray-700 hover:border-gray-500'
+                    }`}
                     aria-label="User profile menu"
                     aria-expanded={isProfileDropdownOpen}
                   >
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-sm font-semibold text-white shadow-lg group-hover:shadow-xl transition-shadow">
+                    <div className={`relative w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-sm font-bold text-white shadow-lg border-2 ${isPremium ? 'border-yellow-400' : 'border-transparent'}`}>
                       {user?.first_name ? user.first_name[0].toUpperCase() : user?.name ? user.name[0].toUpperCase() : 'U'}
+                      {isPremium && <span className="absolute -top-1 -right-1 text-[10px]">⭐</span>}
                     </div>
-                    <span className="text-sm text-gray-300 font-medium group-hover:text-white transition-colors">
-                      {user?.first_name || user?.name || 'User'}
-                    </span>
+                    <div className="text-left hidden xl:block">
+                      <p className="text-xs font-bold text-white leading-none mb-1">
+                        {user?.first_name || user?.name || 'User'}
+                      </p>
+                      <p className="text-[10px] text-gray-400 font-medium leading-none">Account Settings</p>
+                    </div>
                     <svg
-                      className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                        isProfileDropdownOpen ? 'rotate-180' : ''
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isProfileDropdownOpen ? 'rotate-180' : ''}`}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
 
-                  {/* Desktop Profile Dropdown */}
+                  {/* Enhanced Dropdown Menu */}
                   {isProfileDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl py-2 z-[60] animate-scale-in">
-                      <div className="px-4 py-3 border-b border-gray-700">
-                        <p className="text-sm font-medium text-white">
-                          {user?.first_name || user?.name || 'User'}
-                        </p>
-                        <p className="text-xs text-gray-400 truncate">
-                          {user?.email || 'user@example.com'}
-                        </p>
+                    <div className="absolute right-0 mt-4 w-64 bg-gray-900 border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] py-2 z-50 overflow-hidden animate-scale-in origin-top-right backdrop-blur-xl">
+                      <div className="px-5 py-4 bg-white/5 border-b border-white/5 mb-1">
+                        <p className="text-sm font-bold text-white mb-0.5">{user?.first_name || user?.name || 'User'}</p>
+                        <p className="text-xs text-gray-400 truncate font-medium">{user?.email || 'user@example.com'}</p>
+                        {isPremium && (
+                          <span className="inline-block mt-2 px-2 py-0.5 rounded bg-yellow-400/10 text-yellow-500 text-[10px] font-black uppercase tracking-wider border border-yellow-400/20">
+                            Premium Member
+                          </span>
+                        )}
                       </div>
-                      <Link
-                        to="/dashboard"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                      >
-                        <span className="text-lg">📊</span>
-                        Dashboard
-                      </Link>
-                      <Link
-                        to="/profile"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                      >
-                        <span className="text-lg">👤</span>
-                        Profile
-                      </Link>
-                      {isPremium && (
+                      {[
+                        { label: 'Dashboard', icon: '📊', href: '/dashboard' },
+                        { label: 'Profile', icon: '👤', href: '/profile' },
+                        ...(isPremium ? [{ label: 'Premium Features', icon: '🌟', href: '/premium' }] : []),
+                      ].map((link) => (
                         <Link
-                          to="/premium"
+                          key={link.label}
+                          to={link.href}
                           onClick={() => setIsProfileDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                          className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors font-medium"
                         >
-                          <span className="text-lg">🌟</span>
-                          Premium Features
+                          <span className="text-lg">{link.icon}</span>
+                          {link.label}
                         </Link>
-                      )}
-                      <div className="border-t border-gray-700 mt-2 pt-2">
+                      ))}
+                      <div className="border-t border-white/5 mt-1 pt-1">
                         <button
                           onClick={handleLogout}
-                          className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-400 hover:bg-gray-800 hover:text-red-300 transition-colors"
+                          className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-400 hover:bg-red-400/10 hover:text-red-300 transition-colors font-bold"
                         >
                           <span className="text-lg">🚪</span>
                           Logout
@@ -285,137 +260,105 @@ const Header = () => {
                 <div className="flex items-center gap-3">
                   <Link
                     to="/login"
-                    className="px-4 py-2 rounded-lg border border-gray-600 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200"
+                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-300"
                   >
                     Sign in
                   </Link>
                   <Link
                     to="/register"
-                    className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold transition-all duration-300 shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:shadow-blue-500/40"
                   >
-                    Sign up
+                    Get Started
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* Mobile Actions */}
-            <div className="flex lg:hidden items-center gap-2">
+            {/* Mobile Navigation Interface */}
+            <div className="flex lg:hidden items-center gap-3">
               {isAuthenticated && (
                 <div className="relative" ref={mobileProfileRef}>
                   <button
                     onClick={toggleMobileProfile}
-                    className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-all duration-200"
+                    className="flex items-center p-1 rounded-full border-2 border-gray-700 hover:border-blue-500 transition-colors"
                     aria-label="User profile menu"
-                    aria-expanded={isMobileProfileOpen}
                   >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-semibold text-white shadow-lg">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-xs font-black text-white">
                       {user?.first_name ? user.first_name[0].toUpperCase() : user?.name ? user.name[0].toUpperCase() : 'U'}
                     </div>
                   </button>
 
-                  {/* Mobile Profile Dropdown */}
                   {isMobileProfileOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl py-2 z-50 animate-scale-in">
-                      <Link
-                        to="/dashboard"
-                        onClick={() => setIsMobileProfileOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                      >
-                        <span className="text-lg">📊</span>
-                        Dashboard
+                    <div className="absolute right-0 mt-4 w-52 bg-gray-900 border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-scale-in origin-top-right">
+                      <Link to="/dashboard" onClick={() => setIsMobileProfileOpen(false)} className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 font-bold">
+                        <span className="text-lg">📊</span> Dashboard
                       </Link>
-                      <Link
-                        to="/profile"
-                        onClick={() => setIsMobileProfileOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                      >
-                        <span className="text-lg">👤</span>
-                        Profile
+                      <Link to="/profile" onClick={() => setIsMobileProfileOpen(false)} className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 font-bold">
+                        <span className="text-lg">👤</span> Profile
                       </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-400 hover:bg-gray-800 hover:text-red-300 transition-colors"
-                      >
-                        <span className="text-lg">🚪</span>
-                        Logout
+                      <button onClick={handleLogout} className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-400 font-black">
+                        <span className="text-lg">🚪</span> Logout
                       </button>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Mobile Menu Button */}
               <button
                 onClick={toggleMobileMenu}
-                className="p-2 rounded-lg hover:bg-gray-800/50 transition-all duration-200"
+                className={`p-2.5 rounded-xl transition-all duration-300 ${isMenuOpen ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'}`}
                 aria-label="Toggle mobile menu"
-                aria-expanded={isMenuOpen}
               >
-                <svg
-                  className="w-6 h-6 text-gray-300 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMenuOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                   ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
                   )}
                 </svg>
               </button>
             </div>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Fullscreen Menu */}
           {isMenuOpen && (
             <div 
               ref={menuRef}
-              className="lg:hidden bg-gray-900 border-t border-gray-800 animate-slide-down"
+              className="lg:hidden fixed inset-x-0 top-20 bg-gray-900/95 backdrop-blur-2xl border-t border-white/5 h-[calc(100vh-5rem)] overflow-y-auto animate-slide-down"
             >
-              <div className="px-4 py-4 space-y-2">
+              <div className="px-6 py-8 space-y-3">
+                <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 ml-4">Main Menu</p>
                 {(isAuthenticated ? dashboardNavigation : navigation).map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-200 ${
+                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base transition-all duration-300 ${
                       isActivePath(item.href)
-                        ? 'text-blue-400 bg-gray-800/50'
-                        : 'text-gray-300 hover:bg-gray-800/30 hover:text-white'
+                        ? 'text-white bg-blue-600 shadow-lg shadow-blue-600/20'
+                        : 'text-gray-300 bg-white/5 hover:bg-white/10'
                     }`}
                   >
-                    <span className="text-lg">{item.icon}</span>
-                    <span className="font-medium">{item.name}</span>
+                    <span className="text-2xl">{item.icon}</span>
+                    <span className="font-bold tracking-wide">{item.name}</span>
                   </Link>
                 ))}
                 
                 {!isAuthenticated && (
-                  <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-gray-700">
+                  <div className="grid grid-cols-1 gap-4 mt-8 pt-8 border-t border-white/5">
                     <Link
                       to="/login"
                       onClick={() => setIsMenuOpen(false)}
-                      className="px-4 py-3 rounded-lg border border-gray-600 text-center text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200"
+                      className="px-6 py-4 rounded-2xl border border-gray-700 text-center text-white font-bold bg-white/5"
                     >
-                      Sign in
+                      Sign in to Account
                     </Link>
                     <Link
                       to="/register"
                       onClick={() => setIsMenuOpen(false)}
-                      className="px-4 py-3 rounded-lg bg-blue-600 text-center text-white hover:bg-blue-700 transition-all duration-200 shadow-lg"
+                      className="px-6 py-4 rounded-2xl bg-blue-600 text-center text-white font-black shadow-xl"
                     >
-                      Sign up
+                      Create Free Account
                     </Link>
                   </div>
                 )}
@@ -424,6 +367,8 @@ const Header = () => {
           )}
         </div>
       </header>
+      {/* Spacer to prevent content from jumping behind fixed header */}
+      <div className="h-20"></div>
     </>
   );
 };
