@@ -173,6 +173,17 @@ const JobDetails = () => {
   return new Date(Number(y), Number(m) - 1, Number(d));
 };
 
+const formatIndianDate = (dateString) => {
+  const date = safeParseDate(dateString);
+  if (!date) return 'N/A';
+
+  return date.toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+};
+
 const getDaysUntilDeadline = (deadline) => {
   const deadlineDate = safeParseDate(deadline);
   if (!deadlineDate) return null;
@@ -443,7 +454,7 @@ const isUrgent =
                     <div className="space-y-3">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Posted:</span>
-                        <span className="font-medium">{utils.formatPostedDate(job.posted_date)}</span>
+                        <span className="font-medium">{formatIndianDate(job.posted_date)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Views:</span>
@@ -453,7 +464,7 @@ const isUrgent =
                         <div className="flex justify-between">
                           <span className="text-gray-600">Deadline:</span>
                           <span className={`font-medium ${isUrgent ? 'text-red-600' : 'text-gray-900'}`}>
-                            {utils.formatPostedDate(job.application_deadline)}
+                            {formatIndianDate(job.application_deadline)}
                           </span>
                         </div>
                       )}
