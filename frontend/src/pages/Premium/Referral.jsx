@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Users, Gift, CheckCircle, AlertCircle, Loader2, 
+import {
+  Users, Gift, CheckCircle, AlertCircle, Loader2,
   ArrowLeft, Sparkles, Zap, ShieldCheck, BarChart3, Infinity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -81,7 +81,7 @@ const Referral = () => {
             <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
             <span className="text-sm font-bold uppercase tracking-widest">Back to Dashboard</span>
           </Link>
-          
+
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-2xl">
               <div className="flex items-center gap-3 mb-4">
@@ -104,7 +104,7 @@ const Referral = () => {
                 {referralCount}<span className="text-2xl text-gray-600">/20</span>
               </div>
               <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mt-3">
-                <motion.div 
+                <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min((referralCount / 20) * 100, 100)}%` }}
                   className={`h-full ${isEligible ? 'bg-green-400' : 'bg-purple-400'}`}
@@ -117,7 +117,7 @@ const Referral = () => {
 
       <div className="max-w-7xl mx-auto px-6 -mt-8 pb-20">
         <div className="grid lg:grid-cols-12 gap-8">
-          
+
           {/* Left Side: Benefits (Col 5) */}
           <div className="lg:col-span-5 space-y-6 order-2 lg:order-1">
             <Card className="p-8 border-none shadow-xl shadow-purple-900/5 bg-white rounded-[2.5rem]">
@@ -125,7 +125,7 @@ const Referral = () => {
                 <Sparkles className="text-purple-500" size={20} />
                 Premium Features
               </h2>
-              
+
               <div className="space-y-6">
                 {[
                   { icon: <Infinity />, title: "Unlimited Applications", desc: "No daily limits on job applies." },
@@ -263,11 +263,10 @@ const Referral = () => {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className={`w-full py-5 rounded-[2rem] font-black text-white uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 ${
-                    isEligible 
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 shadow-green-500/20' 
-                    : 'bg-gradient-to-r from-purple-600 to-pink-600 shadow-purple-500/20'
-                  }`}
+                  className={`w-full py-5 rounded-[2rem] font-black text-white uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 ${isEligible
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 shadow-green-500/20'
+                      : 'bg-gradient-to-r from-purple-600 to-pink-600 shadow-purple-500/20'
+                    }`}
                 >
                   {loading ? (
                     <span className="flex items-center justify-center gap-2">
