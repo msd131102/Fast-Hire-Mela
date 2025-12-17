@@ -65,7 +65,7 @@ const Home = () => {
             </div>
             
             <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-8 tracking-tighter leading-[0.9] text-white">
-              Hire Faster. <br />
+              Fast Hire Mela <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-blue-200">
                 Work Smarter.
               </span>
