@@ -43,6 +43,7 @@ import databaseRoutes from './routes/database.js';
 import otpRoutes from './routes/otp.js';
 import sessionsRoutes from './routes/sessions.js';
 import referralRoutes from './routes/referrals.js';
+import errorRoutes from './routes/errors.js';
 
 // Load environment variables
 dotenv.config();
@@ -173,6 +174,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/sessions', sessionsRoutes);
 app.use('/api/referral', referralRoutes);
+app.use('/api/errors', errorRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

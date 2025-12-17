@@ -259,7 +259,7 @@ const Register = () => {
                     <Input
                       label="Full Name"
                       placeholder="John Doe"
-                      icon={<User className="w-5 h-5 text-slate-400" />}
+                      icon={<User className="w-5 h-5 text-slate-900" />}
                       {...register('name', { required: 'Full name is required', minLength: 2 })}
                       error={errors.name?.message}
                       className="h-12 bg-white dark:bg-slate-800"
@@ -268,7 +268,7 @@ const Register = () => {
                       label="Email Address"
                       type="email"
                       placeholder="john@example.com"
-                      icon={<Mail className="w-5 h-5 text-slate-400" />}
+                      icon={<Mail className="w-5 h-5 text-slate-900" />}
                       {...register('email', { required: 'Email is required', pattern: /^\S+@\S+$/i })}
                       error={errors.email?.message}
                       className="h-12 bg-white dark:bg-slate-800"
@@ -277,13 +277,13 @@ const Register = () => {
                       label="Phone Number"
                       type="tel"
                       placeholder="1234567890"
-                      icon={<Phone className="w-5 h-5 text-slate-400" />}
+                      icon={<Phone className="w-5 h-5 text-slate-900" />}
                       {...register('phone', { required: 'Phone is required', pattern: /^[0-9]{10}$/ })}
                       error={errors.phone?.message}
                       className="h-12 bg-white dark:bg-slate-800"
                     />
                     <Button type="submit" className="w-full h-12 text-lg shadow-lg shadow-blue-600/20 group">
-                      Next Step <ChevronRight className="ml-2 w-2 h-2 group-hover:translate-x-1 transition-transform" />
+                      Next Step
                     </Button>
                   </motion.div>
                 )}
@@ -326,7 +326,7 @@ const Register = () => {
                     />
                     <div className="flex gap-3 pt-2">
                       <Button type="button" variant="outline" onClick={prevStep} className="flex-1 h-12"><ChevronLeft className="mr-2" /> Back</Button>
-                      <Button type="submit" className="flex-1 h-12 group">Next <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" /></Button>
+                      <Button type="submit" className="flex-1 h-12 group">Next Step</Button>
                     </div>
                   </motion.div>
                 )}
