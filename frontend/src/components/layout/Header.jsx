@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Briefcase, 
-  Building2, 
-  FolderTree, 
-  Info, 
-  Phone, 
-  Home, 
-  Star, 
-  LayoutDashboard, 
-  User as UserIcon, 
-  Crown, 
-  LogOut, 
-  Menu, 
-  X, 
+import {
+  Briefcase,
+  Building2,
+  FolderTree,
+  Info,
+  Phone,
+  Home,
+  Star,
+  LayoutDashboard,
+  User as UserIcon,
+  Crown,
+  LogOut,
+  Menu,
+  X,
   ChevronRight,
   Settings,
   Bell
@@ -26,7 +26,6 @@ import logo from '../../assets/logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const { user, isAuthenticated, logout, isPremium } = useAuth();
@@ -36,13 +35,6 @@ const Header = () => {
 
   const profileRef = useRef(null);
   const menuRef = useRef(null);
-
-  // Logic - Preserved Exactly
-  useEffect(() => {
-    const handleScroll = () => { setIsScrolled(window.scrollY > 10); };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -87,10 +79,8 @@ const Header = () => {
     toast({ title: "Logged Out", description: "See you again soon!", type: "success" });
   }, [logout, navigate, toast]);
 
-  // Background state: Pure Black on scroll
-  const headerBgClass = isScrolled
-    ? 'bg-black/95 backdrop-blur-2xl border-b border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.8)]'
-    : 'bg-transparent border-b border-transparent';
+  // Background state: Always Pure Black
+  const headerBgClass = 'bg-black border-b border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.8)]';
 
   return (
     <header className={cn("fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out", headerBgClass)}>
@@ -100,17 +90,17 @@ const Header = () => {
           {/* Brand Logo: Original Style Restored */}
           <Link to="/" className="flex items-center gap-3 group shrink-0" onClick={() => setIsMenuOpen(false)}>
             <div className="relative">
-              <img 
-                src={logo} 
-                alt="Logo" 
-                className="h-10 w-auto sm:h-12 object-contain transition-transform duration-500 group-hover:scale-105" 
+              <img
+                src={logo}
+                alt="Logo"
+                className="h-10 w-auto sm:h-12 object-contain transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-black" />
             </div>
-            <div className="hidden sm:block">
+            {/* <div className="hidden sm:block">
               <span className="text-xl font-black text-white tracking-tighter block leading-none">PORTAL</span>
               <span className="text-[9px] font-bold text-blue-500 tracking-[0.2em] uppercase opacity-80">Workspace</span>
-            </div>
+            </div> */}
           </Link>
 
           {/* Desktop Nav: Elegant Glass Pill */}
@@ -152,15 +142,15 @@ const Header = () => {
                 >
                   <div className={cn(
                     "relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-xl",
-                    isPremium 
-                      ? "bg-gradient-to-tr from-yellow-400 via-amber-500 to-yellow-600" 
+                    isPremium
+                      ? "bg-gradient-to-tr from-yellow-400 via-amber-500 to-yellow-600"
                       : "bg-gradient-to-br from-blue-600 to-indigo-700"
                   )}>
                     {user?.first_name?.[0]?.toUpperCase() || 'U'}
                     {isPremium && <div className="absolute inset-0 rounded-full border border-white/30 animate-pulse" />}
                   </div>
                   <div className="text-left">
-                    <p className="text-xs font-black text-white tracking-wide uppercase leading-tight">{user?.first_name || 'User'}</p>
+                    <p className="text-xs font-black text-white tracking-wide uppercase leading-tight">{user?.name || 'User'}</p>
                     <p className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">
                       {isPremium ? 'Premium' : 'Member'}
                     </p>
@@ -176,12 +166,12 @@ const Header = () => {
                       className="absolute right-0 mt-4 w-64 bg-black border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] py-2 z-50 backdrop-blur-3xl overflow-hidden"
                     >
                       <div className="px-5 py-4 bg-white/[0.02] border-b border-white/5 mb-1">
-                        <p className="text-sm font-black text-white">{user?.first_name} {user?.last_name}</p>
+                        <p className="text-sm font-black text-white">{user?.name}</p>
                         <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                       </div>
-                      <Link to="/profile" className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-all font-bold"><UserIcon size={16}/> My Profile</Link>
-                      <Link to="/dashboard" className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-all font-bold"><LayoutDashboard size={16}/> Dashboard</Link>
-                      <button onClick={handleLogout} className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-all font-black"><LogOut size={16}/> Logout</button>
+                      <Link to="/profile" className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-all font-bold"><UserIcon size={16} /> My Profile</Link>
+                      <Link to="/dashboard" className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-all font-bold"><LayoutDashboard size={16} /> Dashboard</Link>
+                      <button onClick={handleLogout} className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-all font-black"><LogOut size={16} /> Logout</button>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -201,8 +191,8 @@ const Header = () => {
                 {user?.first_name?.[0]?.toUpperCase()}
               </Link>
             )}
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={cn("p-3 rounded-xl transition-all active:scale-90", isMenuOpen ? "bg-white text-black" : "bg-white/5 text-white")}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
