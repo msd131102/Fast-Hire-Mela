@@ -106,7 +106,7 @@ const Referral = () => {
               <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mt-3">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((referralCount/20)*100, 100)}%` }}
+                  animate={{ width: `${Math.min((referralCount / 20) * 100, 100)}%` }}
                   className={`h-full ${isEligible ? 'bg-green-400' : 'bg-purple-400'}`}
                 />
               </div>
