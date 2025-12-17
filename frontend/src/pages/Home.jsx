@@ -31,7 +31,7 @@ const Home = () => {
 
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
-    queryFn: getCategories,
+    queryFn: () => getCategories({ include_job_count: true }),
   });
 
   const { data: companies, isLoading: companiesLoading } = useQuery({
@@ -162,7 +162,7 @@ const Home = () => {
             </h2>
 
             <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Our proprietary AI automatically finds and verifies new jobs every day at <span className="text-blue-600 font-bold">8:00 PM</span>, 
+              Our proprietary AI automatically finds and verifies new jobs every day at <span className="text-blue-600 font-bold">8:00 PM</span>,
               ensuring you access high-intent, real opportunities before anyone else.
             </p>
 
@@ -255,14 +255,14 @@ const Home = () => {
                         />
                       </div>
                       <span className="text-[10px] font-black uppercase tracking-widest bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-100">
-                        {job.type}
+                        {job.job_type}
                       </span>
                     </div>
-                    
+
                     <CardTitle className="text-xl font-bold mb-4 text-gray-900 group-hover:text-blue-600 transition-colors">
                       {job.title}
                     </CardTitle>
-                    
+
                     <div className="space-y-3 mb-6">
                       <div className="flex items-center text-gray-600 text-sm font-medium">
                         <Building2 className="w-4 h-4 mr-2 text-blue-500" />
@@ -347,7 +347,7 @@ const Home = () => {
                 <p className="text-xs text-blue-300 mb-3">{company.industry}</p>
                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-tighter">
                   <Briefcase className="w-3 h-3 mr-1" />
-                  {company.open_jobs} OPENINGS
+                  {company.job_count} OPENINGS
                 </div>
               </motion.div>
             ))}

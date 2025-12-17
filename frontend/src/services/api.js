@@ -265,7 +265,7 @@ export const unsaveJob = (jobId) => api.post(`/jobs/${jobId}/save`); // Use POST
 
 // Simplified API functions for Home component
 export const getJobs = (params) => api.get('/jobs', { params });
-export const getCategories = () => api.get('/categories');
+export const getCategories = (params) => api.get('/categories', { params });
 export const getCompanies = (params) => api.get('/companies', { params });
 
 // Utility functions
