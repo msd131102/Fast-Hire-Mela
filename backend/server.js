@@ -71,8 +71,10 @@ app.use(cors({
   origin: [
     'https://fasthiremelafrontend.netlify.app', 
     'https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api',
+    'https://fasthiremela.online',
     'http://localhost:5174',
     process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL2,
     process.env.ADMIN_URL
   ].filter(Boolean), // Remove undefined values
   credentials: true,
