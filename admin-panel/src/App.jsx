@@ -78,7 +78,7 @@ function App() {
                   <Layout />
                 </ProtectedRoute>
               }>
-                <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                <Route index element={<Suspense fallback={<LoadingSpinner />}><Dashboard /></Suspense>} />
                 <Route path="dashboard" element={<Suspense fallback={<LoadingSpinner />}><Dashboard /></Suspense>} />
                 <Route path="jobs" element={<Suspense fallback={<LoadingSpinner />}><JobsManagement /></Suspense>} />
                 <Route path="categories" element={<Suspense fallback={<LoadingSpinner />}><CategoriesManagement /></Suspense>} />

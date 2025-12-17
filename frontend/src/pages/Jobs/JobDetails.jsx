@@ -10,7 +10,7 @@ import Button from '../../components/ui/Button';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useToast } from '../../components/ui/toastUtils';
 import { 
-  getJobDetails, getSimilarJobs, saveJob, unsaveJob, getSavedJobs, utils 
+  getJobDetails, getSimilarJobs, saveJob, unsaveJob, getSavedJobs, trackApplication, utils 
 } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -62,12 +62,42 @@ const JobDetails = () => {
   });
 
   const handleSaveJob = async () => {
-    if (!user) return navigate('/login');
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    
+    if (!user.is_premium) {
+      toast.error('Save jobs is a premium feature. Upgrade to premium!');
+      navigate('/premium');
+      return;
+    }
+    
     setIsSaving(true);
     try {
       if (isJobSaved) await unsaveJobMutation.mutateAsync(id);
       else await saveJobMutation.mutateAsync(id);
     } finally { setIsSaving(false); }
+  };
+
+  const handleApplyJob = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    
+    try {
+      // Track the application for logged-in users
+      await trackApplication(id);
+      toast.success('Application tracked successfully');
+      
+      // Redirect to external application link
+      window.open(job.apply_link, '_blank');
+    } catch (error) {
+      toast.error('Failed to track application');
+      // Still redirect to external link even if tracking fails
+      window.open(job.apply_link, '_blank');
+    }
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-white"><LoadingSpinner size="lg" /></div>;
@@ -161,14 +191,14 @@ const JobDetails = () => {
                 <h4 className="text-2xl font-black mb-2 text-slate-900">Start Application</h4>
                 <p className="text-slate-500 font-medium">Join a fast-growing team at {job.company_name}.</p>
               </div>
-              <Button onClick={() => window.open(job.apply_link)} className="w-full py-8 rounded-[2rem] bg-blue-600 text-white font-black text-xl shadow-2xl shadow-blue-200">
+              <Button onClick={handleApplyJob} className="w-full py-8 rounded-[2rem] bg-blue-600 text-white font-black text-xl shadow-2xl shadow-blue-200">
                 Apply Now
               </Button>
               <button 
                 onClick={handleSaveJob}
                 className="w-full py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-white transition-all"
               >
-                {isJobSaved ? 'Saved in Collection' : 'Save for Later'}
+                {isJobSaved ? 'Saved in Collection' : (user && !user.is_premium ? 'Save for Later (Premium)' : 'Save for Later')}
               </button>
             </div>
           </aside>
@@ -187,7 +217,7 @@ const JobDetails = () => {
              <Bookmark size={26} className={isJobSaved ? 'fill-white' : ''} />
            </button>
            <button 
-             onClick={() => window.open(job.apply_link)}
+             onClick={handleApplyJob}
              className="flex-1 h-16 bg-white text-black font-black rounded-[2rem] text-sm tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-all shadow-xl"
            >
              APPLY NOW <Zap size={18} className="fill-black" />
