@@ -38,7 +38,7 @@ export default [
       'no-unused-vars': [
         'warn', 
         { 
-          varsIgnorePattern: '^(motion|useAuth|useTheme|useForm|useMutation|useQuery|isLoading|setIsLoading|darkMode|user|loading|setSelectedCategory|jobsLoading|categoriesLoading|companiesLoading|topCompanies|selectedPlan|setSelectedPlan|appliedFilters|setAppliedFilters|refetch|register|_|__|error|data|newPassword|confirmPassword|terms)$',
+          varsIgnorePattern: '^(motion|useAuth|useTheme|useForm|useMutation|useQuery|isLoading|setIsLoading|darkMode|user|loading|setSelectedCategory|jobsLoading|categoriesLoading|companiesLoading|topCompanies|selectedPlan|setSelectedPlan|appliedFilters|setAppliedFilters|refetch|register|_|__|error|data|newPassword|confirmPassword|terms|[A-Z][a-zA-Z0-9]*)$',
           argsIgnorePattern: '^[A-Z_]'
         }
       ],

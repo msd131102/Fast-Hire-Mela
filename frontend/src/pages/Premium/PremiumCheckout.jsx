@@ -9,9 +9,9 @@ const PremiumCheckout = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const [plan, setPlan] = useState(null);
-  const [billing, setBilling] = useState('monthly');
-  const [email, setEmail] = useState('');
+  const [plan, setPlan] = useState(() => searchParams.get('plan') || 'professional');
+  const [billing, setBilling] = useState(() => searchParams.get('billing') || 'monthly');
+  const [email, setEmail] = useState(() => user?.email || '');
 
   useEffect(() => {
     // Redirect if not logged in
@@ -19,19 +19,7 @@ const PremiumCheckout = () => {
       navigate('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
       return;
     }
-
-    // Get plan and billing from URL params with defaults
-    const planParam = searchParams.get('plan') || 'professional';
-    const billingParam = searchParams.get('billing') || 'monthly';
-    
-    setPlan(planParam);
-    setBilling(billingParam);
-
-    // Set email from user data
-    if (user?.email) {
-      setEmail(user.email);
-    }
-  }, [user, navigate, searchParams]);
+  }, [user, navigate]);
 
   const planDetails = {
     basic: {
@@ -93,7 +81,7 @@ const PremiumCheckout = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Plans
           </button>
-          
+
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Checkout
@@ -111,15 +99,15 @@ const PremiumCheckout = () => {
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full mb-6">
                 <Clock className="w-10 h-10 text-white" />
               </div>
-              
+
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 Coming Soon! 🚀
               </h2>
-              
+
               <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
                 We're working hard to bring you the best payment experience. Our secure checkout system will be available very soon with multiple payment options including:
               </p>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-2xl mx-auto">
                 <div className="text-center p-3 bg-white rounded-lg shadow-sm">
                   <CreditCard className="w-6 h-6 text-blue-600 mx-auto mb-2" />
@@ -142,7 +130,7 @@ const PremiumCheckout = () => {
                   <span className="text-sm text-gray-700">Secure</span>
                 </div>
               </div>
-              
+
               <div className="bg-white rounded-lg p-4 mb-6 max-w-md mx-auto">
                 <div className="flex items-center justify-center space-x-2 text-green-600">
                   <Shield className="w-5 h-5" />
@@ -161,14 +149,12 @@ const PremiumCheckout = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className={`p-3 rounded-full ${
-                  currentPlan.color === 'purple' ? 'bg-purple-100' :
-                  currentPlan.color === 'blue' ? 'bg-blue-100' : 'bg-gray-100'
-                }`}>
-                  <Icon className={`w-6 h-6 ${
-                    currentPlan.color === 'purple' ? 'text-purple-600' :
-                    currentPlan.color === 'blue' ? 'text-blue-600' : 'text-gray-600'
-                  }`} />
+                <div className={`p-3 rounded-full ${currentPlan.color === 'purple' ? 'bg-purple-100' :
+                    currentPlan.color === 'blue' ? 'bg-blue-100' : 'bg-gray-100'
+                  }`}>
+                  <Icon className={`w-6 h-6 ${currentPlan.color === 'purple' ? 'text-purple-600' :
+                      currentPlan.color === 'blue' ? 'text-blue-600' : 'text-gray-600'
+                    }`} />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">{currentPlan.name}</h3>
@@ -216,7 +202,7 @@ const PremiumCheckout = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"

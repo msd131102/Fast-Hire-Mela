@@ -4,6 +4,7 @@ import { Users, Gift, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
+import { referralAPI } from '../../services/api';
 
 const Referral = () => {
   const { user } = useAuth();
@@ -56,7 +57,6 @@ const Referral = () => {
     setLoading(true);
 
     try {
-      const { referralAPI } = await import('../../services/api.js');
       const data = await referralAPI.submitReferral({
         ...formData,
         referred_users: formData.referred_users
