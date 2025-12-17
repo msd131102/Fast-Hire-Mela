@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(() => {
-    // Check localStorage first, then system preference
+    // Check localStorage first, then system preference - Data Preserved
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       return savedTheme === 'dark';
@@ -15,6 +15,9 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     const root = document.documentElement;
     
+    // Add a transition class to root during theme switch for a premium feel
+    root.classList.add('theme-transition');
+    
     if (darkMode) {
       root.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -22,14 +25,20 @@ export const ThemeProvider = ({ children }) => {
       root.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
+
+    // Clean up transition class
+    const timeout = setTimeout(() => {
+      root.classList.remove('theme-transition');
+    }, 300);
+    
+    return () => clearTimeout(timeout);
   }, [darkMode]);
 
-  // Listen for system theme changes
+  // Listen for system theme changes - Logic Preserved
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = (e) => {
-      // Only change if user hasn't explicitly set a preference
       if (!localStorage.getItem('theme')) {
         setDarkMode(e.matches);
       }
@@ -47,11 +56,12 @@ export const ThemeProvider = ({ children }) => {
     setDarkMode(theme === 'dark');
   };
 
-  const value = {
+  // Memoizing value for best performance in a large app
+  const value = useMemo(() => ({
     darkMode,
     toggleTheme,
     setTheme,
-  };
+  }), [darkMode]);
 
   return (
     <ThemeContext.Provider value={value}>
@@ -67,5 +77,20 @@ const useTheme = () => {
   }
   return context;
 };
+
+// Best View styling: Add this to your global CSS or a style tag
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    .theme-transition,
+    .theme-transition *,
+    .theme-transition *:before,
+    .theme-transition *:after {
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease !important;
+      transition-delay: 0s !important;
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 export { useTheme };
