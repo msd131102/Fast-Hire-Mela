@@ -49,6 +49,8 @@ const Header = () => {
     { name: 'Jobs', href: '/jobs', icon: <Briefcase size={16} /> },
     { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={16} /> },
     { name: 'Profile', href: '/profile', icon: <UserIcon size={16} /> },
+    { name: 'SaveJobs', href: '/saved-jobs', icon: <UserIcon size={16} /> },
+    { name: 'Settings', href: '/settings', icon: <Settings size={16} /> },
   ];
 
   const isActivePath = (path) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
