@@ -2,22 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Briefcase,
-  Building2,
-  FolderTree,
-  Info,
-  Phone,
-  Home,
-  Star,
-  LayoutDashboard,
-  User as UserIcon,
-  Crown,
-  LogOut,
-  Menu,
-  X,
-  ChevronRight,
-  Settings,
-  Bell
+  Briefcase, Building2, FolderTree, Info, Phone, Home, Star,
+  LayoutDashboard, User as UserIcon, Crown, LogOut, Menu, X,
+  ChevronRight, Settings, Bell, Zap
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/toastUtils';
@@ -27,6 +14,7 @@ import logo from '../../assets/logo.png';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const { user, isAuthenticated, logout, isPremium } = useAuth();
   const { toast } = useToast();
@@ -34,12 +22,17 @@ const Header = () => {
   const location = useLocation();
 
   const profileRef = useRef(null);
-  const menuRef = useRef(null);
+
+  // Handle scroll effect for a sleeker look on movement
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) setIsProfileDropdownOpen(false);
-      if (menuRef.current && !menuRef.current.contains(event.target)) setIsMenuOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -51,25 +44,20 @@ const Header = () => {
   }, [isMenuOpen]);
 
   const navigation = [
-    { name: 'Find Jobs', href: '/jobs', icon: <Briefcase size={18} />, mobileOnly: false },
-    { name: 'Companies', href: '/companies', icon: <Building2 size={18} />, mobileOnly: false },
-    { name: 'Categories', href: '/categories', icon: <FolderTree size={18} />, mobileOnly: false },
-    { name: 'About', href: '/about', icon: <Info size={18} />, mobileOnly: false },
-    { name: 'Contact', href: '/contact', icon: <Phone size={18} />, mobileOnly: true },
+    { name: 'Find Jobs', href: '/jobs', icon: <Briefcase size={16} /> },
+    { name: 'Companies', href: '/companies', icon: <Building2 size={16} /> },
+    { name: 'Categories', href: '/categories', icon: <FolderTree size={16} /> },
+    { name: 'About', href: '/about', icon: <Info size={16} /> },
   ];
 
   const dashboardNavigation = [
-    { name: 'Home', href: '/', icon: <Home size={18} />, mobileOnly: false },
-    { name: 'Jobs', href: '/jobs', icon: <Briefcase size={18} />, mobileOnly: false },
-    { name: 'Saved Jobs', href: '/saved-jobs', icon: <Star size={18} />, mobileOnly: false },
-    { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={18} />, mobileOnly: false },
-    { name: 'Profile', href: '/profile', icon: <UserIcon size={18} />, mobileOnly: false },
-    ...(isPremium ? [{ name: 'Premium', href: '/premium', icon: <Crown size={18} />, mobileOnly: false }] : []),
+    { name: 'Home', href: '/', icon: <Home size={16} /> },
+    { name: 'Jobs', href: '/jobs', icon: <Briefcase size={16} /> },
+    { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={16} /> },
+    { name: 'Profile', href: '/profile', icon: <UserIcon size={16} /> },
   ];
 
-  const isActivePath = useCallback((path) => {
-    return location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
-  }, [location.pathname]);
+  const isActivePath = (path) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
 
   const handleLogout = useCallback(() => {
     logout();
@@ -79,178 +67,155 @@ const Header = () => {
     toast({ title: "Logged Out", description: "See you again soon!", type: "success" });
   }, [logout, navigate, toast]);
 
-  // Background state: Always Pure Black
-  const headerBgClass = 'bg-black border-b border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.8)]';
-
   return (
-    <header className={cn("fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out", headerBgClass)}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="flex justify-between items-center h-20 sm:h-24">
-
-          {/* Brand Logo: Original Style Restored */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0" onClick={() => setIsMenuOpen(false)}>
-            <div className="relative">
-              <img
-                src={logo}
-                alt="Logo"
-                className="h-10 w-auto sm:h-12 object-contain transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-black" />
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-[100] transition-all duration-300 border-b",
+      scrolled 
+        ? "h-16 bg-black/80 backdrop-blur-xl border-white/10 shadow-2xl" 
+        : "h-20 bg-black border-transparent"
+    )}>
+      <div className="max-w-7xl mx-auto h-full px-4 sm:px-8">
+        <div className="flex justify-between items-center h-full">
+          
+          {/* LOGO SECTION */}
+          <Link to="/" className="relative flex items-center group shrink-0">
+            <div className="relative flex items-center justify-center">
+               <img src={logo} alt="Logo" className="h-8 w-auto sm:h-10 object-contain" />
+               {isPremium && (
+                 <div className="absolute -inset-2 bg-blue-500/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+               )}
             </div>
-            {/* <div className="hidden sm:block">
-              <span className="text-xl font-black text-white tracking-tighter block leading-none">PORTAL</span>
-              <span className="text-[9px] font-bold text-blue-500 tracking-[0.2em] uppercase opacity-80">Workspace</span>
-            </div> */}
           </Link>
 
-          {/* Desktop Nav: Elegant Glass Pill */}
-          <nav className="hidden lg:flex items-center gap-1 bg-white/[0.03] border border-white/10 p-1.5 rounded-2xl backdrop-blur-md">
-            {(isAuthenticated ? dashboardNavigation : navigation)
-              .filter(item => !item.mobileOnly)
-              .map(item => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "relative px-5 py-2.5 rounded-xl transition-all duration-300 group flex items-center gap-2.5 font-bold text-sm",
-                    isActivePath(item.href) ? "text-white" : "text-gray-400 hover:text-white"
-                  )}
-                >
-                  <span className="relative z-10 opacity-80 group-hover:opacity-100 transition-opacity">{item.icon}</span>
-                  <span className="relative z-10 tracking-tight">{item.name}</span>
-                  {isActivePath(item.href) && (
-                    <motion.div
-                      layoutId="active-pill"
-                      className="absolute inset-0 bg-blue-600 rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.3)]"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                </Link>
-              ))}
+          {/* DESKTOP NAVIGATION - Sleek Pill Design */}
+          <nav className="hidden lg:flex items-center gap-1 bg-white/[0.03] border border-white/5 p-1 rounded-full">
+            {(isAuthenticated ? dashboardNavigation : navigation).map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={cn(
+                  "relative px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 text-[13px] font-medium tracking-wide",
+                  isActivePath(item.href) ? "text-white" : "text-gray-400 hover:text-white"
+                )}
+              >
+                <span className="relative z-10">{item.name}</span>
+                {isActivePath(item.href) && (
+                  <motion.div
+                    layoutId="active-pill"
+                    className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg shadow-blue-500/20"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+              </Link>
+            ))}
           </nav>
 
-          {/* Right Section: Profile & Actions */}
-          <div className="hidden lg:flex items-center gap-5">
+          {/* ACTION SECTION */}
+          <div className="flex items-center gap-3 sm:gap-4">
             {isAuthenticated ? (
-              <div className="relative" ref={profileRef}>
-                <button
-                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className={cn(
-                    "flex items-center gap-3 p-1.5 pr-4 rounded-full border transition-all duration-300",
-                    isProfileDropdownOpen ? "bg-white/10 border-white/20" : "bg-white/5 border-white/10 hover:border-blue-500/50"
-                  )}
-                >
-                  <div className={cn(
-                    "relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-xl",
-                    isPremium
-                      ? "bg-gradient-to-tr from-yellow-400 via-amber-500 to-yellow-600"
-                      : "bg-gradient-to-br from-blue-600 to-indigo-700"
-                  )}>
-                    {user?.first_name?.[0]?.toUpperCase() || 'U'}
-                    {isPremium && <div className="absolute inset-0 rounded-full border border-white/30 animate-pulse" />}
+              <div className="flex items-center gap-4">
+                {/* Premium Badge (Desktop Only) */}
+                {isPremium && (
+                  <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-yellow-500/20">
+                    <Zap size={12} className="text-yellow-500 fill-yellow-500" />
+                    <span className="text-[10px] font-bold text-yellow-500 uppercase tracking-tighter">Pro Plan</span>
                   </div>
-                  <div className="text-left">
-                    <p className="text-xs font-black text-white tracking-wide uppercase leading-tight">{user?.name || 'User'}</p>
-                    <p className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">
-                      {isPremium ? 'Premium' : 'Member'}
-                    </p>
-                  </div>
-                </button>
+                )}
+                
+                <div className="relative" ref={profileRef}>
+                  <button
+                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                    className="group flex items-center gap-2 p-0.5 pr-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
+                  >
+                    <div className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-inner",
+                      isPremium ? "bg-gradient-to-tr from-amber-400 to-yellow-600" : "bg-blue-600"
+                    )}>
+                      {user?.first_name?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                    <ChevronRight size={14} className={cn("text-gray-500 transition-transform", isProfileDropdownOpen && "rotate-90")} />
+                  </button>
 
-                <AnimatePresence>
-                  {isProfileDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                      className="absolute right-0 mt-4 w-64 bg-black border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] py-2 z-50 backdrop-blur-3xl overflow-hidden"
-                    >
-                      <div className="px-5 py-4 bg-white/[0.02] border-b border-white/5 mb-1">
-                        <p className="text-sm font-black text-white">{user?.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-                      </div>
-                      <Link to="/profile" className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-all font-bold"><UserIcon size={16} /> My Profile</Link>
-                      <Link to="/dashboard" className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-all font-bold"><LayoutDashboard size={16} /> Dashboard</Link>
-                      <button onClick={handleLogout} className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-all font-black"><LogOut size={16} /> Logout</button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  <AnimatePresence>
+                    {isProfileDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-56 bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-2xl py-2 overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-white/5">
+                          <p className="text-xs font-bold text-white truncate">{user?.name}</p>
+                          <p className="text-[10px] text-gray-500 truncate">{user?.email}</p>
+                        </div>
+                        <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors font-medium"><UserIcon size={14} /> Profile</Link>
+                        <Link to="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors font-medium"><Settings size={14} /> Dashboard</Link>
+                        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-red-400 hover:bg-red-500/5 transition-colors font-bold"><LogOut size={14} /> Sign Out</button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/login" className="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-400 hover:text-white transition-all">Sign in</Link>
-                <Link to="/register" className="px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-black transition-all shadow-xl shadow-blue-900/20 active:scale-95">Join Free</Link>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Link to="/login" className="px-4 py-2 text-[13px] font-medium text-gray-400 hover:text-white transition-colors">Login</Link>
+                <Link to="/register" className="px-5 py-2 rounded-full bg-white text-black text-[13px] font-bold hover:bg-gray-200 transition-all active:scale-95">Join Free</Link>
               </div>
             )}
-          </div>
 
-          {/* Mobile UI */}
-          <div className="flex lg:hidden items-center gap-3">
-            {isAuthenticated && (
-              <Link to="/profile" className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-xs font-black text-white shadow-lg border border-white/10">
-                {user?.name?.[0]?.toUpperCase()}
-              </Link>
-            )}
+            {/* Mobile Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={cn("p-3 rounded-xl transition-all active:scale-90", isMenuOpen ? "bg-white text-black" : "bg-white/5 text-white")}
+              className="lg:hidden p-2 text-white bg-white/5 rounded-lg border border-white/10"
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* MOBILE MENU - Modern Fullscreen Drawer */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="lg:hidden fixed inset-0 top-0 bg-black z-50 flex flex-col pt-24 px-6 overflow-y-auto"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="lg:hidden fixed inset-0 z-[90] bg-black pt-24 px-6 flex flex-col"
           >
-            {/* Close (X) button for mobile menu */}
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-50"
-              aria-label="Close menu"
-            >
-              <X size={28} />
-            </button>
-            <div className="space-y-3 mt-4">
-              <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-6 ml-2">Navigation</p>
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-2 px-2">Navigation</span>
               {(isAuthenticated ? dashboardNavigation : navigation).map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsMenuOpen(false)}
                   className={cn(
-                    "flex items-center justify-between p-5 rounded-2xl transition-all",
-                    isActivePath(item.href) ? "bg-blue-600 text-white shadow-xl shadow-blue-600/40" : "bg-white/5 text-gray-400 border border-white/5"
+                    "flex items-center justify-between p-4 rounded-xl border transition-all",
+                    isActivePath(item.href) ? "bg-blue-600/10 border-blue-500/50 text-white" : "bg-white/5 border-white/5 text-gray-400"
                   )}
                 >
                   <div className="flex items-center gap-4">
-                    <span className="text-xl">{item.icon}</span>
-                    <span className="text-lg font-black tracking-tight">{item.name}</span>
+                    <span className={isActivePath(item.href) ? "text-blue-400" : "text-gray-500"}>{item.icon}</span>
+                    <span className="font-bold tracking-tight text-[15px]">{item.name}</span>
                   </div>
-                  <ChevronRight size={18} className="opacity-30" />
+                  <ChevronRight size={16} className="opacity-20" />
                 </Link>
               ))}
             </div>
 
-            {!isAuthenticated && (
-              <div className="mt-auto mb-10 space-y-4">
-                <Link to="/register" onClick={() => setIsMenuOpen(false)} className="block w-full py-5 rounded-2xl bg-blue-600 text-center text-white font-black text-lg">Create Account</Link>
-                <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block w-full py-5 rounded-2xl bg-white/5 text-center text-gray-300 font-bold border border-white/10">Sign In</Link>
-              </div>
-            )}
-            {isAuthenticated && (
-              <button onClick={handleLogout} className="mt-auto mb-10 w-full py-5 rounded-2xl bg-red-500/10 text-red-500 font-black flex items-center justify-center gap-3">
-                <LogOut size={20} /> Logout
-              </button>
-            )}
+            <div className="mt-auto mb-10 space-y-3">
+              {!isAuthenticated ? (
+                <>
+                  <Link to="/register" onClick={() => setIsMenuOpen(false)} className="block w-full py-4 rounded-xl bg-blue-600 text-center text-white font-bold">Get Started</Link>
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block w-full py-4 rounded-xl border border-white/10 text-center text-gray-300 font-bold">Sign In</Link>
+                </>
+              ) : (
+                <button onClick={handleLogout} className="w-full py-4 rounded-xl bg-red-500/10 text-red-500 font-bold flex items-center justify-center gap-2">
+                  <LogOut size={18} /> Logout
+                </button>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

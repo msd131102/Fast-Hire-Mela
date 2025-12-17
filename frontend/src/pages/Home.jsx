@@ -376,7 +376,7 @@ const Home = () => {
                 </Button>
               </Link>
               <Link to="/register">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto px-10 h-16 rounded-2xl border-2 border-white text-white hover:bg-white/10 font-black text-lg">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto px-10 h-16 rounded-2xl border-2 border-white text-blue-600 hover:bg-white/10 font-black text-lg">
                   Sign Up Free
                 </Button>
               </Link>
