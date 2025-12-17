@@ -70,7 +70,7 @@ app.use(helmet({
 app.use(cors({
   origin: [
     'https://fasthiremelafrontend.netlify.app', 
-    'http://localhost:3000', 
+    'https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app', 
     'http://localhost:5174',
     process.env.FRONTEND_URL,
     process.env.ADMIN_URL
