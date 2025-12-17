@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import ErrorBoundary from './components/common/ErrorBoundary';
 import { ToastProvider } from './components/ui/Toast';
 
 // Layout Components
@@ -47,91 +46,89 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          <ThemeProvider>
-            <AuthProvider>
-              <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                <div className="min-h-screen bg-gray-50 transition-colors">
-                  <Routes>
-                    {/* Public Routes */}
-                    <Route path="/" element={<Layout />}>
-                      <Route index element={<Home />} />
-                      <Route path="jobs" element={<JobsList />} />
-                      <Route path="jobs/:id" element={<JobDetails />} />
-                      <Route path="categories" element={<Categories />} />
-                      <Route path="companies" element={<Companies />} />
-                      <Route path="login" element={<Login />} />
-                      <Route path="register" element={<Register />} />
-                      <Route path="forgot-password" element={<ForgotPassword />} />
-                      <Route path="reset-password" element={<ResetPassword />} />
-                      <Route path="premium" element={<PremiumPlans />} />
-                      <Route path="premium/plans" element={<PremiumPlans />} />
-                      <Route path="premium/checkout" element={
-                        <ProtectedRoute>
-                          <PremiumCheckout />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="premium-checkout" element={
-                        <ProtectedRoute>
-                          <PremiumCheckout />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="about" element={<About />} />
-                      <Route path="contact" element={<Contact />} />
-                      <Route path="privacy" element={<Privacy />} />
-                      <Route path="terms" element={<Terms />} />
-                      <Route path="faq" element={<FAQ />} />
-                      <Route path="user-guidance" element={<UserGuidance />} />
+    <QueryClientProvider client={queryClient}>
+      <ToastProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <div className="min-h-screen bg-gray-50 transition-colors">
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<Layout />}>
+                    <Route index element={<Home />} />
+                    <Route path="jobs" element={<JobsList />} />
+                    <Route path="jobs/:id" element={<JobDetails />} />
+                    <Route path="categories" element={<Categories />} />
+                    <Route path="companies" element={<Companies />} />
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+                    <Route path="forgot-password" element={<ForgotPassword />} />
+                    <Route path="reset-password" element={<ResetPassword />} />
+                    <Route path="premium" element={<PremiumPlans />} />
+                    <Route path="premium/plans" element={<PremiumPlans />} />
+                    <Route path="premium/checkout" element={
+                      <ProtectedRoute>
+                        <PremiumCheckout />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="premium-checkout" element={
+                      <ProtectedRoute>
+                        <PremiumCheckout />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="about" element={<About />} />
+                    <Route path="contact" element={<Contact />} />
+                    <Route path="privacy" element={<Privacy />} />
+                    <Route path="terms" element={<Terms />} />
+                    <Route path="faq" element={<FAQ />} />
+                    <Route path="user-guidance" element={<UserGuidance />} />
 
-                      {/* Protected Routes */}
-                      <Route path="dashboard" element={
-                        <ProtectedRoute>
-                          <Dashboard />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="dashboard/saved-jobs" element={
-                        <ProtectedRoute>
-                          <SavedJobs />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="saved-jobs" element={
-                        <ProtectedRoute>
-                          <SavedJobs />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="applications" element={
-                        <ProtectedRoute>
-                          <Applications />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="profile" element={
-                        <ProtectedRoute>
-                          <Profile />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="premium/dashboard" element={
-                        <ProtectedRoute>
-                          <Premium />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="premium/referral" element={
-                        <ProtectedRoute>
-                          <Referral />
-                        </ProtectedRoute>
-                      } />
+                    {/* Protected Routes */}
+                    <Route path="dashboard" element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="dashboard/saved-jobs" element={
+                      <ProtectedRoute>
+                        <SavedJobs />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="saved-jobs" element={
+                      <ProtectedRoute>
+                        <SavedJobs />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="applications" element={
+                      <ProtectedRoute>
+                        <Applications />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="profile" element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="premium/dashboard" element={
+                      <ProtectedRoute>
+                        <Premium />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="premium/referral" element={
+                      <ProtectedRoute>
+                        <Referral />
+                      </ProtectedRoute>
+                    } />
 
-                      <Route path="*" element={<NotFound />} />
-                    </Route>
-                  </Routes>
-                </div>
-              </Router>
-            </AuthProvider>
-          </ThemeProvider>
-        </ToastProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
+                </Routes>
+              </div>
+            </Router>
+          </AuthProvider>
+        </ThemeProvider>
+      </ToastProvider>
+    </QueryClientProvider>
   );
 }
 
