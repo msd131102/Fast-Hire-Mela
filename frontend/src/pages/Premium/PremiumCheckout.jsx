@@ -150,10 +150,10 @@ const PremiumCheckout = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className={`p-3 rounded-full ${currentPlan.color === 'purple' ? 'bg-purple-100' :
-                    currentPlan.color === 'blue' ? 'bg-blue-100' : 'bg-gray-100'
+                  currentPlan.color === 'blue' ? 'bg-blue-100' : 'bg-gray-100'
                   }`}>
                   <Icon className={`w-6 h-6 ${currentPlan.color === 'purple' ? 'text-purple-600' :
-                      currentPlan.color === 'blue' ? 'text-blue-600' : 'text-gray-600'
+                    currentPlan.color === 'blue' ? 'text-blue-600' : 'text-gray-600'
                     }`} />
                 </div>
                 <div>
