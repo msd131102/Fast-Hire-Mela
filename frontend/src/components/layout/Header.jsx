@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/toastUtils';
 import logo from '../../assets/logo.png';
@@ -19,34 +20,23 @@ const Header = () => {
   const mobileProfileRef = useRef(null);
   const menuRef = useRef(null);
 
-  // Handle scroll effect - Preserved
+  // Logic - Preserved Exactly
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => { setIsScrolled(window.scrollY > 10); };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle click outside for dropdowns - Preserved
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setIsProfileDropdownOpen(false);
-      }
-      if (mobileProfileRef.current && !mobileProfileRef.current.contains(event.target)) {
-        setIsMobileProfileOpen(false);
-      }
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
+      if (profileRef.current && !profileRef.current.contains(event.target)) setIsProfileDropdownOpen(false);
+      if (mobileProfileRef.current && !mobileProfileRef.current.contains(event.target)) setIsMobileProfileOpen(false);
+      if (menuRef.current && !menuRef.current.contains(event.target)) setIsMenuOpen(false);
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle escape key - Preserved
   useEffect(() => {
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape') {
@@ -59,17 +49,11 @@ const Header = () => {
     return () => document.removeEventListener('keydown', handleEscapeKey);
   }, []);
 
-  // Handle body scroll lock - Preserved
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
     return () => { document.body.style.overflow = 'unset'; };
   }, [isMenuOpen]);
 
-  // Navigation items - Preserved
   const navigation = [
     { name: 'Find Jobs', href: '/jobs', icon: '💼', mobileOnly: false },
     { name: 'Companies', href: '/companies', icon: '🏢', mobileOnly: false },
@@ -128,247 +112,170 @@ const Header = () => {
     setIsMenuOpen(false);
   }, []);
 
-  // Visual classes
+  // View Optimization: Smooth Blur and Deep Shadow on Scroll
   const headerBgClass = isScrolled
-    ? 'bg-gray-900/90 backdrop-blur-xl border-b border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
-    : 'bg-gray-900 border-b border-gray-800';
+    ? 'bg-gray-900/80 backdrop-blur-2xl border-b border-white/10 shadow-[0_8px_40px_rgba(0,0,0,0.4)]'
+    : 'bg-gray-950/40 backdrop-blur-sm border-b border-transparent';
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${headerBgClass}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+      <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out ${headerBgClass}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="flex justify-between items-center h-20 sm:h-24">
             
-            {/* Logo Section */}
+            {/* Logo: Enhanced with dynamic glow */}
             <Link 
               to="/" 
               className="flex items-center gap-3 group flex-shrink-0" 
               onClick={closeAllMenus}
             >
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full blur-md opacity-0 group-hover:opacity-40 transition duration-500"></div>
                 <img
                   src={logo}
-                  alt="Fast Hire Mela Logo"
-                  className="relative h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  alt="Logo"
+                  className="relative h-10 w-auto sm:h-12 object-contain transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-gray-900 animate-pulse" />
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900 shadow-sm" />
               </div>
             </Link>
 
-            {/* Desktop Navigation - Centered */}
-            <nav className="hidden lg:flex items-center space-x-2 flex-1 justify-center mx-8">
+            {/* Desktop Navigation: Centered & Modern pill style */}
+            <nav className="hidden lg:flex items-center bg-white/5 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
               {(isAuthenticated ? dashboardNavigation : navigation)
                 .filter(item => !item.mobileOnly)
                 .map(item => (
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`relative px-4 py-2.5 rounded-xl transition-all duration-300 group ${
-                      isActivePath(item.href)
-                        ? 'text-white bg-white/10'
-                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    className={`relative px-5 py-2 rounded-xl transition-all duration-300 group ${
+                      isActivePath(item.href) ? 'text-white' : 'text-gray-400 hover:text-white'
                     }`}
                   >
-                    <span className="flex items-center gap-2.5">
-                      <span className={`text-xl transition-transform duration-300 group-hover:scale-125 ${isActivePath(item.href) ? 'scale-110' : ''}`}>
-                        {item.icon}
-                      </span>
-                      <span className="font-semibold text-sm tracking-wide">{item.name}</span>
+                    <span className="flex items-center gap-2.5 relative z-10">
+                      <span className="text-lg group-hover:rotate-12 transition-transform">{item.icon}</span>
+                      <span className="font-bold text-sm tracking-tight">{item.name}</span>
                     </span>
                     {isActivePath(item.href) && (
                       <motion.div 
-                        layoutId="nav-underline"
-                        className="absolute bottom-1 left-1/2 -translate-x-1/2 w-6 h-1 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                        layoutId="pill"
+                        className="absolute inset-0 bg-blue-600 rounded-xl shadow-lg shadow-blue-600/20"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
                   </Link>
                 ))}
             </nav>
 
-            {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
+            {/* Desktop Actions: Premium Profile Button */}
+            <div className="hidden lg:flex items-center gap-5">
               {isAuthenticated ? (
                 <div className="relative" ref={profileRef}>
                   <button
-                    type="button"
                     onClick={toggleProfileDropdown}
-                    className={`flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-full border transition-all duration-300 ${
-                      isProfileDropdownOpen ? 'bg-gray-800 border-gray-600' : 'bg-gray-800/40 border-gray-700 hover:border-gray-500'
+                    className={`flex items-center gap-3 p-1.5 pr-4 rounded-full border transition-all duration-300 ${
+                      isProfileDropdownOpen ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/10 hover:border-blue-500/50'
                     }`}
-                    aria-label="User profile menu"
-                    aria-expanded={isProfileDropdownOpen}
                   >
-                    <div className={`relative w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-sm font-bold text-white shadow-lg border-2 ${isPremium ? 'border-yellow-400' : 'border-transparent'}`}>
-                      {user?.first_name ? user.first_name[0].toUpperCase() : user?.name ? user.name[0].toUpperCase() : 'U'}
-                      {isPremium && <span className="absolute -top-1 -right-1 text-[10px]">⭐</span>}
+                    <div className={cn(
+                      "relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-xl transition-transform active:scale-90",
+                      isPremium ? "bg-gradient-to-tr from-yellow-400 via-amber-500 to-yellow-600" : "bg-gradient-to-br from-blue-600 to-indigo-700"
+                    )}>
+                      {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
+                      {isPremium && <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-pulse" />}
                     </div>
-                    <div className="text-left hidden xl:block">
-                      <p className="text-xs font-bold text-white leading-none mb-1">
-                        {user?.first_name || user?.name || 'User'}
-                      </p>
-                      <p className="text-[10px] text-gray-400 font-medium leading-none">Account Settings</p>
+                    <div className="text-left">
+                      <p className="text-xs font-black text-white tracking-wide uppercase">{user?.first_name || 'User'}</p>
+                      <p className="text-[9px] text-gray-400 font-bold tracking-widest uppercase">Member</p>
                     </div>
-                    <svg
-                      className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isProfileDropdownOpen ? 'rotate-180' : ''}`}
-                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
                   </button>
 
-                  {/* Enhanced Dropdown Menu */}
-                  {isProfileDropdownOpen && (
-                    <div className="absolute right-0 mt-4 w-64 bg-gray-900 border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] py-2 z-50 overflow-hidden animate-scale-in origin-top-right backdrop-blur-xl">
-                      <div className="px-5 py-4 bg-white/5 border-b border-white/5 mb-1">
-                        <p className="text-sm font-bold text-white mb-0.5">{user?.first_name || user?.name || 'User'}</p>
-                        <p className="text-xs text-gray-400 truncate font-medium">{user?.email || 'user@example.com'}</p>
-                        {isPremium && (
-                          <span className="inline-block mt-2 px-2 py-0.5 rounded bg-yellow-400/10 text-yellow-500 text-[10px] font-black uppercase tracking-wider border border-yellow-400/20">
-                            Premium Member
-                          </span>
-                        )}
-                      </div>
-                      {[
-                        { label: 'Dashboard', icon: '📊', href: '/dashboard' },
-                        { label: 'Profile', icon: '👤', href: '/profile' },
-                        ...(isPremium ? [{ label: 'Premium Features', icon: '🌟', href: '/premium' }] : []),
-                      ].map((link) => (
-                        <Link
-                          key={link.label}
-                          to={link.href}
-                          onClick={() => setIsProfileDropdownOpen(false)}
-                          className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors font-medium"
-                        >
-                          <span className="text-lg">{link.icon}</span>
-                          {link.label}
-                        </Link>
-                      ))}
-                      <div className="border-t border-white/5 mt-1 pt-1">
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-400 hover:bg-red-400/10 hover:text-red-300 transition-colors font-bold"
-                        >
-                          <span className="text-lg">🚪</span>
-                          Logout
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {isProfileDropdownOpen && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                        className="absolute right-0 mt-4 w-64 bg-gray-900 border border-white/10 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden backdrop-blur-3xl"
+                      >
+                        <div className="px-5 py-4 bg-white/5 border-b border-white/5 mb-1">
+                          <p className="text-sm font-black text-white">{user?.first_name || 'User'}</p>
+                          <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                        </div>
+                        <Link to="/profile" className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-all font-bold">👤 My Profile</Link>
+                        <Link to="/dashboard" className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-all font-bold">📊 Dashboard</Link>
+                        <button onClick={handleLogout} className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-all font-black">🚪 Logout</button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
-                  <Link
-                    to="/login"
-                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-300"
-                  >
-                    Sign in
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold transition-all duration-300 shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:shadow-blue-500/40"
-                  >
-                    Get Started
-                  </Link>
+                <div className="flex items-center gap-2">
+                  <Link to="/login" className="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-300 hover:text-white hover:bg-white/5 transition-all">Sign in</Link>
+                  <Link to="/register" className="px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-black transition-all shadow-xl shadow-blue-900/20 active:scale-95">Join Free</Link>
                 </div>
               )}
             </div>
 
-            {/* Mobile Navigation Interface */}
+            {/* Mobile Interface: Compact & Modern */}
             <div className="flex lg:hidden items-center gap-3">
               {isAuthenticated && (
-                <div className="relative" ref={mobileProfileRef}>
-                  <button
-                    onClick={toggleMobileProfile}
-                    className="flex items-center p-1 rounded-full border-2 border-gray-700 hover:border-blue-500 transition-colors"
-                    aria-label="User profile menu"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-xs font-black text-white">
-                      {user?.first_name ? user.first_name[0].toUpperCase() : user?.name ? user.name[0].toUpperCase() : 'U'}
-                    </div>
-                  </button>
-
-                  {isMobileProfileOpen && (
-                    <div className="absolute right-0 mt-4 w-52 bg-gray-900 border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-scale-in origin-top-right">
-                      <Link to="/dashboard" onClick={() => setIsMobileProfileOpen(false)} className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 font-bold">
-                        <span className="text-lg">📊</span> Dashboard
-                      </Link>
-                      <Link to="/profile" onClick={() => setIsMobileProfileOpen(false)} className="flex items-center gap-3 px-5 py-3 text-sm text-gray-300 font-bold">
-                        <span className="text-lg">👤</span> Profile
-                      </Link>
-                      <button onClick={handleLogout} className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-400 font-black">
-                        <span className="text-lg">🚪</span> Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
+                <button onClick={toggleMobileProfile} className="relative p-0.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg" ref={mobileProfileRef}>
+                   <div className="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center text-xs font-black text-white">
+                    {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
+                  </div>
+                </button>
               )}
-
-              <button
-                onClick={toggleMobileMenu}
-                className={`p-2.5 rounded-xl transition-all duration-300 ${isMenuOpen ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'}`}
-                aria-label="Toggle mobile menu"
-              >
+              <button onClick={toggleMobileMenu} className={cn("p-3 rounded-2xl transition-all active:scale-90 shadow-lg", isMenuOpen ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300")}>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  {isMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
-                  )}
+                  {isMenuOpen ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 8h16M4 16h16" />}
                 </svg>
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Mobile Fullscreen Menu */}
+        {/* Mobile Fullscreen Menu: Optimized for thumb reach */}
+        <AnimatePresence>
           {isMenuOpen && (
-            <div 
-              ref={menuRef}
-              className="lg:hidden fixed inset-x-0 top-20 bg-gray-900/95 backdrop-blur-2xl border-t border-white/5 h-[calc(100vh-5rem)] overflow-y-auto animate-slide-down"
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="lg:hidden fixed inset-0 top-0 bg-gray-900/98 backdrop-blur-2xl z-50 flex flex-col pt-24 px-6 overflow-y-auto"
             >
-              <div className="px-6 py-8 space-y-3">
-                <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 ml-4">Main Menu</p>
+              <div className="space-y-3">
+                <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-6 ml-2">Navigate Portal</p>
                 {(isAuthenticated ? dashboardNavigation : navigation).map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base transition-all duration-300 ${
-                      isActivePath(item.href)
-                        ? 'text-white bg-blue-600 shadow-lg shadow-blue-600/20'
-                        : 'text-gray-300 bg-white/5 hover:bg-white/10'
-                    }`}
+                    className={cn(
+                      "flex items-center justify-between p-5 rounded-3xl transition-all active:scale-95",
+                      isActivePath(item.href) ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/40" : "bg-white/5 text-gray-300"
+                    )}
                   >
-                    <span className="text-2xl">{item.icon}</span>
-                    <span className="font-bold tracking-wide">{item.name}</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-2xl">{item.icon}</span>
+                      <span className="text-lg font-black tracking-tight">{item.name}</span>
+                    </div>
+                    <svg className="w-5 h-5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
                   </Link>
                 ))}
-                
-                {!isAuthenticated && (
-                  <div className="grid grid-cols-1 gap-4 mt-8 pt-8 border-t border-white/5">
-                    <Link
-                      to="/login"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="px-6 py-4 rounded-2xl border border-gray-700 text-center text-white font-bold bg-white/5"
-                    >
-                      Sign in to Account
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="px-6 py-4 rounded-2xl bg-blue-600 text-center text-white font-black shadow-xl"
-                    >
-                      Create Free Account
-                    </Link>
-                  </div>
-                )}
               </div>
-            </div>
+              
+              {!isAuthenticated && (
+                <div className="mt-auto mb-10 space-y-4">
+                  <Link to="/register" onClick={() => setIsMenuOpen(false)} className="block w-full py-5 rounded-3xl bg-blue-600 text-center text-white font-black text-lg shadow-2xl">Create Account</Link>
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block w-full py-5 rounded-3xl bg-white/5 text-center text-gray-300 font-bold border border-white/10">Sign In</Link>
+                </div>
+              )}
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </header>
-      {/* Spacer to prevent content from jumping behind fixed header */}
-      <div className="h-20"></div>
     </>
   );
 };
