@@ -1,6 +1,7 @@
 import express from 'express';
 import { sendOtpEmail, generateOtp, verifyConnection } from '../services/simpleOtpService.js';
 import Otp from '../models/Otp.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 
@@ -14,6 +15,23 @@ router.post('/send', async (req, res) => {
         success: false, 
         message: 'Email is required' 
       });
+    }
+
+    // For registration type, check if email already exists
+    if (type === 'registration') {
+      try {
+        const existingUser = await User.findByEmail(email);
+        if (existingUser) {
+          return res.status(400).json({ 
+            success: false, 
+            message: 'This email is already registered. Please sign in instead.',
+            code: 'EMAIL_ALREADY_EXISTS'
+          });
+        }
+      } catch (error) {
+        console.error('Error checking existing user:', error);
+        // Continue with OTP generation even if user check fails
+      }
     }
 
     // Generate 6-digit OTP
@@ -127,6 +145,23 @@ router.post('/resend', async (req, res) => {
         success: false, 
         message: 'Email is required' 
       });
+    }
+
+    // For registration type, check if email already exists
+    if (type === 'registration') {
+      try {
+        const existingUser = await User.findByEmail(email);
+        if (existingUser) {
+          return res.status(400).json({ 
+            success: false, 
+            message: 'This email is already registered. Please sign in instead.',
+            code: 'EMAIL_ALREADY_EXISTS'
+          });
+        }
+      } catch (error) {
+        console.error('Error checking existing user:', error);
+        // Continue with OTP generation even if user check fails
+      }
     }
 
     // Check if there's an existing unused OTP

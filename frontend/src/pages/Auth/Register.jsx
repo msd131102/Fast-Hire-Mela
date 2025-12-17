@@ -22,7 +22,7 @@ import { useMutation } from '@tanstack/react-query';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { otpAPI } from '../../services/api';
+import { otpAPI, authAPI } from '../../services/api';
 import ProfileCompletionModal from '../../components/auth/ProfileCompletionModal';
 import { useAuth } from '../../context/AuthContext';
 
@@ -41,6 +41,8 @@ const Register = () => {
   const [resendTimer, setResendTimer] = useState(0);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [registeredUser, setRegisteredUser] = useState(null);
+  const [isValidatingEmail, setIsValidatingEmail] = useState(false);
+  const [emailValidationError, setEmailValidationError] = useState('');
   const { toast } = useToast();
 
   const {
@@ -54,6 +56,7 @@ const Register = () => {
   } = useForm();
 
   const password = watch('password');
+  const email = watch('email');
 
   useEffect(() => {
     if (resendTimer > 0) {
@@ -61,6 +64,44 @@ const Register = () => {
       return () => clearTimeout(timer);
     }
   }, [resendTimer]);
+
+  // Email validation function
+  const validateEmailAvailability = async (emailToValidate) => {
+    if (!emailToValidate || !/^\S+@\S+\.\S+$/.test(emailToValidate)) {
+      setEmailValidationError('');
+      return;
+    }
+
+    setIsValidatingEmail(true);
+    setEmailValidationError('');
+
+    try {
+      const response = await authAPI.validateEmail(emailToValidate);
+      if (response.success) {
+        setEmailValidationError('');
+      }
+    } catch (error) {
+      if (error.response?.status === 400) {
+        setEmailValidationError(error.response?.data?.message || 'This email is already registered');
+      } else {
+        // Don't show error for network issues, just clear validation
+        setEmailValidationError('');
+      }
+    } finally {
+      setIsValidatingEmail(false);
+    }
+  };
+
+  // Debounced email validation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (email && email.length > 0) {
+        validateEmailAvailability(email);
+      }
+    }, 800); // 800ms debounce
+
+    return () => clearTimeout(timer);
+  }, [email]);
 
   const registerMutation = useMutation({
     mutationFn: ({ userData, otp }) => otpAPI.registerWithOtp(userData, otp),
@@ -93,6 +134,15 @@ const Register = () => {
       }
     } catch (error) {
       const message = error.response?.data?.message || error.message || 'Failed to send OTP';
+      
+      // Handle specific email already exists error
+      if (error.response?.data?.code === 'EMAIL_ALREADY_EXISTS') {
+        toast.error('This email is already registered. Please sign in instead.');
+        // Go back to step 1 so user can change email
+        setStep(1);
+        return false;
+      }
+      
       toast.error(message);
       return false;
     } finally {
@@ -120,7 +170,30 @@ const Register = () => {
     }
   };
 
-  const handleStep1Submit = (data) => {
+  const handleStep1Submit = async (data) => {
+    // Validate email availability before proceeding
+    if (emailValidationError) {
+      toast.error('Please use a different email address');
+      return;
+    }
+
+    // Final email validation check
+    if (email) {
+      setIsValidatingEmail(true);
+      try {
+        await validateEmailAvailability(email);
+        if (emailValidationError) {
+          toast.error('This email is already registered. Please sign in instead.');
+          return;
+        }
+      } catch (error) {
+        toast.error('Unable to validate email. Please try again.');
+        return;
+      } finally {
+        setIsValidatingEmail(false);
+      }
+    }
+
     setUserEmail(data.email);
     setUserData({ ...userData, ...data });
     nextStep();
@@ -169,8 +242,14 @@ const Register = () => {
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
-  const handleResendOTP = () => {
-    if (resendTimer === 0) sendOTP(userEmail);
+  const handleResendOTP = async () => {
+    if (resendTimer === 0) {
+      const success = await sendOTP(userEmail);
+      if (!success) {
+        // If OTP sending failed due to email already exists, go back to step 1
+        setStep(1);
+      }
+    }
   };
 
   const handleOTPChange = (index, value) => {
@@ -264,15 +343,58 @@ const Register = () => {
                       error={errors.name?.message}
                       className="h-12 bg-white dark:bg-slate-800"
                     />
-                    <Input
-                      label="Email Address"
-                      type="email"
-                      placeholder="john@example.com"
-                      icon={<Mail className="w-5 h-5 text-slate-900" />}
-                      {...register('email', { required: 'Email is required', pattern: /^\S+@\S+$/i })}
-                      error={errors.email?.message}
-                      className="h-12 bg-white dark:bg-slate-800"
-                    />
+                    <div>
+                      <Input
+                        label="Email Address"
+                        type="email"
+                        placeholder="john@example.com"
+                        icon={
+                          <div className="relative">
+                            <Mail className="w-5 h-5 text-slate-900" />
+                            {isValidatingEmail && (
+                              <div className="absolute -right-6 -top-1">
+                                <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" />
+                              </div>
+                            )}
+                          </div>
+                        }
+                        {...register('email', { 
+                          required: 'Email is required', 
+                          pattern: {
+                            value: /^\S+@\S+$/i,
+                            message: 'Please enter a valid email address'
+                          },
+                          validate: {
+                            available: (value) => {
+                              if (emailValidationError) {
+                                return emailValidationError;
+                              }
+                              return true;
+                            }
+                          }
+                        })}
+                        error={errors.email?.message || emailValidationError}
+                        className={`h-12 bg-white dark:bg-slate-800 ${
+                          emailValidationError ? 'border-red-500 focus:border-red-500' : ''
+                        }`}
+                      />
+                      {emailValidationError && (
+                        <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                            <div className="text-sm">
+                              <p className="text-red-700 dark:text-red-400 font-medium">{emailValidationError}</p>
+                              <p className="text-red-600 dark:text-red-500 mt-1">
+                                Already have an account?{' '}
+                                <Link to="/login" className="font-semibold underline hover:text-red-800">
+                                  Sign in here
+                                </Link>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <Input
                       label="Phone Number"
                       type="tel"
@@ -282,8 +404,12 @@ const Register = () => {
                       error={errors.phone?.message}
                       className="h-12 bg-white dark:bg-slate-800"
                     />
-                    <Button type="submit" className="w-full h-12 text-lg shadow-lg shadow-blue-600/20 group">
-                      Next Step
+                    <Button 
+                      type="submit" 
+                      className="w-full h-12 text-lg shadow-lg shadow-blue-600/20 group"
+                      disabled={!!emailValidationError || isValidatingEmail}
+                    >
+                      {isValidatingEmail ? 'Validating Email...' : 'Next Step'}
                     </Button>
                   </motion.div>
                 )}
