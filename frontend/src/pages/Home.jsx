@@ -16,7 +16,7 @@ import {
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { getJobs, getCategories, getCompanies } from '../services/api';
+import { getJobs, getCategories, getCompanies, utils } from '../services/api';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -205,7 +205,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {categories?.data?.categories?.map((category, index) => (
+            {categories?.data?.categories && Array.isArray(categories.data.categories) && categories.data.categories.map((category, index) => (
               <motion.div
                 key={category.id}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -219,7 +219,7 @@ const Home = () => {
                 <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{category.icon}</div>
                 <h3 className="font-bold text-gray-900 mb-1 text-sm sm:text-base leading-tight">{category.name}</h3>
                 <div className="inline-block px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-wider">
-                  {category.job_count} jobs
+                  {category.job_count || 0} jobs
                 </div>
               </motion.div>
             ))}
@@ -236,7 +236,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jobs?.data?.jobs?.map((job, index) => (
+            {jobs?.data?.jobs && Array.isArray(jobs.data.jobs) && jobs.data.jobs.map((job, index) => (
               <motion.div
                 key={job.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -276,19 +276,20 @@ const Home = () => {
 
                     <div className="flex items-center justify-between text-sm mb-6 pb-6 border-b border-gray-50">
                       <div className="font-bold text-gray-900">
-                        {job.salary_min && job.salary_max
-                          ? `₹${job.salary_min}L - ₹${job.salary_max}L`
-                          : <span className="text-gray-400 font-normal italic">Not disclosed</span>
-                        }
+                        {job.salary_min && job.salary_max ? (
+                          `₹${job.salary_min}L - ₹${job.salary_max}L`
+                        ) : (
+                          <span className="text-gray-400 font-normal italic">Not disclosed</span>
+                        )}
                       </div>
                       <div className="flex items-center text-gray-400">
                         <Clock className="w-3 h-3 mr-1" />
-                        {job.posted_time}
+                        {utils.formatPostedDate(job.posted_date)}
                       </div>
                     </div>
 
                     <div className="flex flex-wrap gap-2 mb-6">
-                      {job.skills?.slice(0, 3).map((skill, idx) => (
+                      {job.skills_required && Array.isArray(job.skills_required) && job.skills_required.slice(0, 3).map((skill, idx) => (
                         <span key={idx} className="text-[10px] font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded-lg">
                           {skill}
                         </span>
@@ -325,7 +326,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-            {companies?.data?.map((company, index) => (
+            {companies?.data && Array.isArray(companies.data) && companies.data.map((company, index) => (
               <motion.div
                 key={company.id}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -347,7 +348,7 @@ const Home = () => {
                 <p className="text-xs text-blue-300 mb-3">{company.industry}</p>
                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-tighter">
                   <Briefcase className="w-3 h-3 mr-1" />
-                  {company.job_count} OPENINGS
+                  {company.job_count || 0} OPENINGS
                 </div>
               </motion.div>
             ))}
