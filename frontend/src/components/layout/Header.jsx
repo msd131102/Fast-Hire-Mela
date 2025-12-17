@@ -188,7 +188,7 @@ const Header = () => {
           <div className="flex lg:hidden items-center gap-3">
             {isAuthenticated && (
               <Link to="/profile" className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-xs font-black text-white shadow-lg border border-white/10">
-                {user?.first_name?.[0]?.toUpperCase()}
+                {user?.name?.[0]?.toUpperCase()}
               </Link>
             )}
             <button
