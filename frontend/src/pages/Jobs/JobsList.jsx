@@ -25,17 +25,36 @@ import Input from '../../components/ui/Input';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { getJobs, getCategories, getCompanies, saveJob, unsaveJob } from '../../services/api';
 
-// Utility functions
+// Utility function (India / IST friendly)
 const formatPostedDate = (dateString) => {
   if (!dateString) return 'N/A';
+
   const now = new Date();
   const then = new Date(dateString);
-  const diffInDays = Math.floor((now - then) / (1000 * 60 * 60 * 24));
+
+  // Normalize to midnight (prevents timezone issues)
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const postDate = new Date(
+    then.getFullYear(),
+    then.getMonth(),
+    then.getDate()
+  );
+
+  const diffInDays = Math.floor(
+    (today - postDate) / (1000 * 60 * 60 * 24)
+  );
+
   if (diffInDays === 0) return 'Today';
   if (diffInDays === 1) return 'Yesterday';
   if (diffInDays < 7) return `${diffInDays} days ago`;
   if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
-  return then.toLocaleDateString();
+
+  // Indian date format: 12 Aug 2025
+  return postDate.toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
 };
 
 const formatSalary = (min, max, currency = '₹') => {
