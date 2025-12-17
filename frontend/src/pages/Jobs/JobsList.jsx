@@ -22,6 +22,7 @@ import Button from '../../components/ui/Button';
 import { Card, CardContent } from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import Pagination from '../../components/ui/Pagination';
 import { getJobs, getCategories, getCompanies, saveJob, unsaveJob } from '../../services/api';
 
 // --- Utility Functions ---
