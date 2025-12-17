@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/toastUtils';
+import { cn } from '../../utils/cn';
 import logo from '../../assets/logo.png';
 
 const Header = () => {
@@ -10,7 +11,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
-  
+
   const { user, isAuthenticated, logout, isPremium } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -81,10 +82,10 @@ const Header = () => {
     setIsProfileDropdownOpen(false);
     setIsMobileProfileOpen(false);
     setIsMenuOpen(false);
-    toast({ 
-      title: "Logged Out", 
+    toast({
+      title: "Logged Out",
       description: "You have been logged out successfully.",
-      type: "success" 
+      type: "success"
     });
   }, [logout, navigate, toast]);
 
@@ -122,11 +123,11 @@ const Header = () => {
       <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out ${headerBgClass}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
           <div className="flex justify-between items-center h-20 sm:h-24">
-            
+
             {/* Logo: Enhanced with dynamic glow */}
-            <Link 
-              to="/" 
-              className="flex items-center gap-3 group flex-shrink-0" 
+            <Link
+              to="/"
+              className="flex items-center gap-3 group flex-shrink-0"
               onClick={closeAllMenus}
             >
               <div className="relative">
@@ -148,16 +149,15 @@ const Header = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`relative px-5 py-2 rounded-xl transition-all duration-300 group ${
-                      isActivePath(item.href) ? 'text-white' : 'text-gray-400 hover:text-white'
-                    }`}
+                    className={`relative px-5 py-2 rounded-xl transition-all duration-300 group ${isActivePath(item.href) ? 'text-white' : 'text-gray-400 hover:text-white'
+                      }`}
                   >
                     <span className="flex items-center gap-2.5 relative z-10">
                       <span className="text-lg group-hover:rotate-12 transition-transform">{item.icon}</span>
                       <span className="font-bold text-sm tracking-tight">{item.name}</span>
                     </span>
                     {isActivePath(item.href) && (
-                      <motion.div 
+                      <motion.div
                         layoutId="pill"
                         className="absolute inset-0 bg-blue-600 rounded-xl shadow-lg shadow-blue-600/20"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
@@ -173,9 +173,8 @@ const Header = () => {
                 <div className="relative" ref={profileRef}>
                   <button
                     onClick={toggleProfileDropdown}
-                    className={`flex items-center gap-3 p-1.5 pr-4 rounded-full border transition-all duration-300 ${
-                      isProfileDropdownOpen ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/10 hover:border-blue-500/50'
-                    }`}
+                    className={`flex items-center gap-3 p-1.5 pr-4 rounded-full border transition-all duration-300 ${isProfileDropdownOpen ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/10 hover:border-blue-500/50'
+                      }`}
                   >
                     <div className={cn(
                       "relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-xl transition-transform active:scale-90",
@@ -192,7 +191,7 @@ const Header = () => {
 
                   <AnimatePresence>
                     {isProfileDropdownOpen && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -221,7 +220,7 @@ const Header = () => {
             <div className="flex lg:hidden items-center gap-3">
               {isAuthenticated && (
                 <button onClick={toggleMobileProfile} className="relative p-0.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg" ref={mobileProfileRef}>
-                   <div className="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center text-xs font-black text-white">
+                  <div className="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center text-xs font-black text-white">
                     {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
                   </div>
                 </button>
@@ -238,7 +237,7 @@ const Header = () => {
         {/* Mobile Fullscreen Menu: Optimized for thumb reach */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div 
+            <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -265,7 +264,7 @@ const Header = () => {
                   </Link>
                 ))}
               </div>
-              
+
               {!isAuthenticated && (
                 <div className="mt-auto mb-10 space-y-4">
                   <Link to="/register" onClick={() => setIsMenuOpen(false)} className="block w-full py-5 rounded-3xl bg-blue-600 text-center text-white font-black text-lg shadow-2xl">Create Account</Link>
