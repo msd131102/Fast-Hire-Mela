@@ -9,6 +9,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/toastUtils';
 import { cn } from '../../utils/cn';
+import Button from '../ui/Button';
 import logo from '../../assets/logo.png';
 
 const Header = () => {
@@ -207,13 +208,35 @@ const Header = () => {
             <div className="mt-auto mb-10 space-y-3">
               {!isAuthenticated ? (
                 <>
-                  <Link to="/register" onClick={() => setIsMenuOpen(false)} className="block w-full py-4 rounded-xl bg-blue-600 text-center text-white font-bold">Get Started</Link>
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block w-full py-4 rounded-xl border border-white/10 text-center text-gray-300 font-bold">Sign In</Link>
+                  <Button 
+                    onClick={() => {
+                      navigate('/register');
+                      setIsMenuOpen(false);
+                    }} 
+                    className="w-full py-4 rounded-xl bg-blue-600 text-center text-white font-bold"
+                    variant="primary"
+                  >
+                    Get Started
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      navigate('/login');
+                      setIsMenuOpen(false);
+                    }} 
+                    className="w-full py-4 rounded-xl border border-white/10 text-center text-gray-300 font-bold"
+                    variant="outline"
+                  >
+                    Sign In
+                  </Button>
                 </>
               ) : (
-                <button onClick={handleLogout} className="w-full py-4 rounded-xl bg-red-500/10 text-red-500 font-bold flex items-center justify-center gap-2">
+                <Button 
+                  onClick={handleLogout} 
+                  className="w-full py-4 rounded-xl bg-red-500/10 text-red-500 font-bold flex items-center justify-center gap-2"
+                  variant="ghost"
+                >
                   <LogOut size={18} /> Logout
-                </button>
+                </Button>
               )}
             </div>
           </motion.div>
