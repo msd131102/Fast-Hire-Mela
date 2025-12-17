@@ -3,8 +3,6 @@ import { motion } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
-  Building2,
-  MapPin,
   Users,
   Briefcase,
   Share2,
@@ -21,7 +19,6 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useToast } from '../../components/ui/toastUtils';
 import {
   getJobDetails,
-  getSimilarJobs,
   getSavedJobs,
   saveJob,
   unsaveJob,
@@ -48,9 +45,6 @@ const formatDeadlineDate = (dateString) => {
   });
 };
 
-/* =======================
-   DAYS LEFT CALCULATION
-======================= */
 const getDaysUntilDeadline = (deadline) => {
   if (!deadline) return null;
 
@@ -63,7 +57,6 @@ const getDaysUntilDeadline = (deadline) => {
 
   return Math.ceil((end - now) / (1000 * 60 * 60 * 24));
 };
-
 const JobDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -227,7 +220,6 @@ const JobDetails = () => {
       <div className="container mx-auto px-4 py-8 grid lg:grid-cols-3 gap-8">
         {/* MAIN CONTENT */}
         <div className="lg:col-span-2 space-y-6">
-          {/* JOB HEADER */}
           <Card>
             <CardContent className="p-6">
               <div className="flex gap-4">
@@ -352,7 +344,6 @@ const JobDetails = () => {
                 className="mt-4 w-full"
                 onClick={handleSaveJob}
                 disabled={isSaving}
-                variant={isJobSaved ? 'default' : 'outline'}
               >
                 <Bookmark className="mr-2" />
                 {isJobSaved ? 'Saved' : 'Save Job'}
@@ -362,7 +353,6 @@ const JobDetails = () => {
         </div>
       </div>
 
-      {/* MOBILE FOOTER */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t">
         <div className="flex gap-3">
           <Button
