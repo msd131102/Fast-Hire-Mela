@@ -166,14 +166,35 @@ const JobDetails = () => {
   };
 
   // Calculate days until deadline
-  const getDaysUntilDeadline = (deadline) => {
-    if (!deadline) return null;
-    const days = Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24));
-    return days;
-  };
+ const safeParseDate = (dateString) => {
+  if (!dateString) return null;
 
-  const daysUntilDeadline = getDaysUntilDeadline(job?.application_deadline);
-  const isUrgent = daysUntilDeadline && daysUntilDeadline <= 7;
+  const [y, m, d] = dateString.split('T')[0].split('-');
+  return new Date(Number(y), Number(m) - 1, Number(d));
+};
+
+const getDaysUntilDeadline = (deadline) => {
+  const deadlineDate = safeParseDate(deadline);
+  if (!deadlineDate) return null;
+
+  const today = new Date();
+  const todayDate = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  return Math.ceil(
+    (deadlineDate - todayDate) / (1000 * 60 * 60 * 24)
+  );
+};
+
+const daysUntilDeadline = getDaysUntilDeadline(job?.application_deadline);
+const isUrgent =
+  typeof daysUntilDeadline === 'number' &&
+  daysUntilDeadline > 0 &&
+  daysUntilDeadline <= 7;
+
 
   if (isLoading) {
     return (
