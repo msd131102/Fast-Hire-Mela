@@ -187,7 +187,7 @@ const About = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/register">
                 <Button className="px-10 py-4 bg-white text-blue-600 font-black rounded-2xl hover:bg-gray-100 transition-all flex items-center justify-center gap-2">
-                  Get Started Free <ArrowRight size={18} />
+                  Get Started Free
                 </Button>
               </Link>
               <Link to="/contact">

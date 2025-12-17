@@ -67,7 +67,7 @@ const Home = () => {
             <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-8 tracking-tighter leading-[0.9] text-white">
               Fast Hire Mela <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-blue-200">
-                Work Smarter.
+                Work Smarter
               </span>
             </h1>
             
@@ -110,7 +110,7 @@ const Home = () => {
             </motion.form>
 
             <div className="flex flex-wrap justify-center gap-8 mt-20 opacity-40 grayscale pointer-events-none">
-              <span className="text-xs font-bold tracking-widest uppercase">Trusted by Global Teams</span>
+              <span className="text-xs font-bold tracking-widest uppercase">Trusted by Students</span>
             </div>
           </motion.div>
         </div>
@@ -265,7 +265,7 @@ const Home = () => {
                   <Button size="lg" className="w-full sm:w-auto px-12 h-16 rounded-2xl bg-white text-blue-600 hover:bg-gray-50 font-black shadow-2xl">Create Profile</Button>
                 </Link>
                 <Link to="/jobs">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto px-12 h-16 rounded-2xl border-white/30 text-white hover:bg-white/10 font-black backdrop-blur-md">Browse Jobs</Button>
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto px-12 h-16 rounded-2xl border-white/30 text-blue-600 hover:bg-white/10 font-black backdrop-blur-md">Browse Jobs</Button>
                 </Link>
               </div>
             </motion.div>

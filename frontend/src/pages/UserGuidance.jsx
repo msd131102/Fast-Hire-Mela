@@ -175,7 +175,7 @@ const UserGuidance = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/premium/referral">
                   <Button className="px-8 py-4 bg-white text-emerald-700 font-black rounded-2xl hover:bg-gray-100 transition-all flex items-center gap-2">
-                    Start Referring <ArrowRight size={18} />
+                    Start Referring
                   </Button>
                 </Link>
                 <Link to="/premium">
