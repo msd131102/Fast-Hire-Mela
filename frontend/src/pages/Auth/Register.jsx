@@ -283,7 +283,7 @@ const Register = () => {
                       className="h-12 bg-white dark:bg-slate-800"
                     />
                     <Button type="submit" className="w-full h-12 text-lg shadow-lg shadow-blue-600/20 group">
-                      Next Step <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      Next Step <ChevronRight className="ml-2 w-2 h-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </motion.div>
                 )}
