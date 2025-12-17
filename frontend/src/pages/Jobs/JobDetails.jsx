@@ -27,6 +27,7 @@ import {
   getSimilarJobs,
   saveJob,
   unsaveJob,
+  getSavedJobs,
   utils 
 } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
