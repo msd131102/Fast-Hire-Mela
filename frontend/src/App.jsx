@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 // Layout Components
 import Layout from './components/layout/Layout';
@@ -46,18 +47,31 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-              <div className="min-h-screen bg-gray-50 transition-colors">
-                <Routes>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ToastProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <div className="min-h-screen bg-gray-50 transition-colors">
+                  <Routes>
                   {/* Public Routes */}
-                  <Route path="/" element={<Layout />}>
+                  <Route path="/" element={
+                    <ErrorBoundary>
+                      <Layout />
+                    </ErrorBoundary>
+                  }>
                     <Route index element={<Home />} />
-                    <Route path="jobs" element={<JobsList />} />
-                    <Route path="jobs/:id" element={<JobDetails />} />
+                    <Route path="jobs" element={
+                      <ErrorBoundary>
+                        <JobsList />
+                      </ErrorBoundary>
+                    } />
+                    <Route path="jobs/:id" element={
+                      <ErrorBoundary>
+                        <JobDetails />
+                      </ErrorBoundary>
+                    } />
                     <Route path="categories" element={<Categories />} />
                     <Route path="companies" element={<Companies />} />
                     <Route path="login" element={<Login />} />
@@ -129,6 +143,7 @@ function App() {
         </ThemeProvider>
       </ToastProvider>
     </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

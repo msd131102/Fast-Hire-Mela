@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Users, Gift, CheckCircle, AlertCircle, Loader2,
-  ArrowLeft, Sparkles, Zap, ShieldCheck, BarChart3, Infinity
+  ArrowLeft, Sparkles, Zap, ShieldCheck, BarChart3, Infinity, HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '../../components/ui/Card';
