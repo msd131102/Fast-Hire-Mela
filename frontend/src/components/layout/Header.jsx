@@ -211,6 +211,14 @@ const Header = () => {
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="lg:hidden fixed inset-0 top-0 bg-black z-50 flex flex-col pt-24 px-6 overflow-y-auto"
           >
+            {/* Close (X) button for mobile menu */}
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-50"
+              aria-label="Close menu"
+            >
+              <X size={28} />
+            </button>
             <div className="space-y-3 mt-4">
               <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-6 ml-2">Navigation</p>
               {(isAuthenticated ? dashboardNavigation : navigation).map((item) => (
