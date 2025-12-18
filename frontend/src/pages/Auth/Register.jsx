@@ -341,7 +341,7 @@ const Register = () => {
                       icon={<User className="w-5 h-5 text-slate-900" />}
                       {...register('name', { required: 'Full name is required', minLength: 2 })}
                       error={errors.name?.message}
-                      className="h-12 bg-white dark:bg-slate-800"
+                      className="h-12 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                     />
                     <div>
                       <Input
@@ -402,7 +402,7 @@ const Register = () => {
                       icon={<Phone className="w-5 h-5 text-slate-900" />}
                       {...register('phone', { required: 'Phone is required', pattern: /^[0-9]{10}$/ })}
                       error={errors.phone?.message}
-                      className="h-12 bg-white dark:bg-slate-800"
+                      className="h-12 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                     />
                     <Button 
                       type="submit" 
