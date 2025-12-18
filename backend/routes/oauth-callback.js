@@ -88,7 +88,7 @@ router.post('/auth-url', async (req, res) => {
       authUrl.searchParams.set('response_type', 'code');
       authUrl.searchParams.set('client_id', process.env.LINKEDIN_CLIENT_ID);
       authUrl.searchParams.set('redirect_uri', redirectUri);
-      authUrl.searchParams.set('scope', 'r_liteprofile r_emailaddress'); // Space-separated scopes
+      authUrl.searchParams.set('scope', 'openid profile email'); // New working scopes
       authUrl.searchParams.set('state', state);
       authUrl.searchParams.set('code_challenge', pkce.codeChallenge);
       authUrl.searchParams.set('code_challenge_method', 'S256');
@@ -211,6 +211,15 @@ router.post('/callback', async (req, res) => {
       }
     } else if (provider === 'linkedin') {
       try {
+        // First validate that we have a valid authorization code
+        if (!code || code.includes('error')) {
+          return res.status(400).json({
+            success: false,
+            message: 'LinkedIn authorization failed. Please check your app permissions and try again.',
+            error: 'Invalid or missing authorization code from LinkedIn'
+          });
+        }
+
         // Exchange code for access token with LinkedIn
         const tokenResponse = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
           method: 'POST',
@@ -228,6 +237,14 @@ router.post('/callback', async (req, res) => {
 
         const tokenData = await tokenResponse.text();
         const accessToken = new URLSearchParams(tokenData).get('access_token');
+
+        if (!accessToken) {
+          return res.status(400).json({
+            success: false,
+            message: 'LinkedIn token exchange failed. Please check your app configuration.',
+            error: 'No access token received from LinkedIn'
+          });
+        }
 
         // Get user profile from LinkedIn API
         const profileResponse = await fetch('https://api.linkedin.com/v2/people/~:(id,firstName,lastName,profilePicture(displayImage~:playableStreams))', {
