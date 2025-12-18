@@ -22,6 +22,14 @@
   ],
   "routes": [
     {
+      "src": "/sitemap.xml",
+      "dest": "/frontend/public/sitemap.xml"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/frontend/public/robots.txt"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/backend/server.js"
     },

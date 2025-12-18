@@ -93,7 +93,7 @@ router.delete('/sitemap/:id', auth, async (req, res) => {
 // Generate sitemap XML
 router.get('/sitemap.xml', async (req, res) => {
   try {
-    const sitemapXml = await SitemapConfig.generateSitemap();
+    const sitemapXml = await SitemapConfig.generateSitemapXml();
     res.header('Content-Type', 'application/xml');
     res.send(sitemapXml);
   } catch (error) {
