@@ -72,9 +72,17 @@ router.get('/github', async (req, res) => {
       userEmail = emails.find(email => email.primary && email.verified)?.email;
     }
 
+    // Ensure we have valid email for user creation
+    if (!userEmail) {
+      return res.status(400).json({
+        success: false,
+        message: 'GitHub email is required for authentication. Please make sure your email is public in your GitHub profile.'
+      });
+    }
+
     const userData = {
       name: githubUser.name || githubUser.login,
-      email: userEmail || `${githubUser.login}@github.local`,
+      email: userEmail,
       provider: 'github',
       github_url: githubUser.html_url,
       profile_picture: githubUser.avatar_url,

@@ -88,7 +88,7 @@ router.post('/auth-url', async (req, res) => {
       authUrl.searchParams.set('response_type', 'code');
       authUrl.searchParams.set('client_id', process.env.LINKEDIN_CLIENT_ID);
       authUrl.searchParams.set('redirect_uri', redirectUri);
-      authUrl.searchParams.set('scope', 'r_liteprofile r_emailaddress');
+      authUrl.searchParams.set('scope', 'r_liteprofile r_emailaddress'); // Space-separated scopes
       authUrl.searchParams.set('state', state);
       authUrl.searchParams.set('code_challenge', pkce.codeChallenge);
       authUrl.searchParams.set('code_challenge_method', 'S256');
@@ -203,12 +203,11 @@ router.post('/callback', async (req, res) => {
         };
       } catch (error) {
         console.error('GitHub OAuth error:', error);
-        // Fallback to demo user if OAuth fails
-        userData = {
-          name: 'GitHub User',
-          email: `github-user-${Date.now()}@demo.local`,
-          provider: 'github',
-        };
+        return res.status(400).json({
+          success: false,
+          message: 'GitHub OAuth authentication failed. Please try again.',
+          error: error.message
+        });
       }
     } else if (provider === 'linkedin') {
       try {
@@ -262,12 +261,11 @@ router.post('/callback', async (req, res) => {
         };
       } catch (error) {
         console.error('LinkedIn OAuth error:', error);
-        // Fallback to demo user if OAuth fails
-        userData = {
-          name: 'LinkedIn User',
-          email: `linkedin-user-${Date.now()}@demo.local`,
-          provider: 'linkedin',
-        };
+        return res.status(400).json({
+          success: false,
+          message: 'LinkedIn OAuth authentication failed. Please try again.',
+          error: error.message
+        });
       }
     } else {
       return res.status(400).json({ 
