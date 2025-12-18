@@ -34,6 +34,7 @@ import Categories from './pages/Categories';
 import Companies from './pages/Companies';
 import UserGuidance from './pages/UserGuidance';
 import Referral from './pages/Premium/Referral';
+import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient({
@@ -131,6 +132,11 @@ function App() {
                     <Route path="premium/referral" element={
                       <ProtectedRoute>
                         <Referral />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="settings" element={
+                      <ProtectedRoute>
+                        <Settings />
                       </ProtectedRoute>
                     } />
 

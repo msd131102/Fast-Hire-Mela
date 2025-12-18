@@ -230,7 +230,7 @@ const Home = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-5xl font-black mb-4 tracking-tight">Hiring Companies</h2>
-            <p className="text-blue-400 font-bold uppercase text-[10px] tracking-[0.3em]">Direct Access To Companies Page</p>
+            <p className="text-blue-400 font-bold uppercase text-[10px] tracking-[0.3em]">Direct Access To Companies</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4">
             {companies?.data?.map((company) => (
