@@ -911,19 +911,19 @@ router.get('/recommendations/:userId?', authenticateToken, checkUserActive, asyn
         co.description as company_description,
         -- Calculate recommendation score
         CASE 
-          WHEN j.category_id = ANY($${paramCount - 3}) THEN 0.4
+          WHEN j.category_id = ANY($${paramCount - 4}) THEN 0.4
           ELSE 0
         END +
         CASE 
-          WHEN j.location = ANY($${paramCount - 2}) THEN 0.2
+          WHEN j.location = ANY($${paramCount - 3}) THEN 0.2
           ELSE 0
         END +
         CASE 
-          WHEN j.experience_level = ANY($${paramCount - 1}) THEN 0.2
+          WHEN j.experience_level = ANY($${paramCount - 2}) THEN 0.2
           ELSE 0
         END +
         CASE 
-          WHEN j.job_type = ANY($${paramCount - 0}) THEN 0.2
+          WHEN j.job_type = ANY($${paramCount - 1}) THEN 0.2
           ELSE 0
         END as recommendation_score
       FROM jobs j

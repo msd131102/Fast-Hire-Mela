@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Briefcase, Building2, FolderTree, Info, Home, 
   LayoutDashboard, User as UserIcon, LogOut, Menu, X,
-  ChevronRight, Settings, Zap
+  ChevronRight, Settings, Zap,
+  User
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/toastUtils';
@@ -41,6 +42,7 @@ const Header = () => {
     { name: 'Find Jobs', href: '/jobs', icon: <Briefcase size={16} /> },
     { name: 'Companies', href: '/companies', icon: <Building2 size={16} /> },
     { name: 'Categories', href: '/categories', icon: <FolderTree size={16} /> },
+    { name: 'User Guidance', href: '/user-guidance', icon: <User size={16} /> },
     { name: 'About', href: '/about', icon: <Info size={16} /> },
   ];
 
@@ -50,7 +52,6 @@ const Header = () => {
     { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={16} /> },
     { name: 'Profile', href: '/profile', icon: <UserIcon size={16} /> },
     { name: 'SaveJobs', href: '/saved-jobs', icon: <UserIcon size={16} /> },
-    { name: 'Settings', href: '/settings', icon: <Settings size={16} /> },
   ];
 
   const isActivePath = (path) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
