@@ -287,21 +287,25 @@ export const utils = {
     return min ? `${min}+ years` : `Up to ${max} years`;
   },
 
-  // Format posted date
+  // Format posted date (India timezone)
   formatPostedDate: (date) => {
     if (!date) return 'N/A';
     
-    const now = new Date();
+    // Convert to India time (UTC + 5.5 hours)
     const postedDate = new Date(date);
-    const diffTime = Math.abs(now - postedDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const indiaTime = new Date(postedDate.getTime() + (5.5 * 60 * 60 * 1000));
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const postDate = new Date(indiaTime.getFullYear(), indiaTime.getMonth(), indiaTime.getDate());
+    const diffInDays = Math.floor((today - postDate) / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 1) return 'Today';
-    if (diffDays === 2) return 'Yesterday';
-    if (diffDays <= 7) return `${diffDays} days ago`;
-    if (diffDays <= 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    if (diffDays <= 365) return `${Math.floor(diffDays / 30)} months ago`;
-    return `${Math.floor(diffDays / 365)} years ago`;
+    if (diffInDays === 0) return 'Today';
+    if (diffInDays === 1) return 'Yesterday';
+    if (diffInDays < 7) return `${diffInDays} days ago`;
+    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
+    if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
+    return `${Math.floor(diffInDays / 365)} years ago`;
   },
 
   // Debounce function for search

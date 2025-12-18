@@ -28,10 +28,14 @@ import { getJobs, getCategories, getCompanies, saveJob, unsaveJob } from '../../
 // --- Utility Functions ---
 const formatPostedDate = (dateString) => {
   if (!dateString) return 'N/A';
+  
+  // Convert to India time (UTC + 5.5 hours)
+  const ukDate = new Date(dateString);
+  const indiaTime = new Date(ukDate.getTime() + (5.5 * 60 * 60 * 1000));
+  
   const now = new Date();
-  const then = new Date(dateString);
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const postDate = new Date(then.getFullYear(), then.getMonth(), then.getDate());
+  const postDate = new Date(indiaTime.getFullYear(), indiaTime.getMonth(), indiaTime.getDate());
   const diffInDays = Math.floor((today - postDate) / (1000 * 60 * 60 * 24));
 
   if (diffInDays === 0) return 'Today';
@@ -39,7 +43,7 @@ const formatPostedDate = (dateString) => {
   if (diffInDays < 7) return `${diffInDays} days ago`;
   if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
 
-  return postDate.toLocaleDateString('en-IN', {
+  return indiaTime.toLocaleDateString('en-IN', {
     day: '2-digit',
     month: 'short',
     year: 'numeric'
