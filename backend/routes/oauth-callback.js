@@ -220,23 +220,28 @@ router.post('/callback', async (req, res) => {
           });
         }
 
-        // Exchange code for access token with LinkedIn
+        // Exchange code for access token with LinkedIn using PKCE
+        const codeVerifier = storedOAuthState?.codeVerifier;
+        
+        const tokenParams = new URLSearchParams({
+          grant_type: 'authorization_code',
+          code: code,
+          redirect_uri: process.env.FRONTEND_URL + '/auth/callback/linkedin',
+          client_id: process.env.LINKEDIN_CLIENT_ID,
+          client_secret: process.env.LINKEDIN_CLIENT_SECRET,
+          code_verifier: codeVerifier
+        });
+
         const tokenResponse = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: new URLSearchParams({
-            grant_type: 'authorization_code',
-            code: code,
-            redirect_uri: process.env.FRONTEND_URL + '/auth/callback/linkedin',
-            client_id: process.env.LINKEDIN_CLIENT_ID,
-            client_secret: process.env.LINKEDIN_CLIENT_SECRET,
-          }),
+          body: tokenParams.toString(),
         });
 
-        const tokenData = await tokenResponse.text();
-        const accessToken = new URLSearchParams(tokenData).get('access_token');
+        const tokenData = await tokenResponse.json();
+        const accessToken = tokenData.access_token;
 
         if (!accessToken) {
           return res.status(400).json({
