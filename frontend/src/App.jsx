@@ -18,6 +18,7 @@ import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import ResetPassword from './pages/Auth/ResetPassword';
+import OAuthCallback from './pages/Auth/OAuthCallback';
 import Dashboard from './pages/Dashboard/Dashboard';
 import SavedJobs from './pages/Dashboard/SavedJobs';
 import Applications from './pages/Dashboard/Applications';
@@ -79,6 +80,8 @@ function App() {
                     <Route path="register" element={<Register />} />
                     <Route path="forgot-password" element={<ForgotPassword />} />
                     <Route path="reset-password" element={<ResetPassword />} />
+                    <Route path="auth/callback/github" element={<OAuthCallback />} />
+                    <Route path="auth/callback/linkedin" element={<OAuthCallback />} />
                     <Route path="premium" element={<PremiumPlans />} />
                     <Route path="premium/plans" element={<PremiumPlans />} />
                     <Route path="premium/checkout" element={

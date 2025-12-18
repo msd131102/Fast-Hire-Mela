@@ -18,6 +18,7 @@ import { performanceMonitor } from './middleware/performanceMonitor.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
+import oauthCallbackRoutes from './routes/oauth-callback.js';
 import jobsRoutes from './routes/jobs.js';
 import categoriesRoutes from './routes/categories.js';
 import companiesRoutes from './routes/companies.js';
@@ -150,6 +151,7 @@ app.get('/api/stats', async (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/oauth', oauthCallbackRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/companies', companiesRoutes);

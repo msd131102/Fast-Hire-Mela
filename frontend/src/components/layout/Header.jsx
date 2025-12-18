@@ -44,6 +44,7 @@ const Header = () => {
     { name: 'Categories', href: '/categories', icon: <FolderTree size={16} /> },
     { name: 'User Guidance', href: '/user-guidance', icon: <User size={16} /> },
     { name: 'About', href: '/about', icon: <Info size={16} /> },
+    { name: 'Referrals', href: '/referrals', icon: <Referral size={16} /> }
   ];
 
   const dashboardNavigation = [
@@ -52,6 +53,7 @@ const Header = () => {
     { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={16} /> },
     { name: 'Profile', href: '/profile', icon: <UserIcon size={16} /> },
     { name: 'SaveJobs', href: '/saved-jobs', icon: <UserIcon size={16} /> },
+    { name: 'Referrals', href: '/referrals', icon: <Referral size={16} /> }
   ];
 
   const isActivePath = (path) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path));

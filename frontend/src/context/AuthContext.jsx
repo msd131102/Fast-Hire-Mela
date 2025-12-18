@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { authAPI } from '../services/api';
 import Cookies from 'js-cookie';
 import { useToast } from '../components/ui/toastUtils';
-import ProfileCompletionModal from '../components/auth/ProfileCompletionModal';
 
 const AuthContext = createContext();
 
@@ -76,7 +75,6 @@ const authReducer = (state, action) => {
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const { toast } = useToast();
-  const [showProfileModal, setShowProfileModal] = useState(false);
 
   // Initialize auth state from cookies/localStorage
   useEffect(() => {
@@ -97,10 +95,7 @@ export const AuthProvider = ({ children }) => {
                 payload: { user, token },
               });
               
-              // Check if profile completion modal should be shown
-              if (user.role === 'user' && user.profile_completed === false) {
-                setShowProfileModal(true);
-              }
+              // Profile completion modal removed - users go directly to dashboard
             } else {
               // Token invalid, clear everything
               Cookies.remove('token');
@@ -152,10 +147,7 @@ export const AuthProvider = ({ children }) => {
           payload: { user, token },
         });
         
-        // Check if profile completion modal should be shown
-        if (user.role === 'user' && user.profile_completed === false) {
-          setShowProfileModal(true);
-        }
+        // Profile completion modal removed - users go directly to dashboard
         
         toast.success('Login successful! Welcome back.');
         console.log('🎯 Returning success: true');
@@ -202,10 +194,7 @@ export const AuthProvider = ({ children }) => {
           payload: { user, token },
         });
         
-        // Check if profile completion modal should be shown
-        if (user.role === 'user' && user.profile_completed === false) {
-          setShowProfileModal(true);
-        }
+        // Profile completion modal removed - users go directly to dashboard
         
         toast.success('Registration successful! Welcome to Fast Hire Mela.');
         return { success: true };
@@ -231,7 +220,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
     
     dispatch({ type: 'LOGOUT' });
-    setShowProfileModal(false);
     toast.info('You have been logged out successfully.');
   };
 
@@ -244,19 +232,11 @@ export const AuthProvider = ({ children }) => {
       payload: userData,
     });
     
-    // If profile was completed, hide the modal
-    if (userData.profile_completed === true) {
-      setShowProfileModal(false);
-    }
+    // Profile completion modal removed - no action needed
   };
 
   const upgradeToPremium = () => {
     updateUser({ isPremium: true });
-  };
-
-  const handleProfileComplete = () => {
-    setShowProfileModal(false);
-    updateUser({ profile_completed: true });
   };
 
   const value = {
@@ -266,21 +246,11 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateUser,
     upgradeToPremium,
-    showProfileModal,
-    setShowProfileModal,
-    handleProfileComplete,
   };
 
   return (
     <AuthContext.Provider value={value}>
       {children}
-      {showProfileModal && state.user && state.user.role === 'user' && (
-        <ProfileCompletionModal
-          isOpen={showProfileModal}
-          onClose={() => setShowProfileModal(false)}
-          onComplete={handleProfileComplete}
-        />
-      )}
     </AuthContext.Provider>
   );
 };

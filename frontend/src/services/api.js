@@ -80,6 +80,7 @@ export const authAPI = {
   changePassword: (passwordData) => api.put('/auth/change-password', passwordData),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
   resetPassword: (token, password) => api.post('/auth/reset-password', { token, password }),
+  oauthCallback: (oauthData) => api.post('/auth/oauth/callback', oauthData),
 };
 
 // OTP API
@@ -243,6 +244,11 @@ export const newsletterAPI = {
 export const contactAPI = {
   submitContact: (contactData) => api.post('/auth/contact', contactData),
   getCompanies: () => api.get('/companies'),
+};
+
+// OAuth API
+export const oauthAPI = {
+  callback: (code, provider) => api.post('/oauth/oauth/callback', { code, provider }),
 };
 
 // Individual job functions for components
