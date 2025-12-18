@@ -9,17 +9,19 @@ const Card = React.forwardRef(({
   padding = 'md',
   ...props
 }, ref) => {
+  // Enhanced padding for better touch targets and desktop breathing room
   const paddingClasses = {
     sm: 'p-4',
-    md: 'p-6',
-    lg: 'p-8',
-    xl: 'p-10',
+    md: 'p-5 sm:p-6',
+    lg: 'p-6 sm:p-8',
+    xl: 'p-8 sm:p-10',
   };
 
   const cardClasses = cn(
-    'bg-white rounded-lg shadow-sm border border-gray-200',
+    'bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden relative',
     paddingClasses[padding],
-    hover && 'hover:shadow-md transition-shadow duration-200',
+    // Upgraded hover effect with a smooth lift and deeper shadow
+    hover && 'hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer',
     className
   );
 
@@ -27,9 +29,10 @@ const Card = React.forwardRef(({
     <motion.div
       ref={ref}
       className={cardClasses}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-20px" }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       {...props}
     >
       {children}
@@ -47,7 +50,7 @@ const CardHeader = React.forwardRef(({
   return (
     <div
       ref={ref}
-      className={cn('mb-4', className)}
+      className={cn('mb-5 space-y-1.5', className)}
       {...props}
     >
       {children}
@@ -65,7 +68,7 @@ const CardTitle = React.forwardRef(({
   return (
     <h3
       ref={ref}
-      className={cn('text-lg font-semibold text-gray-900', className)}
+      className={cn('text-lg sm:text-xl font-bold text-gray-900 tracking-tight leading-snug', className)}
       {...props}
     >
       {children}
@@ -83,7 +86,7 @@ const CardDescription = React.forwardRef(({
   return (
     <p
       ref={ref}
-      className={cn('text-sm text-gray-600 mt-1', className)}
+      className={cn('text-sm sm:text-base text-gray-500 font-medium leading-relaxed', className)}
       {...props}
     >
       {children}
@@ -101,7 +104,7 @@ const CardContent = React.forwardRef(({
   return (
     <div
       ref={ref}
-      className={cn('', className)}
+      className={cn('relative', className)}
       {...props}
     >
       {children}
@@ -119,7 +122,7 @@ const CardFooter = React.forwardRef(({
   return (
     <div
       ref={ref}
-      className={cn('mt-4 pt-4 border-t border-gray-200', className)}
+      className={cn('mt-6 pt-5 border-t border-gray-50 flex items-center justify-between', className)}
       {...props}
     >
       {children}

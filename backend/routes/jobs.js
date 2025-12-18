@@ -911,19 +911,19 @@ router.get('/recommendations/:userId?', authenticateToken, checkUserActive, asyn
         co.description as company_description,
         -- Calculate recommendation score
         CASE 
-          WHEN j.category_id = ANY($${paramCount - 3}) THEN 0.4
+          WHEN j.category_id = ANY($${paramCount - 4}) THEN 0.4
           ELSE 0
         END +
         CASE 
-          WHEN j.location = ANY($${paramCount - 2}) THEN 0.2
+          WHEN j.location = ANY($${paramCount - 3}) THEN 0.2
           ELSE 0
         END +
         CASE 
-          WHEN j.experience_level = ANY($${paramCount - 1}) THEN 0.2
+          WHEN j.experience_level = ANY($${paramCount - 2}) THEN 0.2
           ELSE 0
         END +
         CASE 
-          WHEN j.job_type = ANY($${paramCount - 0}) THEN 0.2
+          WHEN j.job_type = ANY($${paramCount - 1}) THEN 0.2
           ELSE 0
         END as recommendation_score
       FROM jobs j
@@ -1401,7 +1401,7 @@ router.get('/:jobId/similar', async (req, res) => {
           ELSE 0
         END +
         CASE 
-          WHEN j.skills_required && $${paramCount} THEN 0.15
+          WHEN j.skills_required && $6 THEN 0.15
           ELSE 0
         END as similarity_score
       FROM jobs j
@@ -1410,7 +1410,7 @@ router.get('/:jobId/similar', async (req, res) => {
       LEFT JOIN app_users u ON j.posted_by = u.id
       WHERE ${whereConditions.join(' AND ')}
       ORDER BY similarity_score DESC, j.posted_date DESC
-      LIMIT $${paramCount + 2}
+      LIMIT $7
     `;
 
     queryParams.push(parseInt(limit));

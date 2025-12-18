@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Gift, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import {
+  Users, Gift, CheckCircle, AlertCircle, Loader2,
+  ArrowLeft, Sparkles, Zap, ShieldCheck, BarChart3, Infinity, HelpCircle
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -31,48 +35,32 @@ const Referral = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     setError('');
     setSuccess('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
     if (!formData.name || !formData.email || !formData.mobile || !formData.referred_users) {
       setError('All fields are required');
       return;
     }
-
     if (referralCount < 20) {
       setError('Minimum 20 referred users required to unlock Premium Features');
       return;
     }
 
     setLoading(true);
-
     try {
       const data = await referralAPI.submitReferral({
         ...formData,
-        referred_users: formData.referred_users
-          .split('\n')
-          .map(item => item.trim())
-          .filter(item => item.length > 0)
+        referred_users: formData.referred_users.split('\n').map(item => item.trim()).filter(item => item.length > 0)
       });
 
       if (data.success) {
         setSuccess(data.message || 'Referral submitted successfully! You are eligible for Free Premium Features.');
-        // Clear form
-        setFormData(prev => ({
-          ...prev,
-          mobile: '',
-          referred_users: ''
-        }));
+        setFormData(prev => ({ ...prev, mobile: '', referred_users: '' }));
       } else {
         setError(data.message || 'Failed to submit referral');
       }
@@ -84,214 +72,214 @@ const Referral = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <Gift className="h-12 w-12 text-purple-600" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            🎉 Refer 20+ Users & Unlock FREE Premium Features
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Share FastHireMela with your friends and help them find their dream jobs while you enjoy Premium features absolutely FREE!
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Referral Form */}
-          <Card className="p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-              <Users className="h-5 w-5 mr-2 text-purple-600" />
-              Submit Your Referrals
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Your Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Your Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Mobile Number
-                </label>
-                <input
-                  type="tel"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Enter your mobile number"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Referred Users (Names or Emails)
-                </label>
-                <textarea
-                  name="referred_users"
-                  value={formData.referred_users}
-                  onChange={handleInputChange}
-                  rows="8"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Enter referred user names or emails (one per line)&#10;Example:&#10;user1@gmail.com&#10;user2@gmail.com&#10;user3@gmail.com"
-                  required
-                />
-              </div>
-
-              {/* Referral Status */}
-              <div className={`p-4 rounded-lg ${isEligible ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'}`}>
-                <div className="flex items-center">
-                  {isEligible ? (
-                    <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-                  ) : (
-                    <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
-                  )}
-                  <span className={`font-medium ${isEligible ? 'text-green-700' : 'text-yellow-700'}`}>
-                    {referralCount}/20 referrals submitted
-                    {isEligible ? ' - Eligible for Premium!' : ' - Need 20 referrals'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Error Message */}
-              {error && (
-                <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
-                  <div className="flex items-center">
-                    <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
-                    <span className="text-red-700">{error}</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Success Message */}
-              {success && (
-                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-                    <span className="text-green-700">{success}</span>
-                  </div>
-                </div>
-              )}
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className={`w-full ${isEligible ? 'bg-green-600 hover:bg-green-700' : 'bg-purple-600 hover:bg-purple-700'} text-white font-semibold py-3 rounded-lg transition-colors`}
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center">
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Submitting...
-                  </div>
-                ) : (
-                  isEligible ? '🎉 Submit & Unlock Premium' : 'Submit Referrals'
-                )}
-              </Button>
-            </form>
-          </Card>
-
-          {/* Benefits Card */}
-          <Card className="p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">
-              🎁 Premium Benefits You'll Unlock
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">Unlimited Job Applications</h3>
-                  <p className="text-gray-600">Apply to unlimited jobs without restrictions</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">Priority Job Alerts</h3>
-                  <p className="text-gray-600">Get instant notifications for matching jobs</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">Resume Highlighting</h3>
-                  <p className="text-gray-600">Your profile gets priority visibility</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">Advanced Analytics</h3>
-                  <p className="text-gray-600">Track your job search progress</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">No Ads Experience</h3>
-                  <p className="text-gray-600">Clean, ad-free interface</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-              <h3 className="font-semibold text-purple-900 mb-2">How It Works:</h3>
-              <ol className="space-y-2 text-sm text-purple-700">
-                <li>1. Refer 20+ friends using their names or emails</li>
-                <li>2. Submit the referral form with all details</li>
-                <li>3. Admin team verifies your referrals</li>
-                <li>4. Get instant Premium access once approved</li>
-              </ol>
-            </div>
-          </Card>
-        </div>
-
-        {/* Support Section */}
-        <Card className="mt-8 p-6 bg-blue-50">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Need Help?</h3>
-          <div className="text-gray-700">
-            <p className="mb-2">If you face any issues with referrals, contact our support team:</p>
-            <p className="font-medium">📧 fasthiremela@gmail.com</p>
-            <p className="text-sm text-gray-600 mt-2">We typically respond within 24 hours.</p>
-          </div>
-        </Card>
-
-        {/* Back to Dashboard */}
-        <div className="mt-8 text-center">
-          <Link to="/dashboard">
-            <Button variant="outline" className="border-gray-300 text-gray-700 px-6 py-3 rounded-lg">
-              ← Back to Dashboard
-            </Button>
+    <div className="min-h-screen bg-[#fafafa]">
+      {/* Dynamic Header Section */}
+      <div className="bg-[#050505] pt-24 pb-16 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-purple-600/20 blur-[100px] rounded-full" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <Link to="/dashboard" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8 group">
+            <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+            <span className="text-sm font-bold uppercase tracking-widest">Back to Dashboard</span>
           </Link>
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-400">
+                  <Gift size={24} />
+                </div>
+                <span className="text-purple-400 font-black tracking-widest uppercase text-xs">Premium Access</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">
+                Refer Friends, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Go Premium.</span>
+              </h1>
+              <p className="text-gray-400 text-lg font-medium">
+                Unlock exclusive tools and priority visibility by sharing FastHireMela with 20 friends.
+              </p>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 backdrop-blur-md p-6 rounded-[2rem] text-center min-w-[200px]">
+              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Your Progress</p>
+              <div className={`text-5xl font-black mb-1 ${isEligible ? 'text-green-400' : 'text-purple-400'}`}>
+                {referralCount}<span className="text-2xl text-gray-600">/20</span>
+              </div>
+              <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mt-3">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min((referralCount / 20) * 100, 100)}%` }}
+                  className={`h-full ${isEligible ? 'bg-green-400' : 'bg-purple-400'}`}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 -mt-8 pb-20">
+        <div className="grid lg:grid-cols-12 gap-8">
+
+          {/* Left Side: Benefits (Col 5) */}
+          <div className="lg:col-span-5 space-y-6 order-2 lg:order-1">
+            <Card className="p-8 border-none shadow-xl shadow-purple-900/5 bg-white rounded-[2.5rem]">
+              <h2 className="text-xl font-black text-gray-900 mb-8 flex items-center gap-2">
+                <Sparkles className="text-purple-500" size={20} />
+                Premium Features
+              </h2>
+
+              <div className="space-y-6">
+                {[
+                  { icon: <Infinity />, title: "Unlimited Applications", desc: "No daily limits on job applies." },
+                  { icon: <Zap />, title: "Priority Job Alerts", desc: "Get notified 2 hours before others." },
+                  { icon: <ShieldCheck />, title: "Resume Highlighting", desc: "Priority visibility to recruiters." },
+                  { icon: <BarChart3 />, title: "Advanced Analytics", desc: "See who viewed your profile." }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4 group">
+                    <div className="w-12 h-12 shrink-0 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-purple-50 group-hover:text-purple-600 transition-colors">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 leading-none mb-1">{item.title}</h3>
+                      <p className="text-sm text-gray-500 font-medium">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-10 pt-8 border-t border-gray-100">
+                <h4 className="font-black text-xs uppercase tracking-[0.2em] text-gray-400 mb-4">How it works</h4>
+                <div className="space-y-4">
+                  {[
+                    "List 20+ friend emails/names below",
+                    "Our team verifies the referrals",
+                    "Premium features unlock instantly"
+                  ].map((text, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                      <div className="w-5 h-5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[10px]">
+                        {i + 1}
+                      </div>
+                      {text}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Card>
+
+            <div className="bg-blue-600 rounded-[2rem] p-8 text-white relative overflow-hidden">
+              <div className="relative z-10">
+                <h3 className="font-black mb-2">Need Help?</h3>
+                <p className="text-blue-100 text-sm mb-4">Facing issues with referral tracking?</p>
+                <a href="mailto:fasthiremela@gmail.com" className="inline-flex items-center gap-2 font-bold bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition-colors">
+                  fasthiremela@gmail.com
+                </a>
+              </div>
+              <div className="absolute -bottom-4 -right-4 opacity-20">
+                <HelpCircle size={100} />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side: Form (Col 7) */}
+          <div className="lg:col-span-7 order-1 lg:order-2">
+            <Card className="p-8 md:p-10 border-none shadow-2xl shadow-gray-200/50 bg-white rounded-[2.5rem]">
+              <div className="flex items-center gap-3 mb-8">
+                <Users className="text-purple-600" />
+                <h2 className="text-2xl font-black text-gray-900">Submission Form</h2>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Full Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-purple-500 transition-all font-medium"
+                      placeholder="John Doe"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Mobile Number</label>
+                    <input
+                      type="tel"
+                      name="mobile"
+                      value={formData.mobile}
+                      onChange={handleInputChange}
+                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-purple-500 transition-all font-medium"
+                      placeholder="+91 00000 00000"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-purple-500 transition-all font-medium"
+                    placeholder="john@example.com"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center ml-1">
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-400">Referred Users List</label>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${isEligible ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
+                      {referralCount} detected
+                    </span>
+                  </div>
+                  <textarea
+                    name="referred_users"
+                    value={formData.referred_users}
+                    onChange={handleInputChange}
+                    rows="8"
+                    className="w-full px-5 py-4 bg-gray-50 border-none rounded-[2rem] focus:ring-2 focus:ring-purple-500 transition-all font-medium resize-none"
+                    placeholder="Enter one email/name per line..."
+                    required
+                  />
+                </div>
+
+                <AnimatePresence>
+                  {error && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100">
+                      <AlertCircle size={18} />
+                      <p className="text-sm font-bold">{error}</p>
+                    </motion.div>
+                  )}
+                  {success && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 p-4 bg-green-50 text-green-700 rounded-2xl border border-green-100">
+                      <CheckCircle size={18} />
+                      <p className="text-sm font-bold">{success}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full py-5 rounded-[2rem] font-black text-white uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 ${isEligible
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 shadow-green-500/20'
+                      : 'bg-gradient-to-r from-purple-600 to-pink-600 shadow-purple-500/20'
+                    }`}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="animate-spin" /> Verifying...
+                    </span>
+                  ) : (
+                    isEligible ? '🚀 Unlock Premium Access' : 'Submit My Referrals'
+                  )}
+                </Button>
+              </form>
+            </Card>
+          </div>
+
         </div>
       </div>
     </div>

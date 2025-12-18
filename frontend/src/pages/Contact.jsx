@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Clock, ShieldCheck } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -27,18 +27,13 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Connect to backend API using proper API service
       const response = await fetch('http://localhost:5000/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const result = await response.json();
       
@@ -46,7 +41,7 @@ const Contact = () => {
         addToast('Message sent successfully! We\'ll get back to you soon.', 'success');
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
-        addToast(result.message || 'Failed to send message. Please try again.', 'error');
+        addToast(result.message || 'Failed to send message.', 'error');
       }
     } catch (error) {
       console.error('Error submitting contact form:', error);
@@ -57,195 +52,172 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <div className="min-h-screen bg-[#f8fafc]">
+      {/* Enhanced Hero Section */}
+      <div className="relative bg-slate-900 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 z-0" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Contact Us
+            <span className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wide text-blue-400 uppercase bg-blue-400/10 rounded-full">
+              Get in Touch
+            </span>
+            <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
+              How can we <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">help you?</span>
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-              We're here to help you find your dream job or perfect candidate
+            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              Whether you're looking for your next career move or seeking world-class talent, our team is ready to assist.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Contact Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-3 gap-12">
-          {/* Contact Information */}
-          <div className="lg:col-span-1">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Get in Touch</h2>
-            
-            <div className="space-y-6">
-              <Card className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-blue-100 rounded-full p-3">
-                    <Mail className="h-6 w-6 text-blue-600" />
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-20 relative z-20">
+        <div className="grid lg:grid-cols-12 gap-8">
+          
+          {/* Left Column: Contact Info */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="grid grid-cols-1 gap-4">
+              {[
+                { icon: Mail, color: "text-blue-600", bg: "bg-blue-50", title: "Email Us", detail: "fasthiremela@gmail.com", sub: "Response within 24 hours" },
+                { icon: Phone, color: "text-emerald-600", bg: "bg-emerald-50", title: "Call Us", detail: "+91 900-XXX-XXX", sub: "Mon-Fri, 9AM-6PM IST" },
+                { icon: MapPin, color: "text-purple-600", bg: "bg-purple-50", title: "Location", detail: "Kakinada, India", sub: "Available for meetings" }
+              ].map((item, idx) => (
+                <Card key={idx} className="p-6 border-none shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div className="flex items-center space-x-4">
+                    <div className={`${item.bg} p-3 rounded-2xl`}>
+                      <item.icon className={`h-6 w-6 ${item.color}`} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">{item.title}</p>
+                      <p className="text-lg font-bold text-slate-900">{item.detail}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{item.sub}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Gmail Us</h3>
-                    <p className="text-gray-600">fasthiremela@gmail.com</p>
-                    <p className="text-sm text-gray-500 mt-1">We'll respond within 24 hours</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-green-100 rounded-full p-3">
-                    <Phone className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
-                    <p className="text-gray-600">+91 900-XXX-XXX</p>
-                    <p className="text-sm text-gray-500 mt-1">Mon-Fri: 9AM-6PM IST</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-purple-100 rounded-full p-3">
-                    <MapPin className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Office Location</h3>
-                    <p className="text-gray-600">Kakinada, India</p>
-                    <p className="text-sm text-gray-500 mt-1">By appointment only</p>
-                  </div>
-                </div>
-              </Card>
+                </Card>
+              ))}
             </div>
 
-            {/* Support Hours */}
-            <Card className="mt-8 p-6 bg-blue-50">
-              <h3 className="font-semibold text-gray-900 mb-4">Support Hours</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Monday - Friday</span>
-                  <span className="font-medium">9:00 AM - 6:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Saturday</span>
-                  <span className="font-medium">Closed</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Sunday</span>
-                  <span className="font-medium">Closed</span>
-                </div>
+            {/* Support Hours Card */}
+            <Card className="p-6 border-none shadow-sm bg-white overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-4 opacity-5">
+                <Clock className="h-24 w-24" />
+              </div>
+              <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <Clock className="h-5 w-5 text-blue-600" />
+                Support Hours
+              </h3>
+              <div className="space-y-3 text-sm">
+                {[
+                  { day: "Monday - Friday", time: "9:00 AM - 6:00 PM" },
+                  { day: "Saturday - Sunday", time: "Closed", dim: true }
+                ].map((row, i) => (
+                  <div key={i} className={`flex justify-between items-center py-2 border-b border-slate-50 last:border-0 ${row.dim ? 'text-slate-400' : 'text-slate-700'}`}>
+                    <span>{row.day}</span>
+                    <span className="font-semibold">{row.time}</span>
+                  </div>
+                ))}
               </div>
             </Card>
           </div>
 
-          {/* Contact Form */}
-          <div className="lg:col-span-2">
-            <Card className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+          {/* Right Column: Form & FAQ */}
+          <div className="lg:col-span-8 space-y-8">
+            <Card className="p-8 border-none shadow-xl bg-white">
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-slate-900">Send us a Message</h2>
+                <p className="text-slate-500 mt-1">Fields marked with an asterisk (*) are required.</p>
+              </div>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                      Your Name *
-                    </label>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700">Your Name *</label>
                     <Input
-                      id="name"
                       name="name"
-                      type="text"
                       required
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="John Doe"
+                      className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
                     />
                   </div>
-                  
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address *
-                    </label>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700">Email Address *</label>
                     <Input
-                      id="email"
                       name="email"
                       type="email"
                       required
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="john@example.com"
+                      className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                    Subject *
-                  </label>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-700">Subject *</label>
                   <Input
-                    id="subject"
                     name="subject"
-                    type="text"
                     required
                     value={formData.subject}
                     onChange={handleChange}
                     placeholder="How can we help you?"
+                    className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    Message *
-                  </label>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-700">Message *</label>
                   <textarea
-                    id="message"
                     name="message"
                     required
-                    rows={6}
+                    rows={5}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Tell us more about how we can help you..."
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                    placeholder="Tell us more about your needs..."
                   />
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-500">
-                    We'll never share your information with anyone else.
-                  </p>
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
+                  <div className="flex items-center text-slate-500 text-sm gap-2">
+                    <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                    We value your privacy.
+                  </div>
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex items-center space-x-2"
+                    className="w-full sm:w-auto px-8 py-6 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 active:scale-95 transition-all"
                   >
-                    <Send className="h-4 w-4" />
-                    <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
+                    <div className="flex items-center justify-center gap-2">
+                      {isSubmitting ? 'Sending...' : (
+                        <>
+                          <span className="font-bold">Send Message</span>
+                          <Send className="h-4 w-4" />
+                        </>
+                      )}
+                    </div>
                   </Button>
                 </div>
               </form>
             </Card>
 
             {/* FAQ Section */}
-            <Card className="mt-8 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">How quickly will I hear back?</h3>
-                  <p className="text-gray-600">We typically respond to all inquiries within 24 hours during business days.</p>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Do you offer phone support?</h3>
-                  <p className="text-gray-600">Yes, phone support is available Monday-Friday from 9AM-6PM IST.</p>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Can I schedule a demo?</h3>
-                  <p className="text-gray-600">Absolutely! Contact us to schedule a personalized demo of our platform.</p>
-                </div>
-              </div>
-            </Card>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                { q: "How quickly will I hear back?", a: "We typically respond to all inquiries within 24 hours during business days." },
+                { q: "Can I schedule a demo?", a: "Absolutely! Contact us to schedule a personalized demo of our platform." }
+              ].map((faq, i) => (
+                <Card key={i} className="p-6 border-none shadow-sm bg-white hover:bg-slate-50 transition-colors">
+                  <h3 className="font-bold text-slate-900 mb-2">{faq.q}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -1,34 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
-  Building2, 
-  MapPin, 
-  Clock, 
-  Users,
-  Briefcase,
-  Share2,
-  ExternalLink,
-  XCircle,
-  ArrowLeft,
-  Bookmark,
-  Calendar,
-  TrendingUp,
-  CheckCircle,
-  AlertCircle
+  Building2, MapPin, Share2, ExternalLink, 
+  XCircle, ArrowLeft, Bookmark, Calendar, TrendingUp, ChevronRight, Zap, ShieldCheck
 } from 'lucide-react';
 import Button from '../../components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useToast } from '../../components/ui/toastUtils';
 import { 
-  getJobDetails, 
-  getSimilarJobs,
-  saveJob,
-  unsaveJob,
-  getSavedJobs,
-  utils 
+  getJobDetails, getSimilarJobs, saveJob, unsaveJob, getSavedJobs, trackApplication, utils 
 } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -41,12 +23,10 @@ const JobDetails = () => {
   const [isSaving, setIsSaving] = useState(false);
   const queryClient = useQueryClient();
 
-  // Get saved jobs
+  // API Logic (Identical to source)
   const { data: savedJobsData } = useQuery({
     queryKey: ['savedJobs'],
-    queryFn: () => {
-      return getSavedJobs();
-    },
+    queryFn: () => getSavedJobs(),
     enabled: !!user,
     select: (data) => data?.data?.saved_jobs || [],
   });
@@ -54,46 +34,26 @@ const JobDetails = () => {
   const jobId = parseInt(id);
   const isJobSaved = savedJobsData?.some(savedJob => savedJob.id === jobId);
 
-  // Save job mutation
   const saveJobMutation = useMutation({
     mutationFn: saveJob,
     onSuccess: (data) => {
-      toast.success(data.message || 'Job saved successfully!');
+      toast.success('Job Bookmarked');
       queryClient.invalidateQueries(['savedJobs']);
-      setTimeout(() => {
-        navigate('/dashboard/saved-jobs');
-      }, 1500);
-    },
-    onError: (error) => {
-      const errorMessage = error.response?.data?.message || 'Failed to save job';
-      toast.error(errorMessage);
     },
   });
 
-  // Unsave job mutation
   const unsaveJobMutation = useMutation({
     mutationFn: unsaveJob,
-    onSuccess: (data) => {
-      toast.success(data.message || 'Job removed from saved jobs');
-      queryClient.invalidateQueries(['savedJobs']);
-    },
-    onError: (error) => {
-      const errorMessage = error.response?.data?.message || 'Failed to remove job';
-      toast.error(errorMessage);
-    },
+    onSuccess: () => queryClient.invalidateQueries(['savedJobs']),
   });
 
-  // Fetch job details
-  const { data: jobData, isLoading, error } = useQuery({
+  const { data: job, isLoading, error } = useQuery({
     queryKey: ['job', id],
     queryFn: () => getJobDetails(id),
     enabled: !!id,
     select: (data) => data?.data?.job, 
   });
 
-  const job = jobData;
-
-  // Fetch similar jobs
   const { data: similarJobs } = useQuery({
     queryKey: ['similarJobs', id],
     queryFn: () => id ? getSimilarJobs(id) : Promise.resolve({ data: { jobs: [] } }),
@@ -101,443 +61,170 @@ const JobDetails = () => {
     select: (data) => data?.data?.jobs || [],
   });
 
-  // Track job view
-  useEffect(() => {
-    if (job) {
-      console.log('Job viewed:', job.id);
-    }
-  }, [job]);
-
-  const handleApply = () => {
-    if (!user) {
-      toast.error('Please login to apply');
-      navigate('/login');
-      return;
-    }
-
-    if (job?.apply_link) {
-      window.open(job.apply_link, '_blank');
-    } else {
-      toast.error('No application URL available for this job');
-    }
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: job?.title,
-          text: `Check out this ${job?.title} position at ${job?.company_name}`,
-          url: window.location.href,
-        });
-      } catch (error) {
-        console.log('Error sharing:', error);
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard!');
-    }
-  };
-
   const handleSaveJob = async () => {
     if (!user) {
-      toast.error('Please login to save jobs');
       navigate('/login');
       return;
     }
-
-    const isUserPremium = user.is_premium || user.isPremium;
     
-    if (!isUserPremium) {
-      toast.info('Saving jobs is a premium feature. Please upgrade to premium!');
-      navigate('/premium-checkout');
+    if (!user.is_premium) {
+      toast.error('Save jobs is a premium feature. Upgrade to premium!');
+      navigate('/premium');
       return;
     }
-
+    
     setIsSaving(true);
     try {
-      if (isJobSaved) {
-        await unsaveJobMutation.mutateAsync(id);
-      } else {
-        await saveJobMutation.mutateAsync(id);
-      }
-    } finally {
-      setIsSaving(false);
+      if (isJobSaved) await unsaveJobMutation.mutateAsync(id);
+      else await saveJobMutation.mutateAsync(id);
+    } finally { setIsSaving(false); }
+  };
+
+  const handleApplyJob = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    
+    try {
+      // Track the application for logged-in users
+      await trackApplication(id);
+      toast.success('Application tracked successfully');
+      
+      // Redirect to external application link
+      window.open(job.apply_link, '_blank');
+    } catch (error) {
+      toast.error('Failed to track application');
+      // Still redirect to external link even if tracking fails
+      window.open(job.apply_link, '_blank');
     }
   };
 
-  // Calculate days until deadline
- const safeParseDate = (dateString) => {
-  if (!dateString) return null;
-
-  const [y, m, d] = dateString.split('T')[0].split('-');
-  return new Date(Number(y), Number(m) - 1, Number(d));
-};
-
-const formatIndianDate = (dateString) => {
-  const date = safeParseDate(dateString);
-  if (!date) return 'N/A';
-
-  return date.toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  });
-};
-
-const getDaysUntilDeadline = (deadline) => {
-  const deadlineDate = safeParseDate(deadline);
-  if (!deadlineDate) return null;
-
-  const today = new Date();
-  const todayDate = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
-
-  return Math.ceil(
-    (deadlineDate - todayDate) / (1000 * 60 * 60 * 24)
-  );
-};
-
-const daysUntilDeadline = getDaysUntilDeadline(job?.application_deadline);
-const isUrgent =
-  typeof daysUntilDeadline === 'number' &&
-  daysUntilDeadline > 0 &&
-  daysUntilDeadline <= 7;
-
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
-
-  if (error || !job) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-8 bg-white rounded-xl shadow-lg max-w-md">
-          <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Job Not Found</h2>
-          <p className="text-gray-600 mb-6">The job you're looking for doesn't exist or has been removed.</p>
-          <Link to="/jobs">
-            <Button className="w-full">Browse Other Jobs</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-white"><LoadingSpinner size="lg" /></div>;
+  if (error || !job) return <div className="p-20 text-center font-black">Job Not Found</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-8">
-      {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/jobs" className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Jobs
-            </Link>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleShare}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              <Share2 className="w-4 h-4" />
-            </Button>
-          </div>
+    <div className="min-h-screen bg-white">
+      
+      {/* MOBILE HEADER - APP STYLE */}
+      <div className="lg:hidden sticky top-0 z-50 bg-white/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2"><ArrowLeft size={24} /></button>
+        <div className="flex gap-2">
+          <button onClick={() => {}} className="p-2"><Share2 size={22} /></button>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              {/* Job Header Card */}
-              <Card className="mb-6 overflow-hidden">
-                <CardContent className="p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6">
-                    <div className="flex items-start space-x-4 mb-4 sm:mb-0">
-                      <img
-                        src={job.company_logo || '/api/placeholder/80/80'}
-                        alt={job.company_name}
-                        className="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-gray-200"
-                      />
-                      <div className="flex-1">
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">{job.title}</h1>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-gray-600">
-                          <div className="flex items-center">
-                            <Building2 className="w-4 h-4 mr-1" />
-                            {job.company_name}
-                          </div>
-                          <div className="flex items-center">
-                            <MapPin className="w-4 h-4 mr-1" />
-                            {job.location}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="hidden sm:flex items-center space-x-2">
-                      <Button
-                        variant={isJobSaved ? "default" : "outline"}
-                        size="sm"
-                        onClick={handleSaveJob}
-                        disabled={isSaving || saveJobMutation.isLoading || unsaveJobMutation.isLoading}
-                      >
-                        <Bookmark 
-                          className={`w-4 h-4 mr-2 ${isJobSaved ? 'fill-white' : ''}`} 
-                        />
-                        {isJobSaved ? 'Saved' : 'Save'}
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Key Information Cards */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                      <TrendingUp className="w-5 h-5 text-green-600 mb-2" />
-                      <div className="text-sm font-semibold text-gray-900">
-                        {utils.formatSalary(job.salary_min, job.salary_max)}
-                      </div>
-                      <div className="text-xs text-gray-600">Salary (India)</div>
-                    </div>
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                      <Briefcase className="w-5 h-5 text-blue-600 mb-2" />
-                      <div className="text-sm font-semibold text-gray-900 capitalize">{job.job_type || 'N/A'}</div>
-                      <div className="text-xs text-gray-600">Job Type</div>
-                    </div>
-                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                      <Users className="w-5 h-5 text-purple-600 mb-2" />
-                      <div className="text-sm font-semibold text-gray-900">
-                        {utils.formatExperience(job.experience_min, job.experience_max)}
-                      </div>
-                      <div className="text-xs text-gray-600">Experience</div>
-                    </div>
-                    <div className={`p-4 rounded-lg border ${isUrgent ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
-                      <Calendar className={`w-5 h-5 mb-2 ${isUrgent ? 'text-red-600' : 'text-gray-600'}`} />
-                      <div className="text-sm font-semibold text-gray-900">
-                        {job.application_deadline ? (
-                          isUrgent ? `${daysUntilDeadline} days left` : utils.formatPostedDate(job.application_deadline)
-                        ) : 'No deadline'}
-                      </div>
-                      <div className="text-xs text-gray-600">Deadline</div>
-                    </div>
-                  </div>
-
-                  {/* Skills */}
-                  {job.skills_required && job.skills_required.length > 0 && (
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Required Skills</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {job.skills_required.map((skill, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Job Details Tabs */}
-                  <div className="border-b border-gray-200 mb-6">
-                    <nav className="flex space-x-8">
-                      {['description', 'requirements', 'benefits'].map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveTab(tab)}
-                          className={`py-2 px-1 border-b-2 font-medium text-sm capitalize transition-colors ${
-                            activeTab === tab
-                              ? 'border-blue-500 text-blue-600'
-                              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                          }`}
-                        >
-                          {tab}
-                        </button>
-                      ))}
-                    </nav>
-                  </div>
-
-                  {/* Tab Content */}
-                  <div className="prose prose-gray max-w-none">
-                    {activeTab === 'description' && job.description && (
-                      <div 
-                        dangerouslySetInnerHTML={{ __html: job.description }}
-                      />
-                    )}
-                    {activeTab === 'requirements' && job.responsibilities && (
-                      <div 
-                        dangerouslySetInnerHTML={{ __html: job.responsibilities }}
-                      />
-                    )}
-                    {activeTab === 'benefits' && job.skills_required && (
-                      <div 
-                        dangerouslySetInnerHTML={{ __html: job.skills_required }}
-                      />
-                    )}
-                  </div>
-
-                  {/* Apply Button - Desktop */}
-                  <div className="hidden lg:flex mt-6 pt-6 border-t border-gray-200">
-                    <Button
-                      size="lg"
-                      onClick={handleApply}
-                      className="flex-1"
-                    >
-                      <ExternalLink className="w-5 h-5 mr-2" />
-                      Apply Now
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Company Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>About {job.company_name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center space-x-4 mb-4">
-                    <img
-                      src={job.company_logo || '/api/placeholder/60/60'}
-                      alt={job.company_name}
-                      className="w-12 h-12 rounded-lg object-cover"
-                    />
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{job.company_name}</h3>
-                      <p className="text-gray-600 text-sm">{job.industry || 'Technology'}</p>
-                    </div>
-                  </div>
-                  {job.company_description && (
-                    <div 
-                      className="prose prose-gray max-w-none text-sm"
-                      dangerouslySetInnerHTML={{ __html: job.company_description }}
-                    />
-                  )}
-                  <div className="mt-4">
-                    <Link to={`/jobs?company=${job.company_id}`}>
-                      <Button variant="outline" size="sm">
-                        View All Jobs
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="lg:sticky lg:top-24 space-y-6">
-                {/* Job Summary */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Job Summary</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Posted:</span>
-                        <span className="font-medium">{formatIndianDate(job.posted_date)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Views:</span>
-                        <span className="font-medium">{job.view_count || 0}</span>
-                      </div>
-                      {job.application_deadline && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Deadline:</span>
-                          <span className={`font-medium ${isUrgent ? 'text-red-600' : 'text-gray-900'}`}>
-                            {formatIndianDate(job.application_deadline)}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Similar Jobs */}
-                {similarJobs && similarJobs.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Similar Jobs</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {similarJobs.slice(0, 3).map((similarJob) => (
-                          <Link
-                            key={similarJob.id}
-                            to={`/jobs/${similarJob.id}`}
-                            className="block p-3 border rounded-lg hover:bg-gray-50 transition-colors"
-                          >
-                            <h4 className="font-semibold text-gray-900 mb-1 truncate">{similarJob.title}</h4>
-                            <div className="text-sm text-gray-600 mb-2 truncate">{similarJob.company_name}</div>
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-gray-500 truncate">{similarJob.location}</span>
-                              <span className="text-green-600 font-medium flex-shrink-0">
-                                {utils.formatSalary(similarJob.salary_min, similarJob.salary_max)}
-                              </span>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                      <div className="mt-4">
-                        <Link to="/jobs">
-                          <Button variant="outline" className="w-full">
-                            View More Jobs
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+      <main className="max-w-7xl mx-auto lg:px-12 lg:py-16">
+        <div className="flex flex-col lg:flex-row gap-16">
+          
+          <div className="flex-1">
+            {/* HERO SECTION */}
+            <section className="px-6 lg:px-0 space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 p-2 shadow-sm">
+                  <img src={job.company_logo} alt="" className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 flex items-center gap-1">
+                    {job.company_name} <ShieldCheck size={16} className="text-blue-500 fill-blue-50" />
+                  </h3>
+                  <p className="text-slate-500 font-medium text-sm">{job.location}</p>
+                </div>
               </div>
-            </motion.div>
+
+              <h1 className="text-5xl lg:text-7xl font-black tracking-tight text-slate-900 leading-[0.95]">
+                {job.title}
+              </h1>
+
+              {/* DATA STRIP - HIGH END APP LOOK */}
+              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                {[
+                  { label: 'Package', val: utils.formatSalary(job.salary_min, job.salary_max), color: 'bg-emerald-50 text-emerald-700' },
+                  { label: 'Exp', val: utils.formatExperience(job.experience_min, job.experience_max), color: 'bg-blue-50 text-blue-700' },
+                  { label: 'Type', val: job.job_type, color: 'bg-slate-100 text-slate-700' },
+                  { label: 'Status', val: 'Active', color: 'bg-orange-50 text-orange-700' },
+                ].map((item, idx) => (
+                  <div key={idx} className={`${item.color} px-5 py-3 rounded-2xl shrink-0`}>
+                    <p className="text-[10px] font-black uppercase opacity-60 mb-0.5 tracking-widest">{item.label}</p>
+                    <p className="text-sm font-black">{item.val}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* TABBED CONTENT */}
+            <section className="mt-12">
+              <div className="flex px-6 lg:px-0 gap-8 border-b border-slate-100">
+                {['description', 'requirements', 'benefits'].map((t) => (
+                  <button 
+                    key={t} 
+                    onClick={() => setActiveTab(t)}
+                    className={`pb-4 text-xs font-black uppercase tracking-[0.2em] relative transition-all ${activeTab === t ? 'text-blue-600' : 'text-slate-400'}`}
+                  >
+                    {t}
+                    {activeTab === t && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-full" />}
+                  </button>
+                ))}
+              </div>
+
+              <div className="px-6 lg:px-0 py-10 prose prose-slate max-w-none">
+                 <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeTab}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-slate-600 text-lg leading-relaxed font-medium"
+                    >
+                      {activeTab === 'description' && <div dangerouslySetInnerHTML={{ __html: job.description }} />}
+                      {activeTab === 'requirements' && <div dangerouslySetInnerHTML={{ __html: job.responsibilities }} />}
+                      {activeTab === 'benefits' && <div dangerouslySetInnerHTML={{ __html: job.skills_required }} />}
+                    </motion.div>
+                 </AnimatePresence>
+              </div>
+            </section>
           </div>
+
+          {/* DESKTOP SIDEBAR */}
+          <aside className="hidden lg:block w-96">
+            <div className="sticky top-12 p-10 bg-slate-50 rounded-[3rem] space-y-8 border border-slate-100 shadow-sm">
+              <div>
+                <h4 className="text-2xl font-black mb-2 text-slate-900">Start Application</h4>
+                <p className="text-slate-500 font-medium">Join a fast-growing team at {job.company_name}.</p>
+              </div>
+              <Button onClick={handleApplyJob} className="w-full py-8 rounded-[2rem] bg-blue-600 text-white font-black text-xl shadow-2xl shadow-blue-200">
+                Apply Now
+              </Button>
+              <button 
+                onClick={handleSaveJob}
+                className="w-full py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-white transition-all"
+              >
+                {isJobSaved ? 'Saved in Collection' : (user && !user.is_premium ? 'Save for Later (Premium)' : 'Save for Later')}
+              </button>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      {/* THE ELITE DOCK (MOBILE ONLY) */}
+      <div className="lg:hidden fixed bottom-8 left-6 right-6 z-50">
+        <div className="bg-slate-900/95 backdrop-blur-2xl rounded-[2.5rem] p-3 flex items-center gap-3 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] border border-white/10">
+           <button 
+             onClick={handleSaveJob}
+             className={`w-16 h-16 flex items-center justify-center rounded-[2rem] transition-all ${
+               isJobSaved ? 'bg-blue-600 text-white shadow-inner' : 'bg-slate-800 text-slate-400'
+             }`}
+           >
+             <Bookmark size={26} className={isJobSaved ? 'fill-white' : ''} />
+           </button>
+           <button 
+             onClick={handleApplyJob}
+             className="flex-1 h-16 bg-white text-black font-black rounded-[2rem] text-sm tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-all shadow-xl"
+           >
+             APPLY NOW <Zap size={18} className="fill-black" />
+           </button>
         </div>
       </div>
 
-      {/* Mobile Sticky Footer */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t shadow-2xl z-50">
-        <div className="flex gap-3 items-center">
-          <Button
-            variant={isJobSaved ? "default" : "outline"}
-            size="lg"
-            onClick={handleSaveJob}
-            className="w-1/4 flex-shrink-0"
-            disabled={isSaving || saveJobMutation.isLoading || unsaveJobMutation.isLoading}
-          >
-            <Bookmark
-              className={`w-6 h-6 ${isJobSaved ? 'fill-white text-white' : 'text-gray-500'}`}
-            />
-          </Button>
-          <Button
-            size="lg"
-            onClick={handleApply}
-            className="flex-auto"
-          >
-            <ExternalLink className="w-5 h-5 mr-2" />
-            Apply Now
-          </Button>
-        </div>
-      </div>
     </div>
   );
 };

@@ -43,6 +43,7 @@ import databaseRoutes from './routes/database.js';
 import otpRoutes from './routes/otp.js';
 import sessionsRoutes from './routes/sessions.js';
 import referralRoutes from './routes/referrals.js';
+import errorRoutes from './routes/errors.js';
 
 // Load environment variables
 dotenv.config();
@@ -71,8 +72,8 @@ app.use(cors({
   origin: [
     'https://fasthiremelafrontend.netlify.app', 
     'https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api',
-    'https://fasthiremela.online',
-    'http://localhost:5174',
+    'https://www.fasthiremela.online',
+    'https://fasthiremeladmin.netlify.app',
     process.env.FRONTEND_URL,
     process.env.FRONTEND_URL2,
     process.env.ADMIN_URL
@@ -173,6 +174,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/sessions', sessionsRoutes);
 app.use('/api/referral', referralRoutes);
+app.use('/api/errors', errorRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
