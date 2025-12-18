@@ -193,12 +193,29 @@ const Login = () => {
                   <Button
                     variant="outline"
                     className="w-full h-11 border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all font-medium"
-                    onClick={() => {
-                      const githubUrl = new URL('https://github.com/login/oauth/authorize');
-                      githubUrl.searchParams.set('client_id', 'Ov23li8q5hA7KKjTE3pV');
-                      githubUrl.searchParams.set('redirect_uri', 'https://www.fasthiremela.online/auth/callback/github');
-                      githubUrl.searchParams.set('scope', 'user:email');
-                      window.open(githubUrl.toString(), '_blank');
+                    onClick={async () => {
+                      try {
+                        // Request secure OAuth URL from backend
+                        const response = await fetch('https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api/oauth/auth-url', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            provider: 'github',
+                            redirectUri: 'https://www.fasthiremela.online/auth/callback/github'
+                          })
+                        });
+                        
+                        const data = await response.json();
+                        if (data.success) {
+                          window.open(data.data.authUrl, '_blank');
+                        } else {
+                          console.error('Failed to generate GitHub OAuth URL:', data.message);
+                        }
+                      } catch (error) {
+                        console.error('Error generating GitHub OAuth URL:', error);
+                      }
                     }}
                   >
                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="#333">
@@ -212,14 +229,29 @@ const Login = () => {
                   <Button
                     variant="outline"
                     className="w-full h-11 border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all font-medium"
-                    onClick={() => {
-                      const linkedinUrl = new URL('https://www.linkedin.com/oauth/v2/authorization');
-                      linkedinUrl.searchParams.set('response_type', 'code');
-                      linkedinUrl.searchParams.set('client_id', '86i375i6isfvvv');
-                      linkedinUrl.searchParams.set('redirect_uri', 'https://www.fasthiremela.online/auth/callback/linkedin');
-                      linkedinUrl.searchParams.set('scope', 'r_liteprofile r_emailaddress');
-                      linkedinUrl.searchParams.set('state', '1234567890');
-                      window.open(linkedinUrl.toString(), '_blank');
+                    onClick={async () => {
+                      try {
+                        // Request secure OAuth URL from backend
+                        const response = await fetch('https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api/oauth/auth-url', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            provider: 'linkedin',
+                            redirectUri: 'https://www.fasthiremela.online/auth/callback/linkedin'
+                          })
+                        });
+                        
+                        const data = await response.json();
+                        if (data.success) {
+                          window.open(data.data.authUrl, '_blank');
+                        } else {
+                          console.error('Failed to generate LinkedIn OAuth URL:', data.message);
+                        }
+                      } catch (error) {
+                        console.error('Error generating LinkedIn OAuth URL:', error);
+                      }
                     }}
                   >
                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="#0077B5">

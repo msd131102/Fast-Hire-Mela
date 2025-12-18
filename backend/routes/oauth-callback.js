@@ -29,6 +29,101 @@ const generateToken = (userId, role) => {
   );
 };
 
+// Generate secure state parameter for OAuth
+const generateState = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
+
+// Verify state parameter for CSRF protection
+const verifyState = (providedState, expectedState) => {
+  if (!providedState || !expectedState) {
+    return false;
+  }
+  return crypto.timingSafeEqual(
+    Buffer.from(providedState, 'hex'),
+    Buffer.from(expectedState, 'hex')
+  );
+};
+
+// Generate PKCE code challenge and verifier
+const generatePKCE = () => {
+  const codeVerifier = crypto.randomBytes(32).toString('base64url');
+  const codeChallenge = crypto
+    .createHash('sha256')
+    .update(codeVerifier)
+    .digest('base64url');
+  
+  return {
+    codeVerifier,
+    codeChallenge
+  };
+};
+
+// Generate OAuth authorization URL with security parameters
+router.post('/auth-url', async (req, res) => {
+  try {
+    const { provider, redirectUri } = req.body;
+    
+    if (!provider || !redirectUri) {
+      return res.status(400).json({
+        success: false,
+        message: 'Provider and redirect URI are required'
+      });
+    }
+
+    const state = generateState();
+    const pkce = generatePKCE();
+    
+    let authUrl = '';
+    
+    if (provider === 'github') {
+      authUrl = new URL('https://github.com/login/oauth/authorize');
+      authUrl.searchParams.set('client_id', process.env.GITHUB_CLIENT_ID);
+      authUrl.searchParams.set('redirect_uri', redirectUri);
+      authUrl.searchParams.set('scope', 'user:email');
+      authUrl.searchParams.set('state', state);
+      // GitHub doesn't support PKCE, so we'll use state only
+    } else if (provider === 'linkedin') {
+      authUrl = new URL('https://www.linkedin.com/oauth/v2/authorization');
+      authUrl.searchParams.set('response_type', 'code');
+      authUrl.searchParams.set('client_id', process.env.LINKEDIN_CLIENT_ID);
+      authUrl.searchParams.set('redirect_uri', redirectUri);
+      authUrl.searchParams.set('scope', 'r_liteprofile r_emailaddress');
+      authUrl.searchParams.set('state', state);
+      authUrl.searchParams.set('code_challenge', pkce.codeChallenge);
+      authUrl.searchParams.set('code_challenge_method', 'S256');
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Unsupported OAuth provider'
+      });
+    }
+
+    // Store PKCE verifier in session for later verification
+    req.session = req.session || {};
+    req.session.oauthState = {
+      state,
+      codeVerifier: pkce.codeVerifier,
+      provider
+    };
+
+    res.json({
+      success: true,
+      data: {
+        authUrl: authUrl.toString(),
+        state,
+        codeChallenge: pkce.codeChallenge
+      }
+    });
+  } catch (error) {
+    console.error('OAuth URL generation error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to generate OAuth URL'
+    });
+  }
+});
+
 // OAuth callback handler
 router.post('/callback', async (req, res) => {
   try {
@@ -38,6 +133,15 @@ router.post('/callback', async (req, res) => {
       return res.status(400).json({ 
         success: false, 
         message: 'Authorization code is required' 
+      });
+    }
+
+    // Verify state parameter for CSRF protection
+    const storedOAuthState = req.session?.oauthState;
+    if (!verifyState(state, storedOAuthState?.state)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid state parameter - possible CSRF attack'
       });
     }
 

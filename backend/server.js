@@ -45,6 +45,7 @@ import otpRoutes from './routes/otp.js';
 import sessionsRoutes from './routes/sessions.js';
 import referralRoutes from './routes/referrals.js';
 import errorRoutes from './routes/errors.js';
+import oauthBridgeRoutes from './routes/oauth-bridge.js';
 
 // Load environment variables
 dotenv.config();
@@ -178,6 +179,7 @@ app.use('/api/otp', otpRoutes);
 app.use('/api/sessions', sessionsRoutes);
 app.use('/api/referral', referralRoutes);
 app.use('/api/errors', errorRoutes);
+app.use('/api/oauth-bridge', oauthBridgeRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
