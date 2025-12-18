@@ -44,7 +44,7 @@ const Header = () => {
     { name: 'Categories', href: '/categories', icon: <FolderTree size={16} /> },
     { name: 'User Guidance', href: '/user-guidance', icon: <User size={16} /> },
     { name: 'About', href: '/about', icon: <Info size={16} /> },
-    { name: 'Referrals', href: '/referrals', icon: <Gift size={16} /> }
+    { name: 'Referrals', href: '/premium/referral', icon: <Gift size={16} /> }
   ];
 
   const dashboardNavigation = [
