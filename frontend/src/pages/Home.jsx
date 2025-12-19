@@ -164,15 +164,23 @@ const Home = () => {
       </section>
 
       {/* --- LATEST JOBS --- */}
-      <section className="py-24">
-        <div className="container mx-auto px-4 sm:px-6"> {/* Reduced mobile padding */}
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-            <div className="max-w-xl">
-              <h2 className="text-3xl lg:text-6xl font-black text-gray-900 mb-4 tracking-tighter leading-none">Latest Openings</h2>
-              <p className="text-gray-500 font-medium text-sm sm:text-base">Freshly dropped opportunities.</p>
+      <section className="py-12 sm:py-24"> {/* Reduced top/bottom padding for mobile */}
+        <div className="container mx-auto px-4 sm:px-6 text-left"> {/* Force container text-left */}
+
+          <div className="flex flex-col justify-start items-start mb-8 sm:mb-12 gap-4">
+            <div className="max-w-xl text-left">
+              <h2 className="text-3xl lg:text-6xl font-black text-gray-900 mb-2 tracking-tighter leading-none">
+                Latest Openings
+              </h2>
+              <p className="text-gray-500 font-medium text-sm sm:text-base">
+                Freshly dropped opportunities.
+              </p>
             </div>
+            {/* "View All" button below the text on mobile, left aligned */}
             <Link to="/jobs">
-              <Button variant="outline" className="rounded-full border-gray-200 px-8 font-bold h-12 hidden sm:flex">View All Jobs</Button>
+              <Button variant="outline" className="rounded-full border-gray-200 px-6 font-bold h-10 text-xs sm:text-sm">
+                View All Jobs
+              </Button>
             </Link>
           </div>
 
