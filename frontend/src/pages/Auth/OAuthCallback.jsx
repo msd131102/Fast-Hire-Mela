@@ -147,7 +147,9 @@ const OAuthCallback = () => {
         const urlState = urlParams.get('state');
 
         // Call backend to handle OAuth callback
+        console.log('🔗 Making OAuth callback request:', { code, provider, state: urlState });
         const response = await oauthAPI.callback(code, provider, urlState);
+        console.log('📥 OAuth callback response:', response);
 
         if (response.success) {
           const { user, token } = response.data;
