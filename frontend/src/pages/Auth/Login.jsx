@@ -8,7 +8,6 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { useAuth } from '../../context/AuthContext';
-import { oauthAPI } from '../../services/api';
 
 const Login = () => {
   const navigate = useNavigate();
