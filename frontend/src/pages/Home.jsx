@@ -215,8 +215,10 @@ const Home = () => {
                         {job.salary_min ? `₹${job.salary_min}L` : "Market"}
                       </div>
                     </div>
-                    <div className="flex items-center text-[8px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-tighter mt-1 text-left">
-                      <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" /> {utils.formatPostedDate(job.posted_date)}
+                    {/* Posted Date - Right Side */}
+                    <div className="flex items-center text-[7px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-tighter shrink-0">
+                      <Clock className="w-2 h-2 sm:w-3 sm:h-3 mr-0.5" />
+                      {utils.formatPostedDate(job.posted_date)}
                     </div>
 
                     <Link to={`/jobs/${job.id}`}>

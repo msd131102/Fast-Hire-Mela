@@ -69,7 +69,7 @@ const Header = () => {
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-[100] transition-all duration-200 border-b border-white/10 bg-black",
-      scrolled ? "h-14 shadow-xl" : "h-16" // Decreased heights
+      scrolled ? "h-14 shadow-xl" : "h-16"
     )}>
       <div className="max-w-7xl mx-auto h-full px-4 sm:px-6">
         <div className="flex justify-between items-center h-full">
@@ -79,7 +79,7 @@ const Header = () => {
             <img src={logo} alt="Logo" className="h-6 w-auto sm:h-8 object-contain" />
           </Link>
 
-          {/* DESKTOP NAV */}
+          {/* DESKTOP NAV (Hidden on Mobile) */}
           <nav className="hidden lg:flex items-center gap-1 bg-white/5 border border-white/10 p-1 rounded-full">
             {(isAuthenticated ? dashboardNavigation : navigation).map((item) => (
               <Link
@@ -102,21 +102,19 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* ACTIONS */}
-          <div className="flex items-center gap-3">
-            {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                {isPremium && (
-                  <div className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20">
-                    <Zap size={10} className="text-yellow-500 fill-yellow-500" />
-                    <span className="text-[9px] font-bold text-yellow-500 uppercase">Pro</span>
-                  </div>
-                )}
-                
+          {/* ACTIONS AREA */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            
+            {/* MOBILE ONLY ACTIONS (Shown when LOGGED IN) */}
+            {isAuthenticated && (
+              <div className="flex lg:hidden items-center gap-2 mr-1">
+                <Link to="/dashboard" className="p-1.5 text-gray-400 bg-white/5 rounded-full border border-white/10">
+                  <LayoutDashboard size={16} />
+                </Link>
                 <div className="relative" ref={profileRef}>
                   <button
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                    className="flex items-center gap-1 p-0.5 pr-1.5 rounded-full border border-white/10 bg-white/5"
+                    className="flex items-center p-0.5 rounded-full border border-white/10 bg-white/5"
                   >
                     <div className={cn(
                       "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white",
@@ -124,32 +122,70 @@ const Header = () => {
                     )}>
                       {user?.first_name?.[0]?.toUpperCase() || 'U'}
                     </div>
-                    <ChevronRight size={12} className={cn("text-gray-500 transition-transform", isProfileDropdownOpen && "rotate-90")} />
                   </button>
-
-                  <AnimatePresence>
-                    {isProfileDropdownOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute right-0 mt-2 w-48 bg-[#0F0F0F] border border-white/10 rounded-xl shadow-2xl py-1 overflow-hidden"
-                      >
-                        <Link to="/profile" className="flex items-center gap-3 px-4 py-2 text-[12px] text-gray-400 hover:text-white hover:bg-white/5 transition-colors"><UserIcon size={14} /> Profile</Link>
-                        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2 text-[12px] text-red-400 hover:bg-red-500/5 transition-colors font-bold border-t border-white/5"><LogOut size={14} /> Sign Out</button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
-              </div>
-            ) : (
-              <div className="hidden sm:flex items-center gap-2">
-                <Link to="/login" className="px-3 py-1.5 text-[12px] font-medium text-gray-400 hover:text-white">Login</Link>
-                <Link to="/register" className="px-4 py-1.5 rounded-full bg-white text-black text-[12px] font-bold hover:bg-gray-200">Join Free</Link>
               </div>
             )}
 
-            {/* Mobile Toggle */}
+            {/* MOBILE ONLY ACTIONS (Shown when NOT LOGGED IN) */}
+            {!isAuthenticated && (
+              <div className="flex lg:hidden items-center gap-1.5 mr-1">
+                <Link to="/login" className="px-2.5 py-1.5 text-[11px] font-medium text-gray-400">Login</Link>
+                <Link to="/register" className="px-3 py-1.5 rounded-full bg-white text-black text-[11px] font-bold">Join</Link>
+              </div>
+            )}
+
+            {/* DESKTOP ACTIONS (Hidden on Mobile) */}
+            <div className="hidden lg:flex items-center gap-3">
+              {isAuthenticated ? (
+                <div className="flex items-center gap-3">
+                  {isPremium && (
+                    <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20">
+                      <Zap size={10} className="text-yellow-500 fill-yellow-500" />
+                      <span className="text-[9px] font-bold text-yellow-500 uppercase">Pro</span>
+                    </div>
+                  )}
+                  <div className="relative" ref={profileRef}>
+                    <button
+                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      className="flex items-center gap-1 p-0.5 pr-1.5 rounded-full border border-white/10 bg-white/5"
+                    >
+                      <div className={cn(
+                        "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white",
+                        isPremium ? "bg-gradient-to-tr from-amber-400 to-yellow-600" : "bg-blue-600"
+                      )}>
+                        {user?.first_name?.[0]?.toUpperCase() || 'U'}
+                      </div>
+                      <ChevronRight size={12} className={cn("text-gray-500 transition-transform", isProfileDropdownOpen && "rotate-90")} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link to="/login" className="px-3 py-1.5 text-[12px] font-medium text-gray-400 hover:text-white">Login</Link>
+                  <Link to="/register" className="px-4 py-1.5 rounded-full bg-white text-black text-[12px] font-bold hover:bg-gray-200">Join Free</Link>
+                </div>
+              )}
+            </div>
+
+            {/* Profile Dropdown (Shared for both Desktop and Mobile Profile Clicks) */}
+            <AnimatePresence>
+              {isProfileDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute right-4 lg:right-auto mt-2 w-48 bg-[#0F0F0F] border border-white/10 rounded-xl shadow-2xl py-1 overflow-hidden z-[110]"
+                  style={{ top: scrolled ? '3.5rem' : '4rem' }}
+                >
+                  <Link to="/profile" onClick={() => setIsProfileDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2 text-[12px] text-gray-400 hover:text-white hover:bg-white/5 transition-colors"><UserIcon size={14} /> Profile</Link>
+                  <Link to="/dashboard" onClick={() => setIsProfileDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2 text-[12px] text-gray-400 hover:text-white hover:bg-white/5 transition-colors"><LayoutDashboard size={14} /> Dashboard</Link>
+                  <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2 text-[12px] text-red-400 hover:bg-red-500/5 transition-colors font-bold border-t border-white/5"><LogOut size={14} /> Sign Out</button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(true)}
               className="lg:hidden p-1.5 text-white bg-white/5 rounded-md border border-white/10"
@@ -160,7 +196,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* MOBILE MENU - Solid Black Overlay */}
+      {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -168,20 +204,14 @@ const Header = () => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.3 }}
-            className="lg:hidden fixed inset-0 z-[110] bg-black flex flex-col"
+            className="lg:hidden fixed inset-0 z-[120] bg-black flex flex-col"
           >
-            {/* Mobile Menu Header */}
             <div className="flex justify-between items-center h-14 px-4 border-b border-white/10">
               <img src={logo} alt="Logo" className="h-6 w-auto" />
-              <button 
-                onClick={() => setIsMenuOpen(false)}
-                className="p-2 text-white bg-white/5 rounded-full"
-              >
-                <X size={20} />
-              </button>
+              <button onClick={() => setIsMenuOpen(false)} className="p-2 text-white bg-white/5 rounded-full"><X size={20} /></button>
             </div>
 
-            <div className="flex flex-col gap-1 p-4">
+            <div className="flex flex-col gap-1 p-4 overflow-y-auto">
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 px-2">Menu</span>
               {(isAuthenticated ? dashboardNavigation : navigation).map((item) => (
                 <Link
