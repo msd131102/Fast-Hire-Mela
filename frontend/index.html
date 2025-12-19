@@ -7,17 +7,59 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+    
+    <!-- Basic Meta Tags (will be overridden by React Helmet) -->
     <meta name="description" content="Fast Hire Mela - AI-powered job discovery platform for Freshers & Experienced candidates in India. Find verified jobs, get daily updates, and apply directly to company portals." />
     <meta name="keywords" content="jobs, fresher jobs, experienced jobs, India, AI job alerts, job portal, recruitment, career" />
     <meta name="author" content="Fast Hire Mela" />
+    
+    <!-- Open Graph Meta Tags (fallback) -->
     <meta property="og:title" content="Fast Hire Mela - AI-Powered Job Discovery Platform" />
     <meta property="og:description" content="Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates." />
     <meta property="og:image" content="/favicon.png" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Fast Hire Mela" />
+    
+    <!-- Twitter Card Meta Tags (fallback) -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Fast Hire Mela - AI-Powered Job Discovery" />
     <meta name="twitter:description" content="Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates." />
     <meta name="twitter:image" content="/favicon.png" />
+    <meta name="twitter:site" content="@fasthiremela" />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#3B82F6" />
+    <meta name="msapplication-TileColor" content="#3B82F6" />
+    <meta name="application-name" content="Fast Hire Mela" />
+    <meta name="apple-mobile-web-app-title" content="Fast Hire Mela" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="your-google-verification-code-here" />
+    
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID', {
+        page_title: document.title,
+        page_location: window.location.href,
+        content_group1: 'Job Portal',
+        send_page_view: false // Let React handle page views
+      });
+    </script>
+    
     <title>Fast Hire Mela - AI-Powered Job Discovery Platform</title>
   </head>
   <body>

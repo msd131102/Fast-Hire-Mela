@@ -1,10 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import SEO from './components/seo/SEO';
+import RouteTracker from './components/seo/RouteTracker';
+import { trackPageView } from './utils/analytics';
 
 // Layout Components
 import Layout from './components/layout/Layout';
@@ -56,6 +59,8 @@ function App() {
           <ThemeProvider>
             <AuthProvider>
               <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <SEO />
+                <RouteTracker />
                 <div className="min-h-screen bg-gray-50 transition-colors">
                   <Routes>
                   {/* Public Routes */}
