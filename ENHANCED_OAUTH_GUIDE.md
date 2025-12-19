@@ -17,6 +17,7 @@
 - ✅ **Code Challenge**: SHA256 hash of verifier
 - ✅ **LinkedIn Support**: Full PKCE implementation for LinkedIn OAuth
 - ✅ **GitHub Fallback**: State-only protection for GitHub (no PKCE support)
+- ✅ **Enhanced Scopes**: LinkedIn `w_member_social` for extended profile access
 
 ### **3. Multiple OAuth Strategies**
 - ✅ **Primary OAuth Flow**: Backend-generated secure URLs with validation

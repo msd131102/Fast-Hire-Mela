@@ -88,7 +88,7 @@ router.post('/auth-url', async (req, res) => {
       authUrl.searchParams.set('response_type', 'code');
       authUrl.searchParams.set('client_id', process.env.LINKEDIN_CLIENT_ID);
       authUrl.searchParams.set('redirect_uri', redirectUri);
-      authUrl.searchParams.set('scope', 'openid profile email'); // Correct LinkedIn v2 scopes - NO deprecated scopes
+      authUrl.searchParams.set('scope', 'openid profile email w_member_social'); // Enhanced LinkedIn v2 scopes with extended profile access
       authUrl.searchParams.set('state', state);
       authUrl.searchParams.set('code_challenge', pkce.codeChallenge);
       authUrl.searchParams.set('code_challenge_method', 'S256');
@@ -275,8 +275,28 @@ router.post('/callback', async (req, res) => {
 
         console.log('Access token received successfully');
 
-        // Get user profile from LinkedIn API v2
-        const profileResponse = await fetch('https://api.linkedin.com/v2/people', {
+        // Get comprehensive user profile from LinkedIn API v2 with enhanced fields
+        const profileFields = [
+          'id',
+          'firstName',
+          'lastName',
+          'profilePicture(displayImage~:playableStreams)',
+          'headline',
+          'summary',
+          'location',
+          'industryName',
+          'specialties',
+          'positions',
+          'educations',
+          'skills',
+          'languages',
+          'certifications',
+          'honors',
+          'volunteerExperiences',
+          'projects'
+        ].join(',');
+
+        const profileResponse = await fetch(`https://api.linkedin.com/v2/people?projection=(elements:(${profileFields}))`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Linkedin-Version': '202401'
@@ -284,10 +304,10 @@ router.post('/callback', async (req, res) => {
         });
 
         const profileData = await profileResponse.json();
-        console.log('LinkedIn profile response:', profileData);
+        console.log('LinkedIn enhanced profile response:', profileData);
         
-        // Get email address (requires separate API call)
-        const emailResponse = await fetch('https://api.linkedin.com/v2/emailAddress', {
+        // Get email address with additional details
+        const emailResponse = await fetch('https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~,type))', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Linkedin-Version': '202401'
@@ -295,22 +315,73 @@ router.post('/callback', async (req, res) => {
         });
 
         const emailData = await emailResponse.json();
-        console.log('LinkedIn email response:', emailData);
+        console.log('LinkedIn enhanced email response:', emailData);
+
+        // Get network info for verification status (if available with w_member_social scope)
+        let networkInfo = {};
+        try {
+          const networkResponse = await fetch('https://api.linkedin.com/v2/networkinfo', {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Linkedin-Version': '202401'
+            },
+          });
+          networkInfo = await networkResponse.json();
+          console.log('LinkedIn network info:', networkInfo);
+        } catch (networkError) {
+          console.log('Network info not available (may require additional permissions):', networkError.message);
+        }
         
-        // Extract user data from LinkedIn responses
-        const firstName = profileData.elements?.[0]?.firstName?.localized?.en || profileData.firstName;
-        const lastName = profileData.elements?.[0]?.lastName?.localized?.en || profileData.lastName;
+        // Extract comprehensive user data from LinkedIn responses
+        const profileElement = profileData.elements?.[0] || {};
+        const firstName = profileElement.firstName?.localized?.en || profileElement.firstName;
+        const lastName = profileElement.lastName?.localized?.en || profileElement.lastName;
         const fullName = `${firstName || ''} ${lastName || ''}`.trim();
         
-        // Get email from email response
-        const userEmail = emailData.elements?.[0]?.['handle~']?.emailAddress || `linkedin-user-${Date.now()}@demo.local`;
+        // Get primary email from email response
+        const primaryEmail = emailData.elements?.find(email => email.type === 'PRIMARY')?.['handle~']?.emailAddress ||
+                           emailData.elements?.[0]?.['handle~']?.emailAddress || 
+                           `linkedin-user-${Date.now()}@demo.local`;
+
+        // Extract profile picture with fallback
+        const profilePicture = profileElement.profilePicture?.['displayImage~']?.elements?.[0]?.identifiers?.[0]?.identifier ||
+                              profileElement.profilePicture?.['displayImage~']?.elements?.slice(-1)[0]?.identifiers?.[0]?.identifier;
+
+        // Extract additional profile information
+        const headline = profileElement.headline || '';
+        const summary = profileElement.summary || '';
+        const location = profileElement.location?.name || '';
+        const industry = profileElement.industryName || '';
+        
+        // Determine verification status based on available data
+        const isVerified = Boolean(
+          profileElement.id && 
+          primaryEmail && 
+          !primaryEmail.includes('demo.local') &&
+          (networkInfo.firstDegreeCount || profileElement.positions?._total > 0)
+        );
 
         userData = {
           name: fullName || 'LinkedIn User',
-          email: userEmail,
+          email: primaryEmail,
           provider: 'linkedin',
-          linkedin_url: `https://linkedin.com/in/${profileData.elements?.[0]?.id || 'profile'}`,
-          profile_picture: profileData.elements?.[0]?.profilePicture?.['displayImage~']?.elements?.[0]?.identifiers?.[0]?.identifier,
+          linkedin_url: `https://linkedin.com/in/${profileElement.id || 'profile'}`,
+          profile_picture: profilePicture,
+          // Enhanced profile data
+          headline: headline,
+          summary: summary,
+          location: location,
+          industry: industry,
+          is_verified: isVerified,
+          linkedin_id: profileElement.id,
+          // Additional data for storage
+          raw_profile_data: {
+            positions: profileElement.positions,
+            education: profileElement.educations,
+            skills: profileElement.skills,
+            languages: profileElement.languages,
+            network_info: networkInfo
+          }
         };
         
         console.log('Processed user data:', userData);
@@ -348,14 +419,29 @@ router.post('/callback', async (req, res) => {
         phone: null
       });
 
-      // Update user with OAuth-specific data
-      if (userData.github_url || userData.linkedin_url || userData.profile_picture) {
-        await User.updateProfile(user.id, {
-          github_url: userData.github_url || null,
-          linkedin_url: userData.linkedin_url || null,
-          profile_picture: userData.profile_picture || null
-        });
+      // Update user with OAuth-specific data including enhanced LinkedIn data
+      const profileUpdateData = {
+        github_url: userData.github_url || null,
+        linkedin_url: userData.linkedin_url || null,
+        profile_picture: userData.profile_picture || null
+      };
+
+      // Add LinkedIn-specific enhanced data if available
+      if (userData.provider === 'linkedin') {
+        profileUpdateData.headline = userData.headline || null;
+        profileUpdateData.summary = userData.summary || null;
+        profileUpdateData.location = userData.location || null;
+        profileUpdateData.industry = userData.industry || null;
+        profileUpdateData.is_verified = userData.is_verified || false;
+        profileUpdateData.linkedin_id = userData.linkedin_id || null;
+        
+        // Store additional profile data as JSON if your schema supports it
+        if (userData.raw_profile_data) {
+          profileUpdateData.raw_profile_data = JSON.stringify(userData.raw_profile_data);
+        }
       }
+
+      await User.updateProfile(user.id, profileUpdateData);
     } else {
       user = existingUser;
     }
