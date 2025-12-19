@@ -87,7 +87,7 @@ const JobDetails = () => {
     }
     
     try {
-      // Track the application for logged-in users
+      // Track application for logged-in users
       await trackApplication(id);
       toast.success('Application tracked successfully');
       
@@ -97,6 +97,40 @@ const JobDetails = () => {
       toast.error('Failed to track application');
       // Still redirect to external link even if tracking fails
       window.open(job.apply_link, '_blank');
+    }
+  };
+
+  const handleShare = async () => {
+    if (!job) return;
+    
+    const shareData = {
+      title: `${job.title} at ${job.company_name}`,
+      text: `Check out this job: ${job.title} at ${job.company_name} in ${job.location}`,
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      // Mobile native share
+      try {
+        await navigator.share(shareData);
+        toast.success('Job shared successfully!');
+      } catch (error) {
+        console.log('Native share failed, using clipboard fallback:', error);
+        handleClipboardFallback(shareData);
+      }
+    } else {
+      // Desktop/fallback - copy to clipboard
+      handleClipboardFallback(shareData);
+    }
+  };
+
+  const handleClipboardFallback = async (shareData) => {
+    try {
+      await navigator.clipboard.writeText(shareData.url);
+      toast.success('Job link copied to clipboard!');
+    } catch (error) {
+      console.error('Clipboard copy failed:', error);
+      toast.error('Failed to copy link. Please copy manually.');
     }
   };
 
@@ -110,7 +144,7 @@ const JobDetails = () => {
       <div className="lg:hidden sticky top-0 z-50 bg-white/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2"><ArrowLeft size={24} /></button>
         <div className="flex gap-2">
-          <button onClick={() => {}} className="p-2"><Share2 size={22} /></button>
+          <button onClick={handleShare} className="p-2"><Share2 size={22} /></button>
         </div>
       </div>
 
@@ -199,6 +233,13 @@ const JobDetails = () => {
                 className="w-full py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-white transition-all"
               >
                 {isJobSaved ? 'Saved in Collection' : (user && !user.is_premium ? 'Save for Later (Premium)' : 'Save for Later')}
+              </button>
+              <button 
+                onClick={handleShare}
+                className="w-full py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-white transition-all flex items-center justify-center gap-2"
+              >
+                <Share2 size={18} />
+                Share Job
               </button>
             </div>
           </aside>

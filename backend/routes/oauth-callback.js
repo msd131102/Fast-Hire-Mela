@@ -88,7 +88,7 @@ router.post('/auth-url', async (req, res) => {
       authUrl.searchParams.set('response_type', 'code');
       authUrl.searchParams.set('client_id', process.env.LINKEDIN_CLIENT_ID);
       authUrl.searchParams.set('redirect_uri', redirectUri);
-      authUrl.searchParams.set('scope', 'openid profile email w_member_social'); // Enhanced LinkedIn v2 scopes with extended profile access
+      authUrl.searchParams.set('scope', 'openid profile email'); // Basic LinkedIn OAuth scopes for Sign In with LinkedIn
       authUrl.searchParams.set('state', state);
       authUrl.searchParams.set('code_challenge', pkce.codeChallenge);
       authUrl.searchParams.set('code_challenge_method', 'S256');
