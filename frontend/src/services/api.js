@@ -248,7 +248,7 @@ export const contactAPI = {
 
 // OAuth API
 export const oauthAPI = {
-  callback: (code, provider) => api.post('/oauth/callback', { code, provider }),
+  callback: (code, provider, state) => api.post('/oauth/callback', { code, provider, state }),
 };
 
 // Individual job functions for components
