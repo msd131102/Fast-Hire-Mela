@@ -43,7 +43,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFDFF] selection:bg-blue-100 selection:text-blue-900">
-      
+
       {/* --- HERO SECTION --- */}
       <section className="relative overflow-hidden bg-[#0A0C10] text-white pt-24 pb-20 lg:pt-36 lg:pb-44">
         {/* Animated Background Orbs */}
@@ -63,14 +63,14 @@ const Home = () => {
               <Sparkles className="w-3.5 h-3.5" />
               <span>AI-Powered Recruitment 2.0</span>
             </div>
-            
+
             <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-8 tracking-tighter leading-[0.9] text-white">
               Fast Hire Mela <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-blue-200">
                 Work Smarter
               </span>
             </h1>
-            
+
             <p className="text-lg sm:text-xl text-gray-400 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
               Fast Hire Mela bridges the gap between ambition and opportunity with daily AI-verified listings.
             </p>
@@ -165,56 +165,52 @@ const Home = () => {
 
       {/* --- LATEST JOBS --- */}
       <section className="py-24">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div className="container mx-auto px-4 sm:px-6"> {/* Reduced mobile padding */}
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div className="max-w-xl">
-              <h2 className="text-4xl lg:text-6xl font-black text-gray-900 mb-4 tracking-tighter leading-none">Latest Openings</h2>
-              <p className="text-gray-500 font-medium">Freshly dropped opportunities for your next career move.</p>
+              <h2 className="text-3xl lg:text-6xl font-black text-gray-900 mb-4 tracking-tighter leading-none">Latest Openings</h2>
+              <p className="text-gray-500 font-medium text-sm sm:text-base">Freshly dropped opportunities.</p>
             </div>
             <Link to="/jobs">
-              <Button variant="outline" className="rounded-full border-gray-200 px-8 font-bold h-12">View All Jobs</Button>
+              <Button variant="outline" className="rounded-full border-gray-200 px-8 font-bold h-12 hidden sm:flex">View All Jobs</Button>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Updated Grid: grid-cols-2 for mobile */}
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
             {jobs?.data?.jobs?.map((job) => (
               <motion.div key={job.id} whileHover={{ y: -8 }}>
-                <Card className="rounded-[2.5rem] border border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-15px_rgba(59,130,246,0.15)] transition-all p-2 overflow-hidden">
-                  <div className="p-8">
-                    <div className="flex justify-between items-start mb-8">
-                      <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center p-2 border border-gray-100">
+                <Card className="rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 shadow-sm transition-all p-1 overflow-hidden">
+                  <div className="p-3 sm:p-8"> {/* Smaller padding on mobile */}
+                    <div className="flex justify-between items-start mb-4 sm:mb-8">
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gray-50 rounded-xl flex items-center justify-center p-1.5 border border-gray-100">
                         <img src={job.company_logo || '/api/placeholder/60/60'} alt="" className="w-full h-full object-contain" />
                       </div>
-                      <span className="px-4 py-1.5 rounded-full bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest">
+                      {/* Hide badge on tiny screens or keep it small */}
+                      <span className="hidden xs:block px-2 py-1 rounded-full bg-gray-900 text-white text-[8px] font-bold uppercase">
                         {job.job_type}
                       </span>
                     </div>
 
-                    <CardTitle className="text-xl font-bold mb-3 text-gray-900 leading-snug h-14 line-clamp-2">
+                    <CardTitle className="text-sm sm:text-xl font-bold mb-2 text-gray-900 leading-tight h-10 sm:h-14 line-clamp-2">
                       {job.title}
                     </CardTitle>
 
-                    <div className="flex flex-col gap-2 mb-8">
-                      <div className="flex items-center text-gray-500 text-sm font-semibold">
-                        <Building2 className="w-4 h-4 mr-2 text-blue-500" /> {job.company_name}
-                      </div>
-                      <div className="flex items-center text-gray-500 text-sm font-semibold">
-                        <MapPin className="w-4 h-4 mr-2 text-blue-500" /> {job.location}
+                    <div className="flex flex-col gap-1 mb-4 sm:mb-8">
+                      <div className="flex items-center text-gray-500 text-[10px] sm:text-sm font-semibold truncate">
+                        <Building2 className="w-3 h-3 mr-1 text-blue-500" /> {job.company_name}
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-6 border-t border-gray-50 mb-8">
-                      <div className="text-sm font-black text-gray-900">
-                        {job.salary_min ? `₹${job.salary_min}L - ₹${job.salary_max}L` : "Market Comp"}
-                      </div>
-                      <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                        <Clock className="w-3 h-3 mr-1" /> {utils.formatPostedDate(job.posted_date)}
+                    <div className="pt-3 border-t border-gray-50 mb-4">
+                      <div className="text-[10px] sm:text-sm font-black text-gray-900">
+                        {job.salary_min ? `₹${job.salary_min}L` : "Market"}
                       </div>
                     </div>
 
                     <Link to={`/jobs/${job.id}`}>
-                      <Button className="w-full rounded-2xl h-14 font-black shadow-lg shadow-blue-100 hover:shadow-blue-200 transition-all">
-                        Check Eligibility
+                      <Button className="w-full rounded-xl h-10 sm:h-14 text-[10px] sm:text-sm font-black">
+                        Apply
                       </Button>
                     </Link>
                   </div>
@@ -234,8 +230,8 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4">
             {companies?.data?.map((company) => (
-              <div 
-                key={company.id} 
+              <div
+                key={company.id}
                 onClick={() => window.location.href = `/jobs?company=${company.id}`}
                 className="bg-white/[0.03] border border-white/5 p-8 rounded-[2rem] text-center hover:bg-white/[0.07] transition-all cursor-pointer group"
               >
