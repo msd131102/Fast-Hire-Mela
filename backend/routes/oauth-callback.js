@@ -88,7 +88,7 @@ router.post('/auth-url', async (req, res) => {
       authUrl.searchParams.set('response_type', 'code');
       authUrl.searchParams.set('client_id', process.env.LINKEDIN_CLIENT_ID);
       authUrl.searchParams.set('redirect_uri', redirectUri);
-      authUrl.searchParams.set('scope', 'openid profile email'); // Updated scopes for LinkedIn v2
+      authUrl.searchParams.set('scope', 'openid profile email'); // Correct LinkedIn v2 scopes - NO deprecated scopes
       authUrl.searchParams.set('state', state);
       authUrl.searchParams.set('code_challenge', pkce.codeChallenge);
       authUrl.searchParams.set('code_challenge_method', 'S256');
@@ -226,8 +226,8 @@ router.post('/callback', async (req, res) => {
         // Exchange code for access token with LinkedIn using PKCE
         const codeVerifier = storedOAuthState?.codeVerifier;
         
-        // Use the correct redirect URI that matches LinkedIn app configuration
-        const redirectUri = process.env.FRONTEND_URL2 || process.env.FRONTEND_URL;
+        // Use the EXACT redirect URI that matches LinkedIn app configuration
+        const redirectUri = process.env.FRONTEND_URL2 || 'https://www.fasthiremela.online';
         const fullRedirectUri = `${redirectUri}/auth/callback/linkedin`;
         
         console.log('Using redirect URI:', fullRedirectUri);
