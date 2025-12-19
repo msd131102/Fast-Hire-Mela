@@ -3,7 +3,7 @@
 // Track page views
 export const trackPageView = (path, title, additionalParams = {}) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', 'G-7H717RHZGG', {
+    window.gtag('config', 'G-3313VGRXE8', {
       page_title: title || document.title,
       page_location: window.location.href,
       page_path: path || window.location.pathname,
