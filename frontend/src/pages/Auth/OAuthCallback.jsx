@@ -35,8 +35,11 @@ const OAuthCallback = () => {
           provider = 'github';
         }
 
+        // Add state parameter from URL for LinkedIn
+        const urlState = urlParams.get('state');
+        
         // Call backend to handle OAuth callback
-        const response = await oauthAPI.callback(code, provider);
+        const response = await oauthAPI.callback(code, provider, urlState);
 
         if (response.success) {
           const { user, token } = response.data;

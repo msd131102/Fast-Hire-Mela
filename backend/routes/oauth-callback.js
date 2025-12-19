@@ -88,7 +88,7 @@ router.post('/auth-url', async (req, res) => {
       authUrl.searchParams.set('response_type', 'code');
       authUrl.searchParams.set('client_id', process.env.LINKEDIN_CLIENT_ID);
       authUrl.searchParams.set('redirect_uri', redirectUri);
-      authUrl.searchParams.set('scope', 'openid profile email'); // New working scopes
+      authUrl.searchParams.set('scope', 'openid profile email'); // Updated scopes for LinkedIn v2
       authUrl.searchParams.set('state', state);
       authUrl.searchParams.set('code_challenge', pkce.codeChallenge);
       authUrl.searchParams.set('code_challenge_method', 'S256');
@@ -211,6 +211,9 @@ router.post('/callback', async (req, res) => {
       }
     } else if (provider === 'linkedin') {
       try {
+        console.log('Starting LinkedIn OAuth callback...');
+        console.log('Authorization code:', code);
+        
         // First validate that we have a valid authorization code
         if (!code || code.includes('error')) {
           return res.status(400).json({
@@ -223,14 +226,23 @@ router.post('/callback', async (req, res) => {
         // Exchange code for access token with LinkedIn using PKCE
         const codeVerifier = storedOAuthState?.codeVerifier;
         
+        // Use the correct redirect URI that matches LinkedIn app configuration
+        const redirectUri = process.env.FRONTEND_URL2 || process.env.FRONTEND_URL;
+        const fullRedirectUri = `${redirectUri}/auth/callback/linkedin`;
+        
+        console.log('Using redirect URI:', fullRedirectUri);
+        console.log('Code verifier present:', !!codeVerifier);
+        
         const tokenParams = new URLSearchParams({
           grant_type: 'authorization_code',
           code: code,
-          redirect_uri: process.env.FRONTEND_URL + '/auth/callback/linkedin',
+          redirect_uri: fullRedirectUri,
           client_id: process.env.LINKEDIN_CLIENT_ID,
           client_secret: process.env.LINKEDIN_CLIENT_SECRET,
           code_verifier: codeVerifier
         });
+
+        console.log('Token request params:', tokenParams.toString());
 
         const tokenResponse = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
           method: 'POST',
@@ -241,6 +253,16 @@ router.post('/callback', async (req, res) => {
         });
 
         const tokenData = await tokenResponse.json();
+        console.log('LinkedIn token response:', tokenData);
+        
+        if (tokenData.error) {
+          return res.status(400).json({
+            success: false,
+            message: `LinkedIn token exchange failed: ${tokenData.error_description || tokenData.error}`,
+            error: tokenData.error
+          });
+        }
+
         const accessToken = tokenData.access_token;
 
         if (!accessToken) {
@@ -251,38 +273,55 @@ router.post('/callback', async (req, res) => {
           });
         }
 
-        // Get user profile from LinkedIn API
-        const profileResponse = await fetch('https://api.linkedin.com/v2/people/~:(id,firstName,lastName,profilePicture(displayImage~:playableStreams))', {
+        console.log('Access token received successfully');
+
+        // Get user profile from LinkedIn API v2
+        const profileResponse = await fetch('https://api.linkedin.com/v2/people', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
+            'Linkedin-Version': '202401'
           },
         });
 
         const profileData = await profileResponse.json();
+        console.log('LinkedIn profile response:', profileData);
         
         // Get email address (requires separate API call)
-        const emailResponse = await fetch('https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))', {
+        const emailResponse = await fetch('https://api.linkedin.com/v2/emailAddress', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
+            'Linkedin-Version': '202401'
           },
         });
 
         const emailData = await emailResponse.json();
-        const userEmail = emailData.elements?.[0]?.['handle~']?.emailAddress;
-
-        const firstName = profileData.firstName?.localized?.en || profileData.firstName;
-        const lastName = profileData.lastName?.localized?.en || profileData.lastName;
-        const fullName = `${firstName} ${lastName}`.trim();
+        console.log('LinkedIn email response:', emailData);
+        
+        // Extract user data from LinkedIn responses
+        const firstName = profileData.elements?.[0]?.firstName?.localized?.en || profileData.firstName;
+        const lastName = profileData.elements?.[0]?.lastName?.localized?.en || profileData.lastName;
+        const fullName = `${firstName || ''} ${lastName || ''}`.trim();
+        
+        // Get email from email response
+        const userEmail = emailData.elements?.[0]?.['handle~']?.emailAddress || `linkedin-user-${Date.now()}@demo.local`;
 
         userData = {
           name: fullName || 'LinkedIn User',
-          email: userEmail || `linkedin-user-${Date.now()}@demo.local`,
+          email: userEmail,
           provider: 'linkedin',
-          linkedin_url: `https://linkedin.com/in/${profileData.id}`,
-          profile_picture: profileData.profilePicture?.['displayImage~']?.elements?.[0]?.identifiers?.[0]?.identifier,
+          linkedin_url: `https://linkedin.com/in/${profileData.elements?.[0]?.id || 'profile'}`,
+          profile_picture: profileData.elements?.[0]?.profilePicture?.['displayImage~']?.elements?.[0]?.identifiers?.[0]?.identifier,
         };
+        
+        console.log('Processed user data:', userData);
       } catch (error) {
         console.error('LinkedIn OAuth error:', error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          response: error.response?.data
+        });
+        
         return res.status(400).json({
           success: false,
           message: 'LinkedIn OAuth authentication failed. Please try again.',
