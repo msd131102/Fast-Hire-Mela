@@ -28,11 +28,11 @@ import { getJobs, getCategories, getCompanies, saveJob, unsaveJob } from '../../
 // --- Utility Functions ---
 const formatPostedDate = (dateString) => {
   if (!dateString) return 'N/A';
-  
+
   // Convert to India time (UTC + 5.5 hours)
   const ukDate = new Date(dateString);
   const indiaTime = new Date(ukDate.getTime() + (5.5 * 60 * 60 * 1000));
-  
+
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const postDate = new Date(indiaTime.getFullYear(), indiaTime.getMonth(), indiaTime.getDate());
@@ -118,7 +118,7 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
                     {job.title}
                   </h3>
                 </div>
-                
+
                 <div className="flex flex-wrap items-center gap-y-1 gap-x-3 mt-1">
                   <div className="flex items-center text-gray-600 text-sm font-medium">
                     <Building2 className="w-3.5 h-3.5 mr-1 text-gray-400" />
@@ -135,9 +135,8 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className={`hidden sm:flex p-2 rounded-full transition-colors ${
-                  isSaved ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-400 hover:text-red-500'
-                }`}
+                className={`hidden sm:flex p-2 rounded-full transition-colors ${isSaved ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-400 hover:text-red-500'
+                  }`}
               >
                 <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
               </button>
@@ -158,9 +157,9 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
                 <span>{formatPostedDate(job.posted_date)}</span>
               </div>
               <div className="hidden sm:block">
-                 <span className="text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-700 px-2 py-1 rounded">
-                   {job.job_type?.replace('-', ' ') || 'Full-time'}
-                 </span>
+                <span className="text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                  {job.job_type?.replace('-', ' ') || 'Full-time'}
+                </span>
               </div>
             </div>
 
@@ -173,20 +172,20 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
                   </span>
                 ))}
                 {job.skills_required?.length > 3 && (
-                   <span className="text-[10px] text-gray-400 mt-0.5">+{job.skills_required.length - 3} more</span>
+                  <span className="text-[10px] text-gray-400 mt-0.5">+{job.skills_required.length - 3} more</span>
                 )}
               </div>
-              
+
               <div className="sm:hidden flex items-center gap-2">
-                 <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleSave}
-                    className={isSaved ? 'text-red-500' : 'text-gray-400'}
-                  >
-                    <Heart className={`w-4 h-4 mr-1 ${isSaved ? 'fill-current' : ''}`} />
-                    {isSaved ? 'Saved' : 'Save'}
-                  </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSave}
+                  className={isSaved ? 'text-red-500' : 'text-gray-400'}
+                >
+                  <Heart className={`w-4 h-4 mr-1 ${isSaved ? 'fill-current' : ''}`} />
+                  {isSaved ? 'Saved' : 'Save'}
+                </Button>
               </div>
             </div>
           </CardContent>
@@ -309,9 +308,9 @@ const JobsList = () => {
     } catch (e) { console.error(e); }
   }, []);
 
-  const activeFiltersCount = useMemo(() => 
-    Object.entries(filters).filter(([k, v]) => v && v !== 'posted_date' && k !== 'search').length, 
-  [filters]);
+  const activeFiltersCount = useMemo(() =>
+    Object.entries(filters).filter(([k, v]) => v && v !== 'posted_date' && k !== 'search').length,
+    [filters]);
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
@@ -320,7 +319,7 @@ const JobsList = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col lg:flex-row gap-4 items-center">
             <h1 className="hidden lg:block text-2xl font-bold text-gray-900 mr-4 whitespace-nowrap">Find Work</h1>
-            
+
             <div className="relative w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
@@ -351,7 +350,7 @@ const JobsList = () => {
 
       <main className="container mx-auto px-4 py-6 sm:py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* Filters Sidebar (Desktop) / Drawer (Mobile) */}
           <AnimatePresence>
             {(showFilters || !isMobile) && (
@@ -370,11 +369,10 @@ const JobsList = () => {
                   animate={isMobile ? { y: 0 } : { opacity: 1, x: 0 }}
                   exit={isMobile ? { y: '100%' } : { opacity: 0 }}
                   transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                  className={`${
-                    isMobile 
-                    ? 'fixed bottom-0 left-0 right-0 h-[85vh] bg-white z-[60] rounded-t-3xl overflow-y-auto' 
-                    : 'w-72 flex-shrink-0 sticky top-24 h-fit'
-                  }`}
+                  className={`${isMobile
+                      ? 'fixed bottom-0 left-0 right-0 h-[85vh] bg-white z-[60] rounded-t-3xl overflow-y-auto'
+                      : 'w-72 flex-shrink-0 sticky top-24 h-fit'
+                    }`}
                 >
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
@@ -389,8 +387,8 @@ const JobsList = () => {
                       {/* Filter Group: Category */}
                       <div className="space-y-3">
                         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Job Category</label>
-                        <select 
-                          value={filters.category} 
+                        <select
+                          value={filters.category}
                           onChange={(e) => handleFilterChange('category', e.target.value)}
                           className="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none focus:border-blue-500"
                         >
@@ -422,11 +420,10 @@ const JobsList = () => {
                             <button
                               key={range}
                               onClick={() => handleFilterChange('salary', filters.salary === range ? '' : range)}
-                              className={`p-2 text-xs rounded-lg border transition-all ${
-                                filters.salary === range 
-                                ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100' 
-                                : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300'
-                              }`}
+                              className={`p-2 text-xs rounded-lg border transition-all ${filters.salary === range
+                                  ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100'
+                                  : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300'
+                                }`}
                             >
                               {range}
                             </button>
@@ -437,8 +434,8 @@ const JobsList = () => {
                       {/* Experience & Job Type (Simplified for UI) */}
                       <div className="space-y-3">
                         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Experience</label>
-                        <select 
-                          value={filters.experience} 
+                        <select
+                          value={filters.experience}
                           onChange={(e) => handleFilterChange('experience', e.target.value)}
                           className="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm"
                         >
@@ -475,10 +472,10 @@ const JobsList = () => {
 
               <div className="hidden lg:flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-200">
                 <span className="text-xs font-bold text-gray-400 px-3">SORT:</span>
-                <select 
-                   value={filters.sortBy} 
-                   onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                   className="text-sm font-semibold text-gray-700 bg-transparent outline-none pr-4"
+                <select
+                  value={filters.sortBy}
+                  onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                  className="text-sm font-semibold text-gray-700 bg-transparent outline-none pr-4"
                 >
                   <option value="posted_date">Newest First</option>
                   <option value="salary_max">Highest Pay</option>
@@ -487,11 +484,18 @@ const JobsList = () => {
               </div>
             </div>
 
-            <div className="space-y-4">
+            {/* UPDATED: Changed from space-y-4 to a Grid layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {jobsLoading ? (
-                <LoadingSkeleton />
+                // Showing multiple skeletons to fill the grid during load
+                <>
+                  <LoadingSkeleton />
+                  <LoadingSkeleton />
+                  <LoadingSkeleton />
+                  <LoadingSkeleton />
+                </>
               ) : jobsError ? (
-                <div className="text-center p-12 bg-white rounded-2xl border">
+                <div className="col-span-full text-center p-12 bg-white rounded-2xl border">
                   <p className="text-red-500 font-medium mb-4">Something went wrong while fetching jobs.</p>
                   <Button onClick={() => window.location.reload()}>Try Again</Button>
                 </div>
@@ -506,7 +510,9 @@ const JobsList = () => {
                   />
                 ))
               ) : (
-                <EmptyState onClearFilters={clearFilters} />
+                <div className="col-span-full">
+                  <EmptyState onClearFilters={clearFilters} />
+                </div>
               )}
             </div>
 
