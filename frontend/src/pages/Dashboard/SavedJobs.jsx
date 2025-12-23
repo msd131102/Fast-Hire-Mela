@@ -332,7 +332,7 @@ const SavedJobs = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-2">
                               <div className="min-w-0 flex-1">
-                                <Link to={`/jobs/${job.id}`}>
+                                <Link to={`/jobs/${job.slug}`}>
                                   <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors truncate">
                                     {job.title}
                                   </h3>
@@ -389,7 +389,7 @@ const SavedJobs = () => {
                                 Saved {utils.formatPostedDate(job.saved_at)}
                               </div>
                               <div className="flex gap-2">
-                                <Link to={`/jobs/${job.id}`}>
+                                <Link to={`/jobs/${job.slug}`}>
                                   <Button variant="outline" size="sm">
                                     View Details
                                   </Button>

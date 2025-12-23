@@ -1,4 +1,5 @@
 import { query } from '../config/database.js';
+import { generateJobSlug, generateUniqueSlug } from '../utils/slugGenerator.js';
 
 export class Job {
   // Create new job
@@ -9,20 +10,27 @@ export class Job {
         job_type, salary_min, salary_max, experience_level, 
         skills_required, responsibilities, eligibility, education_required,
         apply_link, application_deadline, work_mode,
-        is_active, is_featured
+        is_active, is_featured, company_name
       } = jobData;
+
+      // Generate unique slug
+      const baseSlug = generateJobSlug(title, company_name);
+      const slug = await generateUniqueSlug(baseSlug, async (slugToCheck) => {
+        const result = await query('SELECT id FROM jobs WHERE slug = $1', [slugToCheck]);
+        return result.rows.length > 0;
+      });
 
       const result = await query(
         `INSERT INTO jobs (
-          title, description, company_id, category_id, location,
+          title, slug, description, company_id, category_id, location,
           job_type, salary_min, salary_max, experience_level,
           skills_required, responsibilities, eligibility, education_required,
           apply_link, application_deadline, work_mode,
           is_active, is_featured
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
         RETURNING *`,
         [
-          title, description, company_id, category_id, location,
+          title, slug, description, company_id, category_id, location,
           job_type, salary_min, salary_max, experience_level,
           skills_required, responsibilities, eligibility, education_required,
           apply_link, application_deadline, work_mode,

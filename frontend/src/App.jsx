@@ -75,7 +75,7 @@ function App() {
                         <JobsList />
                       </ErrorBoundary>
                     } />
-                    <Route path="jobs/:id" element={
+                    <Route path="jobs/:slug" element={
                       <ErrorBoundary>
                         <JobDetails />
                       </ErrorBoundary>

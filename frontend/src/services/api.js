@@ -101,8 +101,8 @@ export const jobsAPI = {
     // If response is already the data (for compatibility)
     return response;
   },
-  getJob: async (id) => {
-    const response = await api.get(`/jobs/${id}`);
+  getJob: async (identifier) => {
+    const response = await api.get(`/jobs/${identifier}`);
     if (response.success && response.data) {
       return response.data;
     }
@@ -122,8 +122,8 @@ export const jobsAPI = {
     }
     return response;
   },
-  getSimilarJobs: async (id) => {
-    const response = await api.get(`/jobs/${id}/similar`);
+  getSimilarJobs: async (identifier) => {
+    const response = await api.get(`/jobs/${identifier}/similar`);
     if (response.success && response.data) {
       return response.data;
     }
@@ -150,8 +150,8 @@ export const jobsAPI = {
     }
     return response;
   },
-  trackApplication: async (jobId) => {
-    const response = await api.post(`/jobs/${jobId}/track-application`);
+  trackApplication: async (jobIdentifier) => {
+    const response = await api.post(`/jobs/${jobIdentifier}/track-application`);
     if (response.success && response.data) {
       return response.data;
     }
@@ -252,10 +252,10 @@ export const oauthAPI = {
 };
 
 // Individual job functions for components
-export const getJobDetails = (id) => api.get(`/jobs/${id}`);
-export const saveJob = (jobId) => api.post(`/jobs/${jobId}/save`);
-export const applyJob = (jobId, applicationData) => api.post(`/jobs/${jobId}/apply`, applicationData);
-export const trackApplication = (jobId) => api.post(`/jobs/${jobId}/track-application`);
+export const getJobDetails = (identifier) => api.get(`/jobs/${identifier}`);
+export const saveJob = (jobIdentifier) => api.post(`/jobs/${jobIdentifier}/save`);
+export const applyJob = (jobIdentifier, applicationData) => api.post(`/jobs/${jobIdentifier}/apply`, applicationData);
+export const trackApplication = (jobIdentifier) => api.post(`/jobs/${jobIdentifier}/track-application`);
 
 // Auth functions
 export const login = (credentials) => authAPI.login(credentials);
@@ -264,11 +264,11 @@ export const forgotPassword = (email) => authAPI.forgotPassword(email);
 export const resetPassword = (token, password) => authAPI.resetPassword(token, password);
 
 // Job functions
-export const getSimilarJobs = (id) => jobsAPI.getSimilarJobs(id);
+export const getSimilarJobs = (identifier) => jobsAPI.getSimilarJobs(identifier);
 
 // User functions
 export const getSavedJobs = () => userAPI.getSavedJobs();
-export const unsaveJob = (jobId) => api.post(`/jobs/${jobId}/save`); // Use POST instead of DELETE to match backend
+export const unsaveJob = (jobIdentifier) => api.post(`/jobs/${jobIdentifier}/save`); // Use POST instead of DELETE to match backend
 
 // Simplified API functions for Home component
 export const getJobs = (params) => api.get('/jobs', { params });

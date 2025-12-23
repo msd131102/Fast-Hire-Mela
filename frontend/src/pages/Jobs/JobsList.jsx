@@ -99,7 +99,7 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
       transition={{ duration: 0.3, delay: index * 0.05 }}
     >
       <Card className="hover:shadow-md transition-all duration-200 border-gray-200 group relative overflow-hidden">
-        <Link to={`/jobs/${job.id}`}>
+        <Link to={`/jobs/${job.slug}`}>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-start gap-4">
               {/* Company Logo */}

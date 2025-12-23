@@ -199,7 +199,7 @@ const Dashboard = () => {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div className="space-y-2">
                             <h3 className="text-lg font-black group-hover:text-blue-400 transition-colors">
-                              <Link to={`/jobs/${job.id}`}>{job.title}</Link>
+                              <Link to={`/jobs/${job.slug}`}>{job.title}</Link>
                             </h3>
                             <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-sm text-gray-500 font-bold">
                               <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg">
@@ -217,7 +217,7 @@ const Dashboard = () => {
                             <span className="text-xs text-gray-600 font-black flex items-center gap-1">
                               <Clock size={14} /> {utils.formatPostedDate(job.created_at)}
                             </span>
-                            <Link to={`/jobs/${job.id}`} className="px-5 py-2.5 bg-white/10 hover:bg-blue-600 text-white rounded-xl text-xs font-black transition-all active:scale-95">
+                            <Link to={`/jobs/${job.slug}`} className="px-5 py-2.5 bg-white/10 hover:bg-blue-600 text-white rounded-xl text-xs font-black transition-all active:scale-95">
                               Details
                             </Link>
                           </div>

@@ -221,7 +221,7 @@ const Home = () => {
                       {utils.formatPostedDate(job.posted_date)}
                     </div>
 
-                    <Link to={`/jobs/${job.id}`}>
+                    <Link to={`/jobs/${job.slug}`}>
                       <Button className="w-full rounded-xl h-10 sm:h-14 text-[10px] sm:text-sm font-black">
                         Apply
                       </Button>

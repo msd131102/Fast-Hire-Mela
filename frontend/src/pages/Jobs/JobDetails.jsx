@@ -15,7 +15,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 const JobDetails = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -31,8 +31,7 @@ const JobDetails = () => {
     select: (data) => data?.data?.saved_jobs || [],
   });
 
-  const jobId = parseInt(id);
-  const isJobSaved = savedJobsData?.some(savedJob => savedJob.id === jobId);
+  const isJobSaved = savedJobsData?.some(savedJob => savedJob.slug === slug);
 
   const saveJobMutation = useMutation({
     mutationFn: saveJob,
@@ -48,16 +47,16 @@ const JobDetails = () => {
   });
 
   const { data: job, isLoading, error } = useQuery({
-    queryKey: ['job', id],
-    queryFn: () => getJobDetails(id),
-    enabled: !!id,
+    queryKey: ['job', slug],
+    queryFn: () => getJobDetails(slug),
+    enabled: !!slug,
     select: (data) => data?.data?.job,
   });
 
   const { data: similarJobs } = useQuery({
-    queryKey: ['similarJobs', id],
-    queryFn: () => id ? getSimilarJobs(id) : Promise.resolve({ data: { jobs: [] } }),
-    enabled: !!id,
+    queryKey: ['similarJobs', slug],
+    queryFn: () => slug ? getSimilarJobs(slug) : Promise.resolve({ data: { jobs: [] } }),
+    enabled: !!slug,
     select: (data) => data?.data?.jobs || [],
   });
 
@@ -75,8 +74,8 @@ const JobDetails = () => {
 
     setIsSaving(true);
     try {
-      if (isJobSaved) await unsaveJobMutation.mutateAsync(id);
-      else await saveJobMutation.mutateAsync(id);
+      if (isJobSaved) await unsaveJobMutation.mutateAsync(slug);
+      else await saveJobMutation.mutateAsync(slug);
     } finally { setIsSaving(false); }
   };
 
@@ -88,7 +87,7 @@ const JobDetails = () => {
 
     try {
       // Track application for logged-in users
-      await trackApplication(id);
+      await trackApplication(slug);
       toast.success('Application tracked successfully');
 
       // Redirect to external application link

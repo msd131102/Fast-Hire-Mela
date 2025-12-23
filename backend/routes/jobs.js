@@ -545,22 +545,25 @@ router.get('/', optionalAuth, async (req, res) => {
 // =============================================
 // SAVE/UNSAVE JOB (AUTHENTICATED) - MUST COME BEFORE /:identifier
 // =============================================
-router.post('/:jobId/save', authenticateToken, checkUserActive, async (req, res) => {
+router.post('/:jobIdentifier/save', authenticateToken, checkUserActive, async (req, res) => {
   try {
     console.log('🔧 Save job endpoint called');
     console.log('🔧 req.user:', req.user);
     console.log('🔧 req.params:', req.params);
     
-    const { jobId } = req.params;
+    const { jobIdentifier } = req.params;
     const userId = req.user.userId || req.user.id;
 
-    console.log('🔧 Processing save job - userId:', userId, 'jobId:', jobId);
+    console.log('🔧 Processing save job - userId:', userId, 'jobIdentifier:', jobIdentifier);
+
+    // Check if identifier is ID or slug
+    const isId = /^\d+$/.test(jobIdentifier);
+    const jobQuery = isId 
+      ? 'SELECT id FROM jobs WHERE id = $1 AND is_active = true'
+      : 'SELECT id FROM jobs WHERE slug = $1 AND is_active = true';
 
     // Check if job exists
-    const jobCheck = await query(
-      'SELECT id FROM jobs WHERE id = $1 AND is_active = true',
-      [jobId]
-    );
+    const jobCheck = await query(jobQuery, [jobIdentifier]);
 
     if (jobCheck.rows.length === 0) {
       return res.status(404).json({
@@ -568,6 +571,8 @@ router.post('/:jobId/save', authenticateToken, checkUserActive, async (req, res)
         message: 'Job not found'
       });
     }
+
+    const jobId = jobCheck.rows[0].id;
 
     // Check if already saved
     const existingSave = await query(
@@ -614,10 +619,28 @@ router.post('/:jobId/save', authenticateToken, checkUserActive, async (req, res)
 // =============================================
 // CHECK IF JOB IS SAVED (AUTHENTICATED) - MUST COME BEFORE /:identifier
 // =============================================
-router.get('/:jobId/saved', authenticateToken, checkUserActive, async (req, res) => {
+router.get('/:jobIdentifier/saved', authenticateToken, checkUserActive, async (req, res) => {
   try {
-    const { jobId } = req.params;
+    const { jobIdentifier } = req.params;
     const userId = req.user.userId || req.user.id;
+
+    // Check if identifier is ID or slug
+    const isId = /^\d+$/.test(jobIdentifier);
+    const jobQuery = isId 
+      ? 'SELECT id FROM jobs WHERE id = $1 AND is_active = true'
+      : 'SELECT id FROM jobs WHERE slug = $1 AND is_active = true';
+
+    // Get job ID
+    const jobCheck = await query(jobQuery, [jobIdentifier]);
+
+    if (jobCheck.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Job not found'
+      });
+    }
+
+    const jobId = jobCheck.rows[0].id;
 
     const result = await query(
       'SELECT id FROM saved_jobs WHERE user_id = $1 AND job_id = $2',
@@ -638,6 +661,7 @@ router.get('/:jobId/saved', authenticateToken, checkUserActive, async (req, res)
     });
   }
 });
+
 
 // =============================================
 // CHECK IF JOB IS SAVED (ALTERNATE ROUTE FOR FRONTEND COMPATIBILITY) - MUST COME BEFORE /:identifier
@@ -1271,27 +1295,18 @@ router.post('/search', async (req, res) => {
 // =============================================
 // GET SIMILAR JOBS - MUST COME BEFORE /:identifier
 // =============================================
-router.get('/:jobId/similar', async (req, res) => {
+router.get('/:jobIdentifier/similar', async (req, res) => {
   try {
-    const { jobId } = req.params;
+    const { jobIdentifier } = req.params;
     const { limit = 5 } = req.query;
 
-    // First get the current job details to find similar jobs
-    const currentJobQuery = `
-      SELECT 
-        j.category_id,
-        j.location,
-        j.experience_level,
-        j.job_type,
-        j.skills_required,
-        j.salary_min,
-        j.salary_max
-      FROM jobs j
-      WHERE j.id = $1 AND j.is_active = true
-        AND (j.expires_at IS NULL OR j.expires_at > CURRENT_TIMESTAMP)
-    `;
+    // Check if identifier is ID or slug
+    const isId = /^\d+$/.test(jobIdentifier);
+    const jobQuery = isId 
+      ? 'SELECT id, category_id, location, experience_level, job_type, skills_required, salary_min, salary_max FROM jobs WHERE id = $1 AND is_active = true AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)'
+      : 'SELECT id, category_id, location, experience_level, job_type, skills_required, salary_min, salary_max FROM jobs WHERE slug = $1 AND is_active = true AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)';
 
-    const currentJobResult = await query(currentJobQuery, [jobId]);
+    const currentJobResult = await query(jobQuery, [jobIdentifier]);
 
     if (currentJobResult.rows.length === 0) {
       return res.status(404).json({
@@ -1309,7 +1324,7 @@ router.get('/:jobId/similar', async (req, res) => {
       '(j.posted_by IS NULL OR u.is_active = true)',
       'j.id != $1'
     ];
-    let queryParams = [jobId];
+    let queryParams = [currentJobResult.rows[0].id];
     let paramCount = 1;
 
     // Add category similarity (highest weight)
@@ -1422,7 +1437,7 @@ router.get('/:jobId/similar', async (req, res) => {
       data: {
         similar_jobs: similarJobsResult.rows,
         current_job: {
-          id: jobId,
+          id: currentJobResult.rows[0].id,
           category_id: currentJob.category_id,
           location: currentJob.location,
           experience_level: currentJob.experience_level,

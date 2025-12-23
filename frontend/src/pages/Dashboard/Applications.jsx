@@ -199,7 +199,7 @@ const Applications = () => {
                   
                   <div className="ml-4 flex flex-col items-end space-y-2">
                     <button
-                      onClick={() => window.location.href = `/jobs/${application.job_id}`}
+                      onClick={() => window.location.href = `/jobs/${application.job_slug || application.job_id}`}
                       className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                     >
                       View Job
