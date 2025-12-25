@@ -370,8 +370,8 @@ const JobsList = () => {
                   exit={isMobile ? { y: '100%' } : { opacity: 0 }}
                   transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                   className={`${isMobile
-                      ? 'fixed bottom-0 left-0 right-0 h-[85vh] bg-white z-[60] rounded-t-3xl overflow-y-auto'
-                      : 'w-72 flex-shrink-0 sticky top-24 h-fit'
+                    ? 'fixed bottom-0 left-0 right-0 h-[85vh] bg-white z-[60] rounded-t-3xl overflow-y-auto'
+                    : 'w-72 flex-shrink-0 sticky top-24 h-fit'
                     }`}
                 >
                   <div className="p-6">
@@ -421,8 +421,8 @@ const JobsList = () => {
                               key={range}
                               onClick={() => handleFilterChange('salary', filters.salary === range ? '' : range)}
                               className={`p-2 text-xs rounded-lg border transition-all ${filters.salary === range
-                                  ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100'
-                                  : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300'
+                                ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100'
+                                : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300'
                                 }`}
                             >
                               {range}
