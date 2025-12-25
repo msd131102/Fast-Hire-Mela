@@ -2,10 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/src/assets/favicon.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/src/assets/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/src/assets/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/src/assets/favicon-16x16.png" />
+    <!-- Favicon for modern browsers -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    
+    <!-- Apple touch icon for iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    
+    <!-- Microsoft tile for Windows -->
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+    
+    <!-- Web manifest -->
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Preconnect for performance -->
@@ -24,7 +33,7 @@
     <!-- Open Graph Meta Tags (fallback) -->
     <meta property="og:title" content="Fast Hire Mela - AI-Powered Job Discovery Platform" />
     <meta property="og:description" content="Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates." />
-    <meta property="og:image" content="/src/assets/favicon-32x32.png" />
+    <meta property="og:image" content="/favicon.png" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Fast Hire Mela" />
     
@@ -32,7 +41,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Fast Hire Mela - AI-Powered Job Discovery" />
     <meta name="twitter:description" content="Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates." />
-    <meta name="twitter:image" content="/src/assets/favicon.png" />
+    <meta name="twitter:image" content="/favicon.png" />
     <meta name="twitter:site" content="@fasthiremela" />
     
     <!-- Additional SEO Meta Tags -->
@@ -56,7 +65,8 @@
       gtag('config', 'G-3313VGRXE8');
     </script>
     
-    <title>Fast Hire Mela - AI-Powered Job Discovery Platform</title>
+    <title>FastHireMela</title>
+    <link rel="canonical" href="https://www.fasthiremela.online/" />
   </head>
   <body>
     <div id="root"></div>

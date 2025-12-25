@@ -2,9 +2,9 @@
 
 export const SEO_CONFIG = {
   site: {
-    name: 'Fast Hire Mela',
+    name: 'FastHireMela',
     url: 'https://www.fasthiremela.online',
-    defaultTitle: 'Fast Hire Mela - AI-Powered Job Discovery Platform',
+    defaultTitle: 'FastHireMela',
     defaultDescription: 'Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates.',
     defaultImage: '/favicon.png',
     twitterHandle: '@fasthiremela',
@@ -13,14 +13,14 @@ export const SEO_CONFIG = {
   
   pages: {
     home: {
-      title: 'Fast Hire Mela - AI-Powered Job Discovery Platform',
+      title: 'FastHireMela',
       description: 'Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates. Apply directly to company portals.',
       keywords: 'jobs, fresher jobs, experienced jobs, India, AI job alerts, job portal, recruitment, career',
       structuredData: [
         {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          name: 'Fast Hire Mela',
+          name: 'FastHireMela',
           url: 'https://www.fasthiremela.online',
           description: 'Find verified jobs in India with AI-powered daily updates',
           potentialAction: {
@@ -33,7 +33,7 @@ export const SEO_CONFIG = {
     },
     
     jobs: {
-      title: 'Latest Jobs in India - Fast Hire Mela',
+      title: 'Jobs – FastHireMela',
       description: 'Browse thousands of verified job openings across India. Find fresher and experienced jobs from top companies with AI-powered matching.',
       keywords: 'jobs in India, latest jobs, job openings, fresher jobs, experienced jobs, job search',
       structuredData: [
@@ -103,16 +103,16 @@ export const SEO_CONFIG = {
     },
     
     login: {
-      title: 'Login to Fast Hire Mela - Access Your Account',
-      description: 'Login to your Fast Hire Mela account to access saved jobs, applications, and personalized job recommendations.',
-      keywords: 'login fast hire mela, job portal login, account access',
+      title: 'Login – FastHireMela',
+      description: 'Login to your FastHireMela account to access saved jobs, applications, and personalized job recommendations.',
+      keywords: 'login FastHireMela, job portal login, account access',
       noIndex: true
     },
     
     register: {
-      title: 'Sign Up for Fast Hire Mela - Create Free Account',
-      description: 'Create your free Fast Hire Mela account to start your job search journey. Get personalized job alerts and AI-powered recommendations.',
-      keywords: 'sign up fast hire mela, job portal registration, create account',
+      title: 'Register – FastHireMela',
+      description: 'Create your free FastHireMela account to start your job search journey. Get personalized job alerts and AI-powered recommendations.',
+      keywords: 'sign up FastHireMela, job portal registration, create account',
       noIndex: true
     },
     
@@ -125,7 +125,7 @@ export const SEO_CONFIG = {
   },
   
   jobPost: {
-    title: (jobTitle, company) => `${jobTitle} at ${company} - Fast Hire Mela`,
+    title: (jobTitle, company) => `${jobTitle} at ${company} – FastHireMela`,
     description: (jobTitle, company, location, description) => 
       `Apply for ${jobTitle} position at ${company} in ${location}. ${description?.substring(0, 150) || 'Find detailed job information and requirements.'}`,
     keywords: (jobTitle, company, skills) => 
@@ -172,7 +172,7 @@ export const SEO_CONFIG = {
   },
   
   category: {
-    title: (categoryName) => `${categoryName} Jobs in India - Fast Hire Mela`,
+    title: (categoryName) => `${categoryName} Jobs – FastHireMela`,
     description: (categoryName, jobCount) => 
       `Find ${jobCount || 'hundreds of'} ${categoryName.toLowerCase()} job opportunities across India. Apply to verified ${categoryName.toLowerCase()} positions from top companies.`,
     keywords: (categoryName) => 
@@ -187,7 +187,7 @@ export const SEO_CONFIG = {
   },
   
   company: {
-    title: (companyName) => `${companyName} Jobs & Careers - Fast Hire Mela`,
+    title: (companyName) => `${companyName} Jobs – FastHireMela`,
     description: (companyName, jobCount, description) => 
       `Explore ${jobCount || 'latest'} job openings at ${companyName}. ${description?.substring(0, 150) || 'Join a great team and advance your career.'}`,
     keywords: (companyName) => 

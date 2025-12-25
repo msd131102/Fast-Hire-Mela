@@ -14,12 +14,21 @@ import {
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { Card, CardTitle } from '../components/ui/Card';
+import SEO from '../components/seo/SEO';
 import { getJobs, getCategories, getCompanies, utils } from '../services/api';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
+
+  // SEO configuration for homepage
+  const seoConfig = {
+    title: 'FastHireMela',
+    description: 'FastHireMela is an AI-powered job discovery platform for freshers and experienced professionals in India.',
+    canonicalUrl: 'https://www.fasthiremela.online/',
+    isHomepage: true
+  };
 
   const { data: jobs } = useQuery({
     queryKey: ['jobs', { limit: 6 }],
@@ -42,7 +51,9 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFF] selection:bg-blue-100 selection:text-blue-900">
+    <>
+      <SEO {...seoConfig} />
+      <div className="min-h-screen bg-[#FDFDFF] selection:bg-blue-100 selection:text-blue-900">
 
       {/* --- HERO SECTION --- */}
       <section className="relative overflow-hidden bg-[#0A0C10] text-white pt-24 pb-20 lg:pt-36 lg:pb-44">
@@ -281,7 +292,8 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

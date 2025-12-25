@@ -11,10 +11,13 @@ const SEO = ({
   canonicalUrl,
   noIndex = false,
   structuredData = [],
-  additionalMeta = []
+  additionalMeta = [],
+  isHomepage = false
 }) => {
   const siteConfig = SEO_CONFIG.site;
-  const fullTitle = title ? `${title} | ${siteConfig.defaultTitle}` : siteConfig.defaultTitle;
+  // For homepage, use exact title without suffix. For other pages, add " – FastHireMela" suffix
+  const fullTitle = isHomepage ? (title || siteConfig.defaultTitle) : 
+                   (title ? `${title} – ${siteConfig.defaultTitle}` : siteConfig.defaultTitle);
   const siteDescription = description || siteConfig.defaultDescription;
   const siteKeywords = keywords || siteConfig.keywords;
   const siteImage = ogImage || siteConfig.defaultImage;
