@@ -11,7 +11,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/toastUtils';
 import { cn } from '../../utils/cn';
 import Button from '../ui/Button';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo.jpg';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
