@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Briefcase, Building2, FolderTree, Info, Home, 
+  Briefcase, Building2, FolderTree, Info, Home,
   LayoutDashboard, User as UserIcon, LogOut, Menu, X,
   ChevronRight, Settings, Zap,
   User, Gift
@@ -53,7 +53,8 @@ const Header = () => {
     { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={16} /> },
     { name: 'Profile', href: '/profile', icon: <UserIcon size={16} /> },
     { name: 'SaveJobs', href: '/saved-jobs', icon: <UserIcon size={16} /> },
-    { name: 'Referrals', href: '/premium/referral', icon: <Gift size={16} /> }
+    { name: 'Referrals', href: '/premium/referral', icon: <Gift size={16} /> },
+    { name: 'Contact', href: '/contact', icon: <Mail size={16} /> }
   ];
 
   const isActivePath = (path) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
@@ -73,7 +74,7 @@ const Header = () => {
     )}>
       <div className="max-w-7xl mx-auto h-full px-4 sm:px-6">
         <div className="flex justify-between items-center h-full">
-          
+
           {/* LOGO */}
           <Link to="/" className="flex items-center shrink-0">
             <img src={logo} alt="Logo" className="h-6 w-auto sm:h-8 object-contain" />
@@ -104,13 +105,24 @@ const Header = () => {
 
           {/* ACTIONS AREA */}
           <div className="flex items-center gap-2 sm:gap-3">
-            
+
             {/* MOBILE ONLY ACTIONS (Shown when LOGGED IN) */}
             {isAuthenticated && (
               <div className="flex lg:hidden items-center gap-2 mr-1">
+                {/* Added Jobs Icon Link below */}
+                <Link to="/jobs" className="p-1.5 text-gray-400 bg-white/5 rounded-full border border-white/10">
+                  <Briefcase size={16} />
+                </Link>
+
                 <Link to="/dashboard" className="p-1.5 text-gray-400 bg-white/5 rounded-full border border-white/10">
                   <LayoutDashboard size={16} />
                 </Link>
+
+                {/* Added Contact Icon here */}
+                <Link to="/contact" className="p-1.5 text-gray-400 bg-white/5 rounded-full border border-white/10">
+                  <Mail size={16} />
+                </Link>
+
                 <div className="relative" ref={profileRef}>
                   <button
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -235,8 +247,8 @@ const Header = () => {
             <div className="mt-auto p-4 border-t border-white/10 bg-[#050505]">
               {!isAuthenticated ? (
                 <div className="grid grid-cols-2 gap-3">
-                  <Button onClick={() => {navigate('/login'); setIsMenuOpen(false);}} variant="outline" className="text-xs py-3">Sign In</Button>
-                  <Button onClick={() => {navigate('/register'); setIsMenuOpen(false);}} variant="primary" className="text-xs py-3">Join Free</Button>
+                  <Button onClick={() => { navigate('/login'); setIsMenuOpen(false); }} variant="outline" className="text-xs py-3">Sign In</Button>
+                  <Button onClick={() => { navigate('/register'); setIsMenuOpen(false); }} variant="primary" className="text-xs py-3">Join Free</Button>
                 </div>
               ) : (
                 <Button onClick={handleLogout} variant="ghost" className="w-full py-3 text-red-500 bg-red-500/5 flex items-center justify-center gap-2">
