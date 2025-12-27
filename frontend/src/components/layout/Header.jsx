@@ -5,7 +5,8 @@ import {
   Briefcase, Building2, FolderTree, Info, Home,
   LayoutDashboard, User as UserIcon, LogOut, Menu, X,
   ChevronRight, Settings, Zap,
-  User, Gift
+  User, Gift,
+  PhoneCallIcon
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/toastUtils';
@@ -54,7 +55,7 @@ const Header = () => {
     { name: 'Profile', href: '/profile', icon: <UserIcon size={16} /> },
     { name: 'SaveJobs', href: '/saved-jobs', icon: <UserIcon size={16} /> },
     { name: 'Referrals', href: '/premium/referral', icon: <Gift size={16} /> },
-    { name: 'Contact', href: '/contact', icon: <Mail size={16} /> }
+    { name: 'Contact', href: '/contact', icon: <PhoneCallIcon size={16} /> }
   ];
 
   const isActivePath = (path) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
@@ -120,7 +121,7 @@ const Header = () => {
 
                 {/* Added Contact Icon here */}
                 <Link to="/contact" className="p-1.5 text-gray-400 bg-white/5 rounded-full border border-white/10">
-                  <Mail size={16} />
+                  <PhoneCallIcon size={16} />
                 </Link>
 
                 <div className="relative" ref={profileRef}>
