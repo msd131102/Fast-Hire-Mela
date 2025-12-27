@@ -2,16 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Favicon for modern browsers -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <!-- Round Google Search Favicon - Priority for search results -->
+    <link rel="icon" href="/google_search_favicon_round.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/google_search_favicon_round.ico" type="image/x-icon" />
+    <link rel="icon" href="/google_search_favicon_round.png" type="image/png" />
+    
+    <!-- Favicon for all browsers and sizes -->
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256x256.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     
     <!-- Apple touch icon for iOS -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png" />
     
     <!-- Microsoft tile for Windows -->
     <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+    <meta name="msapplication-TileColor" content="#3B82F6" />
+    
+    <!-- PWA and mobile -->
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3B82F6" />
     
     <!-- Web manifest -->
     <link rel="manifest" href="/site.webmanifest" />
@@ -26,21 +42,21 @@
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
     
     <!-- Basic Meta Tags (will be overridden by React Helmet) -->
-    <meta name="description" content="Fast Hire Mela - AI-powered job discovery platform for Freshers & Experienced candidates in India. Find verified jobs, get daily updates, and apply directly to company portals." />
-    <meta name="keywords" content="jobs, fresher jobs, experienced jobs, India, AI job alerts, job portal, recruitment, career" />
+    <meta name="description" content="Find verified jobs and apply to latest openings in India. AI-powered job portal with daily updates for freshers and experienced professionals." />
+    <meta name="keywords" content="jobs in India, job openings, apply jobs, latest jobs, fresher jobs, experienced jobs, AI job alerts, job portal India, recruitment, career opportunities" />
     <meta name="author" content="Fast Hire Mela" />
     
     <!-- Open Graph Meta Tags (fallback) -->
-    <meta property="og:title" content="Fast Hire Mela - AI-Powered Job Discovery Platform" />
-    <meta property="og:description" content="Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates." />
+    <meta property="og:title" content="Jobs in India - Latest Openings | FastHireMela" />
+    <meta property="og:description" content="Find verified jobs and apply to latest openings across India. AI-powered job portal with daily updates for freshers and experienced professionals." />
     <meta property="og:image" content="/favicon.png" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Fast Hire Mela" />
     
     <!-- Twitter Card Meta Tags (fallback) -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Fast Hire Mela - AI-Powered Job Discovery" />
-    <meta name="twitter:description" content="Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates." />
+    <meta name="twitter:title" content="Jobs in India - Latest Openings | FastHireMela" />
+    <meta name="twitter:description" content="Find verified jobs and apply to latest openings across India. AI-powered job portal with daily updates for freshers and experienced professionals." />
     <meta name="twitter:image" content="/favicon.png" />
     <meta name="twitter:site" content="@fasthiremela" />
     
@@ -55,18 +71,24 @@
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="your-google-verification-code-here" />
     
-    <!-- Google Analytics 4 -->
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/src/main.jsx" as="script" type="module" crossorigin />
+    
+    <!-- Google Analytics 4 - Async with defer -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3313VGRXE8"></script>
-    <script>
+    <script defer>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-3313VGRXE8');
     </script>
     
-    <title>FastHireMela</title>
-    <link rel="canonical" href="https://www.fasthiremela.online/" />
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+      body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:#FDFDFF}.hero-loading{min-height:100vh;background:#0A0C10;display:flex;align-items:center;justify-content:center;color:white}
+    </style>
+    
+    <title>Jobs in India - Apply to Openings | FastHireMela</title>
   </head>
   <body>
     <div id="root"></div>

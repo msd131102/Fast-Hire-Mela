@@ -4,18 +4,18 @@ export const SEO_CONFIG = {
   site: {
     name: 'FastHireMela',
     url: 'https://www.fasthiremela.online',
-    defaultTitle: 'FastHireMela',
-    defaultDescription: 'Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates.',
+    defaultTitle: 'Jobs in India - Apply to Openings | FastHireMela',
+    defaultDescription: 'Find verified jobs and apply to latest openings in India. AI-powered job portal for freshers and experienced professionals with daily updates.',
     defaultImage: '/favicon.png',
     twitterHandle: '@fasthiremela',
-    keywords: 'jobs, fresher jobs, experienced jobs, India, AI job alerts, job portal, recruitment, career'
+    keywords: 'jobs in India, job openings, apply jobs, latest jobs, fresher jobs, experienced jobs, AI job alerts, job portal India, recruitment, career opportunities'
   },
   
   pages: {
     home: {
-      title: 'FastHireMela',
-      description: 'Find verified jobs in India with AI-powered daily updates. Completely free for freshers and experienced candidates. Apply directly to company portals.',
-      keywords: 'jobs, fresher jobs, experienced jobs, India, AI job alerts, job portal, recruitment, career',
+      title: 'Jobs in India - Latest Openings | FastHireMela',
+      description: 'Find verified jobs and apply to latest openings across India. AI-powered job portal with daily updates for freshers and experienced professionals.',
+      keywords: 'jobs in India, job openings, apply jobs, latest jobs, fresher jobs, experienced jobs, AI job alerts, job portal India, recruitment, career opportunities',
       structuredData: [
         {
           '@context': 'https://schema.org',

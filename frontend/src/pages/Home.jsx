@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { Card, CardTitle } from '../components/ui/Card';
 import SEO from '../components/seo/SEO';
+import OptimizedImage from '../components/ui/OptimizedImage';
 import { getJobs, getCategories, getCompanies, utils } from '../services/api';
 
 const Home = () => {
@@ -24,8 +25,9 @@ const Home = () => {
 
   // SEO configuration for homepage
   const seoConfig = {
-    title: 'FastHireMela',
-    description: 'FastHireMela is an AI-powered job discovery platform for freshers and experienced professionals in India.',
+    title: 'Jobs in India - Latest Openings | FastHireMela',
+    description: 'Find verified jobs and apply to latest openings across India. AI-powered job portal with daily updates for freshers and experienced professionals.',
+    keywords: 'jobs in India, job openings, apply jobs, latest jobs, fresher jobs, experienced jobs, AI job alerts, job portal India, recruitment, career opportunities',
     canonicalUrl: 'https://www.fasthiremela.online/',
     isHomepage: true
   };
@@ -203,7 +205,13 @@ const Home = () => {
                   <div className="p-3 sm:p-8"> {/* Smaller padding on mobile */}
                     <div className="flex justify-between items-start mb-4 sm:mb-8">
                       <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gray-50 rounded-xl flex items-center justify-center p-1.5 border border-gray-100">
-                        <img src={job.company_logo || '/api/placeholder/60/60'} alt="" className="w-full h-full object-contain" />
+                        <OptimizedImage 
+                          src={job.company_logo || '/api/placeholder/60/60'} 
+                          alt={`${job.company_name} logo`} 
+                          className="w-full h-full object-contain" 
+                          width={60}
+                          height={60}
+                        />
                       </div>
                       {/* Hide badge on tiny screens or keep it small */}
                       <span className="hidden xs:block px-2 py-1 rounded-full bg-gray-900 text-white text-[8px] font-bold uppercase">
@@ -260,7 +268,13 @@ const Home = () => {
                 className="bg-white/[0.03] border border-white/5 p-8 rounded-[2rem] text-center hover:bg-white/[0.07] transition-all cursor-pointer group"
               >
                 <div className="bg-white p-4 rounded-3xl inline-block mb-6 shadow-2xl group-hover:scale-110 transition-transform">
-                  <img src={company.logo_url || '/api/placeholder/80/80'} alt="" className="w-12 h-12 object-contain grayscale group-hover:grayscale-0 transition-all" />
+                  <OptimizedImage 
+                    src={company.logo_url || '/api/placeholder/80/80'} 
+                    alt={`${company.name} company logo`} 
+                    className="w-12 h-12 object-contain grayscale group-hover:grayscale-0 transition-all" 
+                    width={80}
+                    height={80}
+                  />
                 </div>
                 <h3 className="font-bold text-white mb-1">{company.name}</h3>
                 <p className="text-xs text-gray-500 mb-4">{company.industry}</p>

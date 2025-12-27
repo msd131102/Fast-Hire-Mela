@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 import { useToast } from '../../components/ui/toastUtils';
 import {
   getJobDetails, getSimilarJobs, saveJob, unsaveJob, getSavedJobs, trackApplication, utils
@@ -155,7 +156,13 @@ const JobDetails = () => {
             <section className="px-6 lg:px-0 space-y-8">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 p-2 shadow-sm">
-                  <img src={job.company_logo} alt="" className="w-full h-full object-contain" />
+                  <OptimizedImage 
+                    src={job.company_logo} 
+                    alt={`${job.company_name} logo`} 
+                    className="w-full h-full object-contain" 
+                    width={64}
+                    height={64}
+                  />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 flex items-center gap-1">
