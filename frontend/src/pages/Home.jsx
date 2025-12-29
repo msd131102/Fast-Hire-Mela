@@ -2,43 +2,22 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Search,
-  Building2,
-  MapPin,
-  Clock,
-  ArrowRight,
-  Briefcase,
-  Sparkles,
-  MousePointer2,
-  Code,
-  Headphones,
-  BarChart,
-  Layers,
-  Globe
+  Search, Building2, MapPin, Clock, ArrowRight, Briefcase, Sparkles, 
+  MousePointer2, Code, Headphones, BarChart, Layers, Globe, Zap, ShieldCheck
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
-import { Card, CardTitle } from '../components/ui/Card';
 import SEO from '../components/seo/SEO';
 import OptimizedImage from '../components/ui/OptimizedImage';
 import { getJobs, getCategories, getCompanies, utils } from '../services/api';
 
-// --- HELPER: ICON MAPPER ---
-// This converts string names from your database into actual Lucide components
-const CategoryIcon = ({ name, className }) => {
+// --- Dynamic Icon Mapper ---
+const IconComponent = ({ name, className }) => {
   const iconMap = {
-    'Briefcase': Briefcase,
-    'Code': Code,
-    'Headphones': Headphones,
-    'BarChart': BarChart,
-    'Layers': Layers,
-    'Globe': Globe,
-    'Building2': Building2,
-    'Sparkles': Sparkles
+    Briefcase, Code, Headphones, BarChart, Layers, Globe, Building2, Sparkles, Zap, ShieldCheck
   };
-
-  const IconComponent = iconMap[name] || Briefcase; // Fallback to Briefcase
-  return <IconComponent className={className} />;
+  const Icon = iconMap[name] || Briefcase;
+  return <Icon className={className} />;
 };
 
 const Home = () => {
@@ -48,26 +27,15 @@ const Home = () => {
 
   const seoConfig = {
     title: 'Jobs in India - Latest Openings | FastHireMela',
-    description: 'Find verified jobs and apply to latest openings across India. AI-powered job portal with daily updates for freshers and experienced professionals.',
-    keywords: 'jobs in India, job openings, apply jobs, latest jobs, fresher jobs, experienced jobs, AI job alerts, job portal India, recruitment, career opportunities',
+    description: 'Find verified jobs and apply to latest openings across India.',
+    keywords: 'jobs in India, job openings, apply jobs, latest jobs',
     canonicalUrl: 'https://www.fasthiremela.online/',
     isHomepage: true
   };
 
-  const { data: jobs } = useQuery({
-    queryKey: ['jobs', { limit: 6 }],
-    queryFn: () => getJobs({ limit: 6 }),
-  });
-
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => getCategories({ include_job_count: true }),
-  });
-
-  const { data: companies } = useQuery({
-    queryKey: ['companies', { limit: 8 }],
-    queryFn: () => getCompanies({ limit: 8 }),
-  });
+  const { data: jobs } = useQuery({ queryKey: ['jobs', { limit: 6 }], queryFn: () => getJobs({ limit: 6 }) });
+  const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: () => getCategories({ include_job_count: true }) });
+  const { data: companies } = useQuery({ queryKey: ['companies', { limit: 8 }], queryFn: () => getCompanies({ limit: 8 }) });
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -77,252 +45,194 @@ const Home = () => {
   return (
     <>
       <SEO {...seoConfig} />
-      <div className="min-h-screen bg-[#FDFDFF] selection:bg-blue-100 selection:text-blue-900">
+      <div className="min-h-screen bg-[#F8FAFC] selection:bg-blue-600 selection:text-white">
 
-        {/* --- HERO SECTION --- */}
-        <section className="relative overflow-hidden bg-[#0A0C10] text-white pt-24 pb-20 lg:pt-36 lg:pb-44">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full animate-pulse" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full" />
-          </div>
-
+        {/* --- PREMIUM HERO SECTION --- */}
+        <section className="relative pt-24 pb-20 lg:pt-40 lg:pb-52 bg-[#05070A] overflow-hidden">
+          {/* Ambient Light Effects */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 blur-[120px] rounded-full" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/10 blur-[120px] rounded-full" />
+          
           <div className="container relative mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-center max-w-4xl mx-auto"
+              className="text-center max-w-5xl mx-auto"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-blue-300 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mb-8 backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>AI-Powered Recruitment 2.0</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase mb-10 backdrop-blur-md">
+                <Zap className="w-3.5 h-3.5 fill-current" />
+                <span>The Future of Job Hunting</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-8 tracking-tighter leading-[0.9] text-white">
-                Fast Hire Mela <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-blue-200">
-                  Work Smarter
-                </span>
+              <h1 className="text-5xl md:text-7xl lg:text-9xl font-black text-white mb-8 tracking-tighter leading-[0.85]">
+                Hire <span className="text-blue-500">Fast.</span> <br />
+                Work <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-200">Better.</span>
               </h1>
 
-              <p className="text-lg sm:text-xl text-gray-400 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
-                Fast Hire Mela bridges the gap between ambition and opportunity with daily AI-verified listings.
+              <p className="text-gray-400 text-lg md:text-xl mb-14 max-w-2xl mx-auto font-light leading-relaxed">
+                Connect with India's top employers through our AI-driven placement ecosystem.
               </p>
 
-              <motion.form
-                onSubmit={handleSearch}
-                className="bg-white/[0.03] backdrop-blur-3xl p-2 rounded-2xl lg:rounded-full border border-white/10 shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] max-w-5xl mx-auto flex flex-col lg:flex-row gap-2"
-              >
-                <div className="flex-[1.5] relative group">
-                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5 group-focus-within:text-blue-400 transition-colors" />
-                  <input
-                    type="text"
-                    placeholder="What role are you looking for?"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-14 pr-6 py-5 bg-white/5 lg:bg-transparent border-0 rounded-xl lg:rounded-none text-white placeholder-gray-500 text-sm focus:ring-0 outline-none font-medium"
-                  />
+              {/* Ultra-Modern Search Bar */}
+              <form onSubmit={handleSearch} className="relative z-20 group">
+                <div className="bg-white/5 backdrop-blur-2xl p-2 rounded-2xl lg:rounded-full border border-white/10 shadow-2xl flex flex-col lg:flex-row gap-2 max-w-4xl mx-auto transition-all group-focus-within:border-blue-500/50">
+                  <div className="flex-[1.5] relative">
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      placeholder="Job title, skills or company"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-16 pr-6 py-5 bg-transparent border-0 text-white placeholder-gray-500 focus:ring-0 outline-none text-base"
+                    />
+                  </div>
+                  <div className="hidden lg:block w-px h-10 bg-white/10 self-center" />
+                  <div className="flex-1 relative">
+                    <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      placeholder="Location"
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      className="w-full pl-16 pr-6 py-5 bg-transparent border-0 text-white placeholder-gray-500 focus:ring-0 outline-none text-base"
+                    />
+                  </div>
+                  <Button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white h-16 lg:h-auto px-10 lg:rounded-full font-bold shadow-xl shadow-blue-600/20">
+                    Find Jobs
+                  </Button>
                 </div>
-                <div className="hidden lg:block w-[1px] h-8 self-center bg-white/10"></div>
-                <div className="flex-1 relative group">
-                  <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5 group-focus-within:text-blue-400 transition-colors" />
-                  <input
-                    type="text"
-                    placeholder="City or Remote"
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                    className="w-full pl-14 pr-6 py-5 bg-white/5 lg:bg-transparent border-0 rounded-xl lg:rounded-none text-white placeholder-gray-500 text-sm focus:ring-0 outline-none font-medium"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-500 text-white h-14 lg:h-auto px-10 lg:rounded-full font-bold transition-all active:scale-95 whitespace-nowrap"
-                >
-                  Search Jobs
-                </Button>
-              </motion.form>
-
-              <div className="flex flex-wrap justify-center gap-8 mt-20 opacity-40 grayscale pointer-events-none">
-                <span className="text-xs font-bold tracking-widest uppercase">Trusted by Students</span>
-              </div>
+              </form>
             </motion.div>
           </div>
         </section>
 
-        {/* --- AI FEATURES --- */}
-        <section className="py-24 border-b border-gray-100">
+        {/* --- CATEGORIES SECTION --- */}
+        <section className="py-24 bg-white">
           <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {[
-                { icon: <Sparkles className="text-blue-600 w-6 h-6" />, title: "Daily 8 PM Drop", desc: "Our AI curates and verifies high-intent roles every evening." },
-                { icon: <Briefcase className="text-indigo-600 w-6 h-6" />, title: "Verified Listings", desc: "Every company is vetted to ensure zero spam or ghost jobs." },
-                { icon: <MousePointer2 className="text-blue-600 w-6 h-6" />, title: "1-Click Apply", desc: "Streamlined applications designed for the modern professional." }
-              ].map((feature, i) => (
-                <div key={i} className="group p-8 rounded-3xl bg-white hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100">
-                  <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
-                    {feature.icon}
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+              <div>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter">Market Sectors</h2>
+                <p className="text-blue-600 font-bold text-sm tracking-widest uppercase mt-2">Explore Industry Vertical</p>
+              </div>
+              <div className="h-px flex-1 bg-gray-100 hidden md:block mx-10 mb-4" />
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              {categories?.data?.categories?.map((cat) => (
+                <div key={cat.id} onClick={() => window.location.href = `/jobs?category=${cat.id}`} className="group cursor-pointer">
+                  <div className="bg-gray-50 rounded-[2.5rem] p-8 border border-transparent group-hover:border-blue-100 group-hover:bg-blue-50/30 transition-all duration-500 text-center flex flex-col items-center">
+                    <div className="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                      <IconComponent name={cat.icon} className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h3 className="font-bold text-gray-900 text-sm mb-1">{cat.name}</h3>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{cat.job_count || 0} Vacancies</p>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-500 leading-relaxed text-sm font-medium">{feature.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* --- CATEGORIES --- */}
-        <section className="py-24 bg-[#F8F9FF]">
-          <div className="container mx-auto px-6 text-center lg:text-left">
-            <div className="mb-16">
-              <h2 className="text-3xl lg:text-5xl font-black text-gray-900 mb-4 tracking-tight">Explore by Sector</h2>
-              <p className="text-gray-500 font-semibold uppercase text-xs tracking-[0.2em]">High Growth Opportunities</p>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {categories?.data?.categories?.map((category) => (
-                <motion.div
-                  key={category.id}
-                  whileHover={{ y: -5, backgroundColor: '#fff' }}
-                  onClick={() => window.location.href = `/jobs?category=${category.id}`}
-                  className="bg-white/40 backdrop-blur-sm border border-gray-100 p-8 rounded-[2rem] cursor-pointer transition-all shadow-sm hover:shadow-xl flex flex-col items-center lg:items-start"
-                >
-                  <div className="mb-6">
-                    {/* Fixed dynamic icon rendering */}
-                    <CategoryIcon name={category.icon} className="w-10 h-10 text-blue-600" />
-                  </div>
-                  <h3 className="font-bold text-gray-900 mb-2 text-sm">{category.name}</h3>
-                  <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase">
-                    {category.job_count || 0} Open
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* --- LATEST JOBS --- */}
-        <section className="py-12 sm:py-24">
-          <div className="container mx-auto px-4 sm:px-6 text-left">
-            <div className="flex flex-col justify-start items-start mb-8 sm:mb-12 gap-4">
-              <div className="max-w-xl text-left">
-                <h2 className="text-3xl lg:text-6xl font-black text-gray-900 mb-2 tracking-tighter leading-none">
-                  Latest Openings
-                </h2>
-                <p className="text-gray-500 font-medium text-sm sm:text-base">
-                  Freshly dropped opportunities.
-                </p>
-              </div>
-              <Link to="/jobs">
-                <Button variant="outline" className="rounded-full border-gray-200 px-6 font-bold h-10 text-xs sm:text-sm">
-                  View All Jobs
-                </Button>
+        {/* --- LATEST JOBS GRID (PREMIUM CARD DESIGN) --- */}
+        <section className="py-24 bg-gray-50/50">
+          <div className="container mx-auto px-6">
+            <div className="flex justify-between items-center mb-16">
+              <h2 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tighter">Live Openings</h2>
+              <Link to="/jobs" className="text-blue-600 font-bold flex items-center gap-2 group text-sm">
+                View Gallery <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {jobs?.data?.jobs?.map((job) => (
-                <motion.div key={job.id} whileHover={{ y: -8 }}>
-                  <Card className="rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 shadow-sm transition-all p-1 overflow-hidden h-full">
-                    <div className="p-3 sm:p-8 flex flex-col h-full">
-                      <div className="flex justify-between items-start mb-4 sm:mb-8">
-                        <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gray-50 rounded-xl flex items-center justify-center p-1.5 border border-gray-100 overflow-hidden">
-                          <OptimizedImage 
-                            src={job.company_logo || '/api/placeholder/60/60'} 
-                            alt={`${job.company_name} logo`} 
-                            className="w-full h-full object-contain" 
-                            width={60}
-                            height={60}
-                          />
-                        </div>
-                        <span className="inline-flex px-2 py-1 rounded-full bg-gray-900 text-white text-[8px] font-bold uppercase">
-                          {job.job_type}
-                        </span>
+                <motion.div key={job.id} whileHover={{ y: -10 }} className="h-full">
+                  <div className="bg-white border border-gray-100 rounded-[2rem] p-8 h-full shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 relative flex flex-col">
+                    <div className="flex justify-between items-start mb-10">
+                      <div className="w-16 h-16 bg-gray-50 rounded-2xl p-2 border border-gray-100 shadow-inner">
+                        <OptimizedImage src={job.company_logo || '/api/placeholder/64/64'} className="w-full h-full object-contain" />
                       </div>
+                      <span className="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                        {job.job_type}
+                      </span>
+                    </div>
 
-                      <CardTitle className="text-sm sm:text-xl font-bold mb-2 text-gray-900 leading-tight h-10 sm:h-14 line-clamp-2">
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2 leading-tight tracking-tight line-clamp-2 h-14">
                         {job.title}
-                      </CardTitle>
-
-                      <div className="flex flex-col gap-1 mb-4 sm:mb-8">
-                        <div className="flex items-center text-gray-500 text-[10px] sm:text-sm font-semibold truncate">
-                          <Building2 className="w-3 h-3 mr-1 text-blue-500" /> {job.company_name}
-                        </div>
-                      </div>
-
-                      <div className="mt-auto">
-                        <div className="pt-3 border-t border-gray-50 mb-4">
-                          <div className="text-[10px] sm:text-sm font-black text-gray-900">
-                            {job.salary_min ? `₹${job.salary_min}L` : "Market"}
-                          </div>
-                        </div>
-                        <div className="flex items-center text-[7px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-tighter mb-4">
-                          <Clock className="w-2 h-2 sm:w-3 sm:h-3 mr-0.5" />
-                          {utils.formatPostedDate(job.posted_date)}
-                        </div>
-
-                        <Link to={`/jobs/${job.slug}`}>
-                          <Button className="w-full rounded-xl h-10 sm:h-14 text-[10px] sm:text-sm font-black">
-                            Apply
-                          </Button>
-                        </Link>
+                      </h3>
+                      <div className="flex items-center text-gray-500 font-medium mb-8">
+                        <Building2 className="w-4 h-4 mr-2 text-blue-500" />
+                        <span className="text-sm">{job.company_name}</span>
                       </div>
                     </div>
-                  </Card>
+
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-50 mt-auto">
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Package</p>
+                        <p className="text-lg font-black text-gray-900 leading-none">
+                          {job.salary_min ? `₹${job.salary_min}L+` : "Best in Market"}
+                        </p>
+                      </div>
+                      <Link to={`/jobs/${job.slug}`}>
+                        <Button className="rounded-2xl h-12 px-8 bg-gray-900 text-white hover:bg-blue-600 transition-colors">
+                          Apply
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* --- TOP COMPANIES --- */}
-        <section className="py-24 bg-[#0A0C10] text-white">
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-5xl font-black mb-4 tracking-tight">Hiring Companies</h2>
-              <p className="text-blue-400 font-bold uppercase text-[10px] tracking-[0.3em]">Direct Access To Companies</p>
+        {/* --- HIRING COMPANIES SECTION --- */}
+        <section className="py-32 bg-[#05070A] relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px]" />
+          <div className="container mx-auto px-6 relative z-10">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-4">Top Recruiters</h2>
+              <p className="text-gray-500 font-bold uppercase tracking-[0.4em] text-xs">Direct Partnerships</p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4">
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {companies?.data?.map((company) => (
-                <div
-                  key={company.id}
-                  onClick={() => window.location.href = `/jobs?company=${company.id}`}
-                  className="bg-white/[0.03] border border-white/5 p-8 rounded-[2rem] text-center hover:bg-white/[0.07] transition-all cursor-pointer group"
-                >
-                  <div className="bg-white p-4 rounded-3xl inline-block mb-6 shadow-2xl group-hover:scale-110 transition-transform">
-                    <OptimizedImage 
-                      src={company.logo_url || '/api/placeholder/80/80'} 
-                      alt={`${company.name} logo`} 
-                      className="w-12 h-12 object-contain group-hover:grayscale-0 transition-all" 
-                      width={80}
-                      height={80}
-                    />
+                <div key={company.id} className="group bg-white/5 border border-white/10 p-10 rounded-[3rem] text-center hover:bg-white/10 transition-all duration-500 cursor-pointer">
+                  <div className="w-20 h-20 bg-white rounded-3xl p-4 mx-auto mb-6 group-hover:rotate-6 transition-transform">
+                    <OptimizedImage src={company.logo_url || '/api/placeholder/80/80'} className="w-full h-full object-contain" />
                   </div>
-                  <h3 className="font-bold text-white mb-1">{company.name}</h3>
-                  <p className="text-xs text-gray-500 mb-4">{company.industry}</p>
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-600/20 text-blue-400 text-[10px] font-black tracking-widest">
-                    {company.job_count || 0} OPENINGS
-                  </div>
+                  <h4 className="text-white font-bold text-lg mb-1">{company.name}</h4>
+                  <p className="text-blue-400 text-[10px] font-black tracking-widest uppercase">{company.job_count || 0} Positions</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* --- CTA SECTION --- */}
+        {/* --- PREMIUM CTA SECTION --- */}
         <section className="py-24 px-6">
           <div className="container mx-auto">
-            <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-[3rem] p-12 lg:p-24 text-center relative overflow-hidden shadow-[0_40px_100px_-20px_rgba(59,130,246,0.5)]">
-              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} className="relative z-10 max-w-2xl mx-auto">
-                <h2 className="text-4xl lg:text-6xl font-black text-white mb-8 tracking-tighter leading-none">Your Next Career Chapter Starts Here.</h2>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="bg-blue-600 rounded-[4rem] p-12 lg:p-32 text-center relative overflow-hidden shadow-2xl shadow-blue-600/40">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-700 to-indigo-900" />
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent" />
+              
+              <div className="relative z-10 max-w-3xl mx-auto">
+                <h2 className="text-5xl lg:text-7xl font-black text-white mb-10 tracking-tighter leading-none">
+                  Ready for your next big move?
+                </h2>
+                <div className="flex flex-col sm:flex-row gap-6 justify-center">
                   <Link to="/register">
-                    <Button size="lg" className="w-full sm:w-auto px-12 h-16 rounded-2xl bg-white text-blue-600 hover:bg-gray-50 font-black shadow-2xl">Create Profile</Button>
+                    <Button size="lg" className="w-full sm:w-auto px-14 h-20 rounded-3xl bg-white text-blue-600 hover:scale-105 transition-transform font-black text-xl">
+                      Get Started
+                    </Button>
                   </Link>
                   <Link to="/jobs">
-                    <Button size="lg" variant="outline" className="w-full sm:w-auto px-12 h-16 rounded-2xl border-white/30 text-white hover:bg-white/10 font-black backdrop-blur-md">Browse Jobs</Button>
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto px-14 h-20 rounded-3xl border-white/40 text-white hover:bg-white/10 backdrop-blur-md font-black text-xl">
+                      Search Jobs
+                    </Button>
                   </Link>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
