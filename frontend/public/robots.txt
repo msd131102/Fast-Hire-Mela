@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+# Favicon references for better discovery
 Sitemap: https://www.fasthiremela.online/sitemap.xml
