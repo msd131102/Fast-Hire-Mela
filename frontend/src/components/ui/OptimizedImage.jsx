@@ -13,25 +13,51 @@ const OptimizedImage = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
+  // Function to construct full URL for backend images
+  const constructImageUrl = (imageSrc) => {
+    if (!imageSrc) return null;
+    
+    // If it's already a full URL, return as-is
+    if (imageSrc.startsWith('http')) {
+      return imageSrc;
+    }
+    
+    // If it starts with /uploads/, it's a backend relative path
+    if (imageSrc.startsWith('/uploads/')) {
+      const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      return `${backendUrl}${imageSrc}`;
+    }
+    
+    // If it's a relative path starting with /, it's a frontend asset
+    if (imageSrc.startsWith('/')) {
+      return imageSrc;
+    }
+    
+    // Otherwise, treat as relative path
+    return `/${imageSrc}`;
+  };
+
   // Generate WebP and fallback sources
   const generateSrcSet = (baseSrc) => {
     if (!baseSrc || hasError) return '';
     
+    const fullSrc = constructImageUrl(baseSrc);
+    
     // If it's an external URL, return as-is
-    if (baseSrc.startsWith('http')) {
-      return baseSrc;
+    if (fullSrc.startsWith('http')) {
+      return fullSrc;
     }
     
     // For local images, generate different sizes
     const extensions = ['.jpg', '.jpeg', '.png'];
-    const hasImageExtension = extensions.some(ext => baseSrc.includes(ext));
+    const hasImageExtension = extensions.some(ext => fullSrc.includes(ext));
     
     if (!hasImageExtension) {
-      return baseSrc;
+      return fullSrc;
     }
     
     // Generate WebP version with fallback
-    const baseName = baseSrc.replace(/\.[^/.]+$/, '');
+    const baseName = fullSrc.replace(/\.[^/.]+$/, '');
     return `${baseName}.webp 1x, ${baseName}@2x.webp 2x`;
   };
 
@@ -43,14 +69,16 @@ const OptimizedImage = ({
     setHasError(true);
   };
 
+  const finalSrc = constructImageUrl(src);
+
   // Fallback placeholder
-  if (hasError) {
+  if (hasError || !finalSrc) {
     return (
       <div 
         className={`bg-gray-100 flex items-center justify-center ${className}`}
         style={{ width, height }}
       >
-        <span className="text-gray-400 text-sm">Image not available</span>
+        <span className="text-gray-400 text-xs text-center">No Logo</span>
       </div>
     );
   }
@@ -66,13 +94,13 @@ const OptimizedImage = ({
         {/* WebP source for modern browsers */}
         <source
           type="image/webp"
-          srcSet={generateSrcSet(src)}
+          srcSet={generateSrcSet(finalSrc)}
           sizes={sizes}
         />
         
         {/* Fallback for older browsers */}
         <img
-          src={src}
+          src={finalSrc}
           alt={alt}
           width={width}
           height={height}
@@ -82,7 +110,7 @@ const OptimizedImage = ({
           onError={handleError}
           className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
           style={{ 
-            objectFit: 'cover',
+            objectFit: 'contain',
             width: width || '100%',
             height: height || 'auto'
           }}

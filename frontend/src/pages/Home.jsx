@@ -189,7 +189,7 @@ const Home = () => {
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center border border-gray-200 shadow-sm overflow-hidden">
                         <OptimizedImage
-                          src={job.company_logo || '/api/placeholder/80/80'}
+                          src={job.company_logo_url || job.company_logo || '/vite.svg'}
                           alt={job.company_name}
                           className="max-w-[80%] max-h-[80%] object-contain"
                           width={80}
@@ -254,7 +254,7 @@ const Home = () => {
                   {/* LOGO FIXED */}
                   <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-lg border border-gray-100">
                     <OptimizedImage
-                      src={company.logo_url || '/api/placeholder/120/120'}
+                      src={company.logo_url || '/vite.svg'}
                       alt={company.name}
                       className="max-w-[75%] max-h-[75%] object-contain"
                       width={120}

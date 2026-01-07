@@ -325,9 +325,9 @@ const SavedJobs = () => {
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4 flex-1">
                           <img
-                            src={job.company_logo || '/api/placeholder/60/60'}
+                            src={job.company_logo_url || job.company_logo || '/vite.svg'}
                             alt={job.company_name}
-                            className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                            className="w-16 h-16 rounded-lg object-contain flex-shrink-0"
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-2">

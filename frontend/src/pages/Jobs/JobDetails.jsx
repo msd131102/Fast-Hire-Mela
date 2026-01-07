@@ -157,7 +157,7 @@ const JobDetails = () => {
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 p-2 shadow-sm">
                   <OptimizedImage 
-                    src={job.company_logo} 
+                    src={job.company_logo_url || job.company_logo || '/vite.svg'} 
                     alt={`${job.company_name} logo`} 
                     className="w-full h-full object-contain" 
                     width={64}
