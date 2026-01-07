@@ -189,7 +189,7 @@ const Home = () => {
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center border border-gray-200 shadow-sm overflow-hidden">
                         <OptimizedImage
-                          src={job.company_logo_url || job.company_logo || '/vite.svg'}
+                          src={job.company_logo || '/api/placeholder/80/80'}
                           alt={job.company_name}
                           className="max-w-[80%] max-h-[80%] object-contain"
                           width={80}
