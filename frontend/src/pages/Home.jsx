@@ -1,53 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Search, Building2, MapPin, ArrowRight, Briefcase,
-  Code, Headphones, BarChart, Layers, Globe, Zap, ShieldCheck
+  Search,
+  Building2,
+  MapPin,
+  Clock,
+  ArrowRight,
+  Briefcase,
+  Sparkles,
+  MousePointer2,
+  Code,
+  Headphones,
+  BarChart,
+  Layers,
+  Globe
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import { Card, CardTitle } from '../components/ui/Card';
 import SEO from '../components/seo/SEO';
 import OptimizedImage from '../components/ui/OptimizedImage';
-import { getJobs, getCategories, getCompanies } from '../services/api';
+import { getJobs, getCategories, getCompanies, utils } from '../services/api';
 
-/* ------------------ MOBILE DETECTION ------------------ */
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  return isMobile;
-};
-
-/* ------------------ ICON MAP ------------------ */
-const IconComponent = ({ name, className }) => {
+/* ---------------- ICON MAPPER ---------------- */
+const CategoryIcon = ({ name, className }) => {
   const iconMap = {
-    Briefcase, Code, Headphones, BarChart, Layers,
-    Globe, Zap, ShieldCheck
+    Briefcase,
+    Code,
+    Headphones,
+    BarChart,
+    Layers,
+    Globe,
+    Sparkles
   };
   const Icon = iconMap[name] || Briefcase;
   return <Icon className={className} />;
 };
 
 const Home = () => {
-  const isMobile = useIsMobile();
-
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
 
+  /* ---------------- SEO ---------------- */
   const seoConfig = {
     title: 'Jobs in India - Latest Openings | FastHireMela',
-    description: 'Find verified jobs and apply to latest openings across India.',
+    description:
+      'Find verified jobs and apply to latest openings across India. AI-powered job portal.',
     canonicalUrl: 'https://www.fasthiremela.online/',
     isHomepage: true
   };
 
+  /* ---------------- DATA ---------------- */
   const { data: jobs } = useQuery({
     queryKey: ['jobs', { limit: 6 }],
     queryFn: () => getJobs({ limit: 6 })
@@ -65,164 +70,207 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    window.location.href = `/jobs?q=${encodeURIComponent(searchQuery)}&location=${selectedLocation}`;
+    window.location.href = `/jobs?q=${encodeURIComponent(
+      searchQuery
+    )}&category=${selectedCategory}&location=${selectedLocation}`;
   };
 
   return (
     <>
       <SEO {...seoConfig} />
 
-      <div className="min-h-screen bg-[#F8FAFC]">
+      <div className="min-h-screen bg-[#FDFDFF]">
 
-        {/* ---------------- HERO ---------------- */}
-        <section className="relative pt-28 pb-24 lg:pt-40 lg:pb-52 bg-[#05070A] overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/10 blur-[120px]" />
-
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* ================= HERO ================= */}
+        <section className="relative bg-[#0A0C10] text-white pt-24 pb-20 lg:pt-36 lg:pb-44 overflow-hidden">
+          <div className="container mx-auto px-4 sm:px-6">
             <motion.div
-              initial={isMobile ? { opacity: 0, y: 24 } : false}
-              animate={isMobile ? { opacity: 1, y: 0 } : false}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="text-center max-w-5xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center max-w-4xl mx-auto"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase mb-10">
-                <Zap className="w-3.5 h-3.5" />
-                The Future of Job Hunting
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-blue-300 text-xs font-bold uppercase mb-8">
+                <Sparkles className="w-3.5 h-3.5" />
+                AI-Powered Recruitment
               </div>
 
-              <h1 className="text-[2.8rem] sm:text-5xl md:text-7xl lg:text-9xl font-black text-white mb-6 sm:mb-8 leading-tight">
-                Hire <span className="text-blue-500">Fast.</span><br />
-                Work <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-200">Better.</span>
+              <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black mb-8 tracking-tight leading-tight">
+                Fast Hire Mela <br />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-300">
+                  Work Smarter
+                </span>
               </h1>
 
-              <p className="text-gray-400 text-base sm:text-lg md:text-xl mb-10 sm:mb-14 max-w-xl sm:max-w-2xl mx-auto">
-                Connect with India's top employers through our AI-driven placement ecosystem.
+              <p className="text-gray-400 text-base sm:text-xl mb-12 max-w-2xl mx-auto">
+                Daily AI-verified jobs for freshers & professionals.
               </p>
 
-              <form onSubmit={handleSearch}>
-                <motion.div
-                  whileFocusWithin={isMobile ? { scale: 1.02 } : {}}
-                  transition={{ type: 'spring', stiffness: 180, damping: 15 }}
-                  className="bg-white/5 backdrop-blur-2xl p-3 sm:p-2 rounded-2xl lg:rounded-full border border-white/10 flex flex-col lg:flex-row gap-2 max-w-4xl mx-auto"
-                >
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Job title, skills or company"
-                      className="w-full pl-14 sm:pl-16 pr-5 py-4 sm:py-5 bg-transparent text-white outline-none"
-                    />
-                  </div>
+              <form
+                onSubmit={handleSearch}
+                className="bg-white/5 backdrop-blur-xl p-3 rounded-2xl sm:rounded-full flex flex-col sm:flex-row gap-2 max-w-4xl mx-auto"
+              >
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Job title or skill"
+                    className="w-full pl-10 pr-4 py-3 bg-transparent text-white outline-none"
+                  />
+                </div>
 
-                  <div className="flex-1 relative">
-                    <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      value={selectedLocation}
-                      onChange={(e) => setSelectedLocation(e.target.value)}
-                      placeholder="Location"
-                      className="w-full pl-14 sm:pl-16 pr-5 py-4 sm:py-5 bg-transparent text-white outline-none"
-                    />
-                  </div>
+                <div className="relative flex-1">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    value={selectedLocation}
+                    onChange={(e) => setSelectedLocation(e.target.value)}
+                    placeholder="Location"
+                    className="w-full pl-10 pr-4 py-3 bg-transparent text-white outline-none"
+                  />
+                </div>
 
-                  <Button className="bg-blue-600 h-14 lg:h-auto px-10 rounded-xl lg:rounded-full font-bold">
-                    Find Jobs
-                  </Button>
-                </motion.div>
+                <Button className="h-12 px-8 rounded-xl sm:rounded-full font-bold">
+                  Search Jobs
+                </Button>
               </form>
             </motion.div>
           </div>
         </section>
 
-        {/* ---------------- CATEGORIES ---------------- */}
-        <section className="py-24 bg-white">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-              {categories?.data?.categories?.map(cat => (
+        {/* ================= CATEGORIES ================= */}
+        <section className="py-20 bg-[#F8F9FF]">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {categories?.data?.categories?.map((cat) => (
                 <motion.div
                   key={cat.id}
-                  whileTap={isMobile ? { scale: 0.96 } : {}}
-                  className="cursor-pointer"
-                  onClick={() => window.location.href = `/jobs?category=${cat.id}`}
+                  whileHover={{ y: -6 }}
+                  onClick={() =>
+                    (window.location.href = `/jobs?category=${cat.id}`)
+                  }
+                  className="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-lg cursor-pointer"
                 >
-                  <div className="bg-gray-50 p-6 sm:p-8 rounded-[2.5rem] text-center hover:bg-blue-50/40 transition">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <IconComponent name={cat.icon} className="w-7 h-7 text-blue-600" />
-                    </div>
-                    <h3 className="font-bold text-sm">{cat.name}</h3>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase">{cat.job_count || 0} Jobs</p>
-                  </div>
+                  <CategoryIcon
+                    name={cat.icon}
+                    className="w-8 h-8 text-blue-600 mx-auto mb-4"
+                  />
+                  <h3 className="text-sm font-bold text-gray-900">
+                    {cat.name}
+                  </h3>
+                  <p className="text-[10px] text-gray-500 font-bold mt-1">
+                    {cat.job_count || 0} Open
+                  </p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ---------------- JOBS ---------------- */}
-        <section className="py-24 bg-gray-50">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {jobs?.data?.jobs?.map(job => (
-                <motion.div
-                  key={job.id}
-                  initial={isMobile ? { opacity: 0, y: 20 } : false}
-                  whileInView={isMobile ? { opacity: 1, y: 0 } : false}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.45 }}
-                >
-                  <div className="bg-white p-6 sm:p-8 rounded-[2rem] shadow hover:shadow-xl transition h-full flex flex-col">
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">
-                      {job.title}
-                    </h3>
-                    <p className="text-gray-500 mb-6">{job.company_name}</p>
-
-                    <Link to={`/jobs/${job.slug}`} className="mt-auto">
-                      <Button
-                        as={motion.button}
-                        whileTap={isMobile ? { scale: 0.94 } : {}}
-                        className="w-full rounded-xl bg-gray-900 text-white hover:bg-blue-600"
-                      >
-                        Apply
-                      </Button>
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ---------------- CTA ---------------- */}
-        <section className="py-24 px-4">
-          <div className="max-w-[1400px] mx-auto">
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-900 p-10 sm:p-16 lg:p-32 rounded-[4rem] text-center text-white">
-              <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black mb-10">
-                Ready for your next big move?
+        {/* ================= JOBS ================= */}
+        <section className="py-20">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-3xl lg:text-5xl font-black text-gray-900">
+                Latest Openings
               </h2>
-
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Button
-                  as={motion.button}
-                  whileTap={isMobile ? { scale: 0.95 } : {}}
-                  className="bg-white text-blue-600 h-16 px-12 rounded-3xl font-black"
-                >
-                  Get Started
+              <Link to="/jobs">
+                <Button variant="outline" className="rounded-full">
+                  View All
                 </Button>
+              </Link>
+            </div>
 
-                <Button
-                  as={motion.button}
-                  whileTap={isMobile ? { scale: 0.95 } : {}}
-                  variant="outline"
-                  className="border-white text-white h-16 px-12 rounded-3xl font-black"
-                >
-                  Search Jobs
-                </Button>
-              </div>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+              {jobs?.data?.jobs?.map((job) => (
+                <motion.div key={job.id} whileHover={{ y: -6 }}>
+                  <Card className="h-full rounded-2xl p-4 sm:p-6 flex flex-col">
+                    {/* LOGO FIXED */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center border border-gray-200 shadow-sm overflow-hidden">
+                        <OptimizedImage
+                          src={job.company_logo || '/api/placeholder/80/80'}
+                          alt={job.company_name}
+                          className="max-w-[80%] max-h-[80%] object-contain"
+                          width={80}
+                          height={80}
+                        />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase bg-gray-900 text-white px-3 py-1 rounded-full">
+                        {job.job_type}
+                      </span>
+                    </div>
+
+                    <CardTitle className="text-sm sm:text-lg line-clamp-2 mb-2">
+                      {job.title}
+                    </CardTitle>
+
+                    <p className="text-xs sm:text-sm text-gray-500 mb-4 flex items-center">
+                      <Building2 className="w-3 h-3 mr-1 text-blue-500" />
+                      {job.company_name}
+                    </p>
+
+                    <div className="mt-auto">
+                      <p className="text-xs font-bold mb-2">
+                        {job.salary_min ? `₹${job.salary_min}L` : 'Market'}
+                      </p>
+
+                      <div className="flex items-center text-[10px] text-gray-400 mb-3">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {utils.formatPostedDate(job.posted_date)}
+                      </div>
+
+                      <Link to={`/jobs/${job.slug}`}>
+                        <Button className="w-full h-10 sm:h-12 text-xs sm:text-sm font-bold">
+                          Apply
+                        </Button>
+                      </Link>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
 
+        {/* ================= COMPANIES ================= */}
+        <section className="py-24 bg-[#0A0C10] text-white">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="text-center mb-14">
+              <h2 className="text-3xl lg:text-5xl font-black mb-3">
+                Hiring Companies
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {companies?.data?.map((company) => (
+                <div
+                  key={company.id}
+                  onClick={() =>
+                    (window.location.href = `/jobs?company=${company.id}`)
+                  }
+                  className="bg-white/5 p-6 rounded-2xl text-center hover:bg-white/10 transition cursor-pointer"
+                >
+                  {/* LOGO FIXED */}
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-lg border border-gray-100">
+                    <OptimizedImage
+                      src={company.logo_url || '/api/placeholder/120/120'}
+                      alt={company.name}
+                      className="max-w-[75%] max-h-[75%] object-contain"
+                      width={120}
+                      height={120}
+                    />
+                  </div>
+
+                  <p className="font-bold text-sm">{company.name}</p>
+                  <p className="text-[10px] text-gray-400">
+                    {company.job_count || 0} Openings
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );
