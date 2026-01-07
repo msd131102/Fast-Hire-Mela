@@ -81,7 +81,7 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-white p-1 rounded-lg border border-gray-100 shadow-sm flex-shrink-0">
                 <img
-                  src={job.company_logo_url || job.company_logo || '/vite.svg'}
+                   src={job.company_logo || '/api/placeholder/40/40'}
                   alt={job.company_name}
                   className="w-9 h-9 sm:w-12 sm:h-12 object-contain"
                 />
