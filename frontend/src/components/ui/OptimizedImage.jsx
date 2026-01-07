@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const OptimizedImage = ({ 
   src, 
@@ -13,106 +13,91 @@ const OptimizedImage = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  // Function to construct full URL for backend images
+  // Reset state when src changes
+  useEffect(() => {
+    setIsLoaded(false);
+    setHasError(false);
+  }, [src]);
+
   const constructImageUrl = (imageSrc) => {
     if (!imageSrc) return null;
+    if (imageSrc.startsWith('http')) return imageSrc;
     
-    // If it's already a full URL, return as-is
-    if (imageSrc.startsWith('http')) {
-      return imageSrc;
-    }
-    
-    // If it starts with /uploads/, it's a backend relative path
     if (imageSrc.startsWith('/uploads/')) {
       const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       return `${backendUrl}${imageSrc}`;
     }
     
-    // If it's a relative path starting with /, it's a frontend asset
-    if (imageSrc.startsWith('/')) {
-      return imageSrc;
-    }
-    
-    // Otherwise, treat as relative path
-    return `/${imageSrc}`;
+    return imageSrc.startsWith('/') ? imageSrc : `/${imageSrc}`;
   };
 
-  // Generate WebP and fallback sources
-  const generateSrcSet = (baseSrc) => {
-    if (!baseSrc || hasError) return '';
+  const generateSrcSet = (fullSrc) => {
+    if (!fullSrc || hasError || fullSrc.startsWith('http')) return '';
     
-    const fullSrc = constructImageUrl(baseSrc);
-    
-    // If it's an external URL, return as-is
-    if (fullSrc.startsWith('http')) {
-      return fullSrc;
-    }
-    
-    // For local images, generate different sizes
     const extensions = ['.jpg', '.jpeg', '.png'];
-    const hasImageExtension = extensions.some(ext => fullSrc.includes(ext));
+    const hasImageExtension = extensions.some(ext => fullSrc.toLowerCase().includes(ext));
     
-    if (!hasImageExtension) {
-      return fullSrc;
-    }
+    if (!hasImageExtension) return fullSrc;
     
-    // Generate WebP version with fallback
     const baseName = fullSrc.replace(/\.[^/.]+$/, '');
     return `${baseName}.webp 1x, ${baseName}@2x.webp 2x`;
   };
 
-  const handleLoad = () => {
-    setIsLoaded(true);
-  };
-
-  const handleError = () => {
-    setHasError(true);
-  };
-
   const finalSrc = constructImageUrl(src);
 
-  // Fallback placeholder
   if (hasError || !finalSrc) {
     return (
       <div 
-        className={`bg-gray-100 flex items-center justify-center ${className}`}
-        style={{ width, height }}
+        className={`bg-slate-50 flex flex-col items-center justify-center border border-slate-100 rounded-xl ${className}`}
+        style={{ width: width || '100%', height: height || '100%' }}
       >
-        <span className="text-gray-400 text-xs text-center">No Logo</span>
+        <div className="w-1/3 h-1/3 bg-slate-200 rounded-full animate-pulse mb-1" />
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">No Brand</span>
       </div>
     );
   }
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      {/* Loading placeholder */}
+    <div 
+      className={`relative overflow-hidden flex items-center justify-center bg-white ${className}`}
+      style={{ 
+        width: width || '100%', 
+        height: height || 'auto',
+        aspectRatio: width && height ? `${width}/${height}` : 'auto'
+      }}
+    >
+      {/* 1. Blur Placeholder Layer */}
       {!isLoaded && (
-        <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+        <div className="absolute inset-0 bg-slate-50 flex items-center justify-center">
+          <div className="w-full h-full animate-pulse bg-gradient-to-br from-slate-50 to-slate-100" />
+        </div>
       )}
       
-      <picture>
-        {/* WebP source for modern browsers */}
+      <picture className="w-full h-full flex items-center justify-center">
         <source
           type="image/webp"
           srcSet={generateSrcSet(finalSrc)}
           sizes={sizes}
         />
         
-        {/* Fallback for older browsers */}
         <img
           src={finalSrc}
-          alt={alt}
+          alt={alt || 'Company Logo'}
           width={width}
           height={height}
           loading={priority ? 'eager' : loading}
           decoding="async"
-          onLoad={handleLoad}
-          onError={handleError}
-          className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+          onLoad={() => setIsLoaded(true)}
+          onError={() => setHasError(true)}
+          className={`
+            duration-700 ease-in-out transition-all
+            ${isLoaded ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-95 blur-sm'}
+            ${className}
+          `}
           style={{ 
             objectFit: 'contain',
-            width: width || '100%',
-            height: height || 'auto'
+            maxWidth: '100%',
+            maxHeight: '100%'
           }}
         />
       </picture>
