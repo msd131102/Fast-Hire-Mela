@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../../assets/logo.jpg';
+import AntiGravityLogo from '../common/AntiGravityLogo';
 import {
   MapPin,
   Phone,
@@ -17,20 +17,20 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 sm:py-16">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
-          
+
           {/* Company Info */}
           <div className="flex flex-col space-y-6">
             <Link to="/" className="inline-block transition-transform duration-300 hover:scale-105">
-              <img src={logo} alt="FastHireMela Logo" className="h-14 sm:h-16 w-auto" />
+              <AntiGravityLogo variant="compact" className="h-14 sm:h-16 w-auto" />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
               Your trusted platform for finding the best job opportunities.
               Connect with top companies and accelerate your career journey.
             </p>
             <div className="flex items-center space-x-3">
-              <a 
-                href="https://www.linkedin.com/company/fasthiremela/" 
-                target="_blank" 
+              <a
+                href="https://www.linkedin.com/company/fasthiremela/"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center justify-center w-10 h-10 bg-gray-800/50 rounded-xl hover:bg-blue-600 transition-all duration-300 shadow-sm"
               >
@@ -54,8 +54,8 @@ const Footer = () => {
                 { name: 'Dashboard', path: '/dashboard' }
               ].map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.path} 
+                  <Link
+                    to={link.path}
                     className="text-gray-400 hover:text-blue-400 hover:translate-x-1 transition-all duration-200 text-sm inline-flex items-center"
                   >
                     {link.name}
@@ -81,8 +81,8 @@ const Footer = () => {
                 { name: 'User Guidance', path: '/user-guidance' }
               ].map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.path} 
+                  <Link
+                    to={link.path}
                     className="text-gray-400 hover:text-blue-400 hover:translate-x-1 transition-all duration-200 text-sm inline-flex items-center"
                   >
                     {link.name}
@@ -108,7 +108,7 @@ const Footer = () => {
                   <span className="font-semibold text-gray-300">PIN: 533003</span>
                 </address>
               </div>
-              
+
               <div className="flex items-center space-x-4 group">
                 <div className="bg-blue-500/10 p-2 rounded-lg">
                   <Mail className="h-5 w-5 text-blue-400 flex-shrink-0 group-hover:scale-110 transition-transform" />

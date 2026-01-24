@@ -14,6 +14,7 @@ import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Pages
+import AntiGravityLogo from './components/common/AntiGravityLogo';
 import Home from './pages/Home';
 import JobsList from './pages/Jobs/JobsList';
 import JobDetails from './pages/Jobs/JobDetails';
@@ -63,102 +64,103 @@ function App() {
                 <RouteTracker />
                 <div className="min-h-screen bg-gray-50 transition-colors">
                   <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={
-                    <ErrorBoundary>
-                      <Layout />
-                    </ErrorBoundary>
-                  }>
-                    <Route index element={<Home />} />
-                    <Route path="jobs" element={
+                    <Route path="/logo-preview" element={<AntiGravityLogo />} />
+                    {/* Public Routes */}
+                    <Route path="/" element={
                       <ErrorBoundary>
-                        <JobsList />
+                        <Layout />
                       </ErrorBoundary>
-                    } />
-                    <Route path="jobs/:slug" element={
-                      <ErrorBoundary>
-                        <JobDetails />
-                      </ErrorBoundary>
-                    } />
-                    <Route path="categories" element={<Categories />} />
-                    <Route path="companies" element={<Companies />} />
-                    <Route path="login" element={<Login />} />
-                    <Route path="register" element={<Register />} />
-                    <Route path="forgot-password" element={<ForgotPassword />} />
-                    <Route path="reset-password" element={<ResetPassword />} />
-                    <Route path="auth/callback/github" element={<OAuthCallback />} />
-                    <Route path="auth/callback/linkedin" element={<OAuthCallback />} />
-                    <Route path="auth/oauth-success" element={<OAuthSuccess />} />
-                    <Route path="premium" element={<PremiumPlans />} />
-                    <Route path="premium/plans" element={<PremiumPlans />} />
-                    <Route path="premium/checkout" element={
-                      <ProtectedRoute>
-                        <PremiumCheckout />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="premium-checkout" element={
-                      <ProtectedRoute>
-                        <PremiumCheckout />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="about" element={<About />} />
-                    <Route path="contact" element={<Contact />} />
-                    <Route path="privacy" element={<Privacy />} />
-                    <Route path="terms" element={<Terms />} />
-                    <Route path="faq" element={<FAQ />} />
-                    <Route path="user-guidance" element={<UserGuidance />} />
+                    }>
+                      <Route index element={<Home />} />
+                      <Route path="jobs" element={
+                        <ErrorBoundary>
+                          <JobsList />
+                        </ErrorBoundary>
+                      } />
+                      <Route path="jobs/:slug" element={
+                        <ErrorBoundary>
+                          <JobDetails />
+                        </ErrorBoundary>
+                      } />
+                      <Route path="categories" element={<Categories />} />
+                      <Route path="companies" element={<Companies />} />
+                      <Route path="login" element={<Login />} />
+                      <Route path="register" element={<Register />} />
+                      <Route path="forgot-password" element={<ForgotPassword />} />
+                      <Route path="reset-password" element={<ResetPassword />} />
+                      <Route path="auth/callback/github" element={<OAuthCallback />} />
+                      <Route path="auth/callback/linkedin" element={<OAuthCallback />} />
+                      <Route path="auth/oauth-success" element={<OAuthSuccess />} />
+                      <Route path="premium" element={<PremiumPlans />} />
+                      <Route path="premium/plans" element={<PremiumPlans />} />
+                      <Route path="premium/checkout" element={
+                        <ProtectedRoute>
+                          <PremiumCheckout />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="premium-checkout" element={
+                        <ProtectedRoute>
+                          <PremiumCheckout />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="about" element={<About />} />
+                      <Route path="contact" element={<Contact />} />
+                      <Route path="privacy" element={<Privacy />} />
+                      <Route path="terms" element={<Terms />} />
+                      <Route path="faq" element={<FAQ />} />
+                      <Route path="user-guidance" element={<UserGuidance />} />
 
-                    {/* Protected Routes */}
-                    <Route path="dashboard" element={
-                      <ProtectedRoute>
-                        <Dashboard />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="dashboard/saved-jobs" element={
-                      <ProtectedRoute>
-                        <SavedJobs />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="saved-jobs" element={
-                      <ProtectedRoute>
-                        <SavedJobs />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="applications" element={
-                      <ProtectedRoute>
-                        <Applications />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="profile" element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="premium/dashboard" element={
-                      <ProtectedRoute>
-                        <Premium />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="premium/referral" element={
-                      <ProtectedRoute>
-                        <Referral />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="settings" element={
-                      <ProtectedRoute>
-                        <Settings />
-                      </ProtectedRoute>
-                    } />
+                      {/* Protected Routes */}
+                      <Route path="dashboard" element={
+                        <ProtectedRoute>
+                          <Dashboard />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="dashboard/saved-jobs" element={
+                        <ProtectedRoute>
+                          <SavedJobs />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="saved-jobs" element={
+                        <ProtectedRoute>
+                          <SavedJobs />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="applications" element={
+                        <ProtectedRoute>
+                          <Applications />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="profile" element={
+                        <ProtectedRoute>
+                          <Profile />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="premium/dashboard" element={
+                        <ProtectedRoute>
+                          <Premium />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="premium/referral" element={
+                        <ProtectedRoute>
+                          <Referral />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="settings" element={
+                        <ProtectedRoute>
+                          <Settings />
+                        </ProtectedRoute>
+                      } />
 
-                    <Route path="*" element={<NotFound />} />
-                  </Route>
-                </Routes>
-              </div>
-            </Router>
-          </AuthProvider>
-        </ThemeProvider>
-      </ToastProvider>
-    </QueryClientProvider>
+                      <Route path="*" element={<NotFound />} />
+                    </Route>
+                  </Routes>
+                </div>
+              </Router>
+            </AuthProvider>
+          </ThemeProvider>
+        </ToastProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }

@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/toastUtils';
 import { cn } from '../../utils/cn';
 import Button from '../ui/Button';
-import logo from '../../assets/logo.jpg';
+import AntiGravityLogo from '../common/AntiGravityLogo';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -78,7 +78,7 @@ const Header = () => {
 
           {/* LOGO */}
           <Link to="/" className="flex items-center shrink-0">
-            <img src={logo} alt="Logo" className="h-6 w-auto sm:h-8 object-contain" />
+            <AntiGravityLogo variant="compact" className="h-6 w-auto sm:h-8" />
           </Link>
 
           {/* DESKTOP NAV (Hidden on Mobile) */}
@@ -220,7 +220,7 @@ const Header = () => {
             className="lg:hidden fixed inset-0 z-[120] bg-black flex flex-col"
           >
             <div className="flex justify-between items-center h-14 px-4 border-b border-white/10">
-              <img src={logo} alt="Logo" className="h-6 w-auto" />
+              <AntiGravityLogo variant="compact" className="h-6 w-auto" />
               <button onClick={() => setIsMenuOpen(false)} className="p-2 text-white bg-white/5 rounded-full"><X size={20} /></button>
             </div>
 
