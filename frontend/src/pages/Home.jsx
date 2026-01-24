@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Search, Building2, MapPin, Clock, ArrowRight, Briefcase, 
+  Search, Building2, MapPin, Clock, ArrowRight, Briefcase,
   Sparkles, Code, Headphones, BarChart, Layers, Globe, TrendingUp
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { Card, CardTitle } from '../components/ui/Card';
 import SEO from '../components/seo/SEO';
 import OptimizedImage from '../components/ui/OptimizedImage';
 import { getJobs, getCategories, getCompanies, utils } from '../services/api';
+import Hero3DScene from '../components/common/Hero3DScene';
 
 /* ---------------- ICON MAPPER ---------------- */
 const CategoryIcon = ({ name, className }) => {
@@ -22,6 +23,7 @@ const CategoryIcon = ({ name, className }) => {
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
+  const navigate = useNavigate();
 
   const seoConfig = {
     title: 'Jobs in India - Latest Openings | FastHireMela',
@@ -47,7 +49,8 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    window.location.href = `/jobs?q=${encodeURIComponent(searchQuery)}&location=${selectedLocation}`;
+    // Navigate to jobs page with query params
+    navigate(`/jobs?q=${encodeURIComponent(searchQuery)}&location=${selectedLocation}`);
   };
 
   return (
@@ -55,64 +58,144 @@ const Home = () => {
       <SEO {...seoConfig} />
 
       <div className="min-h-screen bg-[#F8FAFC]">
-        {/* ================= HERO SECTION ================= */}
-        <section className="relative bg-[#020617] pt-24 pb-20 lg:pt-48 lg:pb-56 overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full" />
+        {/* ================= HERO SECTION (Apple-Style 3D) ================= */}
+        <section className="relative min-h-[90vh] bg-[#000000] overflow-hidden flex items-center justify-center py-20 lg:py-0 font-sans selection:bg-blue-500/30">
+
+          {/* Real 3D Background (Spline-like) */}
+          <Hero3DScene />
+
+          {/* Fallback/Overlay Gradients for blending */}
+          <div className="absolute inset-0 z-0 pointer-events-none opacity-50">
+            <div className="absolute top-[-20%] left-[20%] w-[60vw] h-[60vw] bg-indigo-600/10 blur-[150px] rounded-full mix-blend-screen" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 blur-[120px] rounded-full mix-blend-screen" />
           </div>
 
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center max-w-4xl mx-auto"
+          <div className="container mx-auto px-4 relative z-10 w-full perspective-1000">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, rotateX: 20 }}
+              animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }} // Apple ease-out cuve
+              className="text-center max-w-5xl mx-auto"
+              style={{ transformStyle: 'preserve-3d' }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-blue-400 text-[10px] md:text-xs font-semibold tracking-wide mb-6 backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
-                VERIFIED BY AI TECHNOLOGY
+              {/* Floating Badge */}
+              <motion.div
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/10 text-gray-300 text-[11px] font-medium tracking-[0.2em] uppercase backdrop-blur-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-8 md:mb-12 hover:bg-white/[0.06] transition-colors cursor-default"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                <span>Next-Gen Hiring Platform</span>
+              </motion.div>
+
+              {/* Main Heading with Layered 3D Text */}
+              <div className="relative mb-10 md:mb-14 group perspective-text">
+                <motion.h1
+                  className="text-5xl md:text-7xl lg:text-8xl font-semibold text-white tracking-tight leading-[1] md:leading-[0.95]"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                >
+                  <span className="block bg-gradient-to-b from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-2xl">
+                    Discover Your
+                  </span>
+                  <span className="block mt-2 md:mt-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400 relative z-10">
+                    Dream Career.
+                  </span>
+                </motion.h1>
+                {/* Glow/Reflection behind text */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-32 bg-blue-500/20 blur-[80px] -z-10 rounded-full opacity-50 group-hover:opacity-70 transition-opacity duration-1000" />
               </div>
 
-              <h1 className="text-4xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-[1.1] tracking-tight">
-                Your Career <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400">
-                  Starts Here.
-                </span>
-              </h1>
-
-              <p className="text-gray-400 text-sm md:text-xl mb-10 max-w-2xl mx-auto font-medium px-4">
-                FastHireMela connects you with daily AI-verified opportunities from India's top companies.
-              </p>
-
-              {/* SEARCH COMMAND BAR */}
-              <form 
-                onSubmit={handleSearch}
-                className="bg-white p-2 rounded-2xl md:rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-1 max-w-3xl mx-auto border border-white/20"
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="text-gray-400 text-base md:text-2xl mb-12 max-w-2xl mx-auto font-normal leading-relaxed text-balance"
               >
-                <div className="relative flex-[1.2] w-full border-b md:border-b-0 md:border-r border-gray-100">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Role or Company"
-                    className="w-full pl-10 pr-4 py-3 md:py-4 bg-transparent text-gray-900 outline-none font-medium text-sm md:text-base"
-                  />
+                Connect with AI-verified opportunities from India's top tech giants. Simple, fast, and transparent.
+              </motion.p>
+
+              {/* 3D Floating Search Bar */}
+              <motion.div
+                className="relative max-w-3xl mx-auto group"
+                initial={{ opacity: 0, y: 40, rotateX: 10 }}
+                animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                transition={{ delay: 0.8, duration: 1, type: "spring", bounce: 0.2 }}
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                {/* Glass container with depth */}
+                <div className="relative bg-white/[0.02] backdrop-blur-xl border border-white/[0.08] p-2 rounded-2xl md:rounded-full shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:bg-white/[0.04] group-hover:shadow-[0_30px_60px_-12px_rgba(0,0,0,0.7)] group-hover:-translate-y-1">
+
+                  <form onSubmit={handleSearch} className="flex flex-col md:flex-row items-center gap-2">
+
+                    {/* Role Input */}
+                    <div className="relative flex-1 w-full md:w-auto h-14 bg-black/20 rounded-xl md:rounded-l-full md:rounded-r-none border border-white/5 focus-within:bg-black/40 focus-within:border-white/10 transition-colors group/input">
+                      <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5 group-focus-within/input:text-blue-400 transition-colors" />
+                      <input
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search role or company..."
+                        className="w-full h-full pl-12 pr-4 bg-transparent text-white placeholder-gray-600 outline-none text-base font-medium"
+                      />
+                    </div>
+
+                    {/* Location Input */}
+                    <div className="relative flex-1 w-full md:w-auto h-14 bg-black/20 rounded-xl md:rounded-none border border-white/5 focus-within:bg-black/40 focus-within:border-white/10 transition-colors group/input">
+                      <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5 group-focus-within/input:text-blue-400 transition-colors" />
+                      <input
+                        value={selectedLocation}
+                        onChange={(e) => setSelectedLocation(e.target.value)}
+                        placeholder="City or remote"
+                        className="w-full h-full pl-12 pr-4 bg-transparent text-white placeholder-gray-600 outline-none text-base font-medium"
+                      />
+                    </div>
+
+                    {/* Search Button */}
+                    <Button
+                      type="submit"
+                      className="w-full md:w-auto h-14 px-8 rounded-xl md:rounded-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-lg hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all duration-300 relative overflow-hidden"
+                    >
+                      Search
+                    </Button>
+                  </form>
                 </div>
-                <div className="relative flex-1 w-full">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                    placeholder="Location"
-                    className="w-full pl-10 pr-4 py-3 md:py-4 bg-transparent text-gray-900 outline-none font-medium text-sm md:text-base"
-                  />
+
+                {/* Reflective shine below bar */}
+                <div className="absolute -bottom-10 left-10 right-10 h-4 bg-blue-500/10 blur-[30px] rounded-full pointer-events-none" />
+              </motion.div>
+
+              {/* Floating "AI Verified" Toast - decorative 3D element */}
+              <motion.div
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 1.5, duration: 1 }}
+                className="hidden lg:flex absolute right-[-5%] top-1/3 p-4 rounded-2xl bg-white/[0.05] backdrop-blur-md border border-white/10 items-center justify-center gap-4 animate-float-slow rotate-[5deg] hover:rotate-0 transition-transform duration-500 shadow-2xl"
+              >
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><Sparkles size={20} /></div>
+                <div className="text-left">
+                  <div className="text-xs text-gray-400 uppercase tracking-wider font-bold">New Jobs</div>
+                  <div className="text-white font-bold text-sm">+250 Added Today</div>
                 </div>
-                <Button className="w-full md:w-auto h-12 md:h-14 px-8 rounded-xl md:rounded-full font-bold bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all text-sm">
-                  Search
-                </Button>
-              </form>
+              </motion.div>
+
             </motion.div>
           </div>
+
+          <style>{`
+            .perspective-1000 { perspective: 1000px; }
+            @keyframes pulse-slow {
+              0%, 100% { opacity: 0.3; transform: scale(1); }
+              50% { opacity: 0.15; transform: scale(1.1); }
+            }
+            .animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
+            @keyframes float-slow {
+              0%, 100% { transform: translateY(0px) rotate(5deg); }
+              50% { transform: translateY(-20px) rotate(3deg); }
+            }
+            .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
+          `}</style>
         </section>
 
         {/* ================= CATEGORIES (Grid on Mobile) ================= */}
