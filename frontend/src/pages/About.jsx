@@ -143,7 +143,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* Team Section: Featured Look */}
+      {/* Team Section: Featured Look
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-black text-gray-900 tracking-tight">Meet Our Team</h2>
@@ -173,7 +173,7 @@ const About = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* CTA Section: High Conversion */}
       <div className="px-6 pb-20">
