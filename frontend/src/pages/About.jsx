@@ -168,7 +168,7 @@ const About = () => {
                 10+ projects done experienced in MERN stack
               </div>
               <p className="text-gray-500 leading-relaxed font-medium">
-                Full-stack engineer with a passion for building impactful web applications. Skilled in React, Node.js, and MongoDB, with a track record of delivering high-quality projects on time. Dedicated to continuous learning and innovation in the tech space.
+                Full-stack engineer with a passion for building impactful web applications
               </p>
             </div>
           </div>
