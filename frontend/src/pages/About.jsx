@@ -143,7 +143,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* Team Section: Featured Look
+      {/* Team Section: Featured Look */}
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-black text-gray-900 tracking-tight">Meet Our Team</h2>
@@ -163,9 +163,9 @@ const About = () => {
                 </div>
               </div>
               <h3 className="text-2xl font-black text-gray-900 mb-1">Mr. Shiva</h3>
-              <p className="text-blue-600 font-bold tracking-widest uppercase text-xs mb-4">Founder</p>
+              <p className="text-blue-600 font-bold tracking-widest uppercase text-xs mb-4">Full Stack Developer</p>
               <div className="inline-block px-4 py-1 text-[10px] font-black tracking-widest text-blue-700 bg-blue-50 rounded-full mb-6 uppercase">
-                2+ Years Experience
+                10+ projects done experienced in MERN stack
               </div>
               <p className="text-gray-500 leading-relaxed font-medium">
                 Full-stack engineer crafting smart, modern job discovery and hiring solutions for the next generation of Indian talent.
@@ -173,7 +173,7 @@ const About = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
 
       {/* CTA Section: High Conversion */}
       <div className="px-6 pb-20">
