@@ -76,9 +76,9 @@ app.use(cors({
     'https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api',
     'https://www.fasthiremela.online',
     'https://fasthiremeladmin.netlify.app',
-    // process.env.FRONTEND_URL,
-    // process.env.FRONTEND_URL2,
-    // process.env.ADMIN_URL
+    process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL2,
+    process.env.ADMIN_URL
   ].filter(Boolean), // Remove undefined values
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
