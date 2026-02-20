@@ -77,7 +77,7 @@ app.use(cors({
     'https://www.fasthiremela.online',
     'https://fasthiremeladmin.netlify.app',
     process.env.FRONTEND_URL,
-    process.env.FRONTEND_URL2,
+    process.env.
     process.env.ADMIN_URL
   ].filter(Boolean), // Remove undefined values
   credentials: true,
