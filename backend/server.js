@@ -78,7 +78,8 @@ app.use(cors({
     'https://fasthiremeladmin.netlify.app',
     process.env.FRONTEND_URL,
     process.env.FRONTEND_URL2,
-    process.env.ADMIN_URL
+    process.env.ADMIN_URL           0.
+    020110050002
   ].filter(Boolean), // Remove undefined values
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
