@@ -270,6 +270,11 @@ const Home = () => {
                       <span className="truncate">{job.company_name}</span>
                     </div>
 
+                    <div className="flex items-center text-[10px] md:text-sm text-gray-500 font-medium mb-3 md:mb-6">
+                      <MapPin className="w-3 h-3 md:w-4 md:h-4 mr-1 text-blue-500 shrink-0" />
+                      <span className="truncate">{job.location || 'Remote'}</span>
+                    </div>
+
                     <div className="mt-auto pt-3 md:pt-6 border-t border-gray-50">
                       <div className="flex flex-col gap-1 md:gap-0 md:flex-row md:justify-between md:items-center mb-3 md:mb-4">
                         <span className="text-xs md:text-lg font-black text-gray-900">
