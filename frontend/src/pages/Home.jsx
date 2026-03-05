@@ -278,7 +278,7 @@ const Home = () => {
                     <div className="mt-auto pt-3 md:pt-6 border-t border-gray-50">
                       <div className="flex flex-col gap-1 md:gap-0 md:flex-row md:justify-between md:items-center mb-3 md:mb-4">
                         <span className="text-xs md:text-lg font-black text-gray-900">
-                          {job.salary_min ? `₹${job.salary_min}L` : 'Market'}
+                          {job.salary_min ? `₹${job.salary_min}L` : ''}
                         </span>
                         <div className="flex items-center text-[9px] md:text-xs text-gray-400 font-medium">
                           <Clock className="w-3 h-3 mr-1" />
