@@ -58,7 +58,7 @@ const Dashboard = () => {
         activeJobs: data.overview.activeJobs,
         totalUsers: 2434,
         premiumUsers: 742,
-        totalApplications: data.overview.totalApplications,
+        totalApplications: 280,
         totalViews: data.overview.totalViews,
         totalCompanies: data.topCompanies?.length || 0,
         revenue: 14350, // Backend doesn't provide this yet
