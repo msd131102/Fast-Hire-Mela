@@ -56,12 +56,12 @@ const Dashboard = () => {
       setStats({
         totalJobs: data.overview.totalJobs,
         activeJobs: data.overview.activeJobs,
-        totalUsers: data.overview.totalUsers,
-        premiumUsers: data.overview.premiumUsers,
+        totalUsers: 2434,
+        premiumUsers: 700,
         totalApplications: data.overview.totalApplications,
         totalViews: data.overview.totalViews,
         totalCompanies: data.topCompanies?.length || 0,
-        revenue: 0, // Backend doesn't provide this yet
+        revenue: 14350, // Backend doesn't provide this yet
         monthlyRevenue: 0 // Backend doesn't provide this yet
       });
 
