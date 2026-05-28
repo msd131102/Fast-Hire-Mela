@@ -57,7 +57,7 @@ const Dashboard = () => {
         totalJobs: data.overview.totalJobs,
         activeJobs: data.overview.activeJobs,
         totalUsers: 2434,
-        premiumUsers: 700,
+        premiumUsers: 742,
         totalApplications: data.overview.totalApplications,
         totalViews: data.overview.totalViews,
         totalCompanies: data.topCompanies?.length || 0,
