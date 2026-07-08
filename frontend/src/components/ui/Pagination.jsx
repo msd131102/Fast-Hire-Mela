@@ -64,8 +64,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isLoading = false }
           disabled={currentPage === 1 || isLoading}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm sm:w-auto w-full justify-center ${
             currentPage === 1 || isLoading
-              ? 'bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100'
-              : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 active:scale-95'
+              ? 'bg-background text-muted/50 cursor-not-allowed border border-border/50'
+              : 'bg-surface border border-border text-muted hover:bg-secondary-800 hover:border-primary-500 hover:text-primary-400 hover:shadow-adventure active:scale-95'
           }`}
         >
           <ChevronLeft className="w-4 h-4" />
@@ -77,17 +77,17 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isLoading = false }
           {visiblePages.map((page, index) => (
             <React.Fragment key={index}>
               {page === '...' ? (
-                <span className="w-8 text-center text-gray-400 font-bold select-none">...</span>
+                <span className="w-8 text-center text-muted font-bold select-none">...</span>
               ) : (
                 <button
                   onClick={() => handlePageClick(page)}
                   disabled={isLoading}
                   className={`w-10 h-10 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center ${
                     page === currentPage
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-105'
+                      ? 'bg-primary-600 text-text shadow-sm scale-105 border border-primary-500/50'
                       : isLoading
-                      ? 'bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100'
-                      : 'bg-white border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 active:scale-90 shadow-sm'
+                      ? 'bg-background text-muted/50 cursor-not-allowed border border-border/50'
+                      : 'bg-surface border border-border text-muted hover:bg-secondary-800 hover:border-primary-500 hover:text-primary-400 hover:shadow-adventure active:scale-90'
                   }`}
                 >
                   {page}
@@ -103,8 +103,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isLoading = false }
           disabled={currentPage === totalPages || isLoading}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm sm:w-auto w-full justify-center ${
             currentPage === totalPages || isLoading
-              ? 'bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100'
-              : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 active:scale-95'
+              ? 'bg-background text-muted/50 cursor-not-allowed border border-border/50'
+              : 'bg-surface border border-border text-muted hover:bg-secondary-800 hover:border-primary-500 hover:text-primary-400 hover:shadow-adventure active:scale-95'
           }`}
         >
           <span className="hidden sm:inline">Next</span>
@@ -113,7 +113,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isLoading = false }
       </div>
       
       {/* Mobile-only page indicator for very small screens */}
-      <div className="sm:hidden text-xs font-medium text-gray-400">
+      <div className="sm:hidden text-xs font-medium text-muted">
         Page {currentPage} of {totalPages}
       </div>
     </nav>

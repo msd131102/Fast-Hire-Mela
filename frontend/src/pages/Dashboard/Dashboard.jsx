@@ -80,35 +80,35 @@ const Dashboard = () => {
       title: 'Update Profile',
       description: 'Keep your profile fresh',
       icon: Edit,
-      color: 'bg-blue-600',
+      color: 'bg-primary-600',
       link: '/profile'
     },
     {
       title: 'Browse Jobs',
       description: 'Find new opportunities',
       icon: Briefcase,
-      color: 'bg-indigo-600',
+      color: 'bg-secondary-600',
       link: '/jobs'
     },
     {
       title: 'Saved Jobs',
       description: 'View your favorites',
       icon: Heart,
-      color: 'bg-rose-600',
+      color: 'bg-danger-600',
       link: '/saved-jobs'
     }
   ];
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center p-6">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/10">
-            <User className="text-white" size={32} />
+          <div className="w-20 h-20 bg-surface flex items-center justify-center mx-auto mb-6 rounded-3xl border border-border shadow-sm">
+            <User className="text-text" size={32} />
           </div>
-          <h1 className="text-2xl font-black text-white mb-4">Access Restricted</h1>
-          <p className="text-gray-500 mb-8">Please login to access your personalized job dashboard.</p>
-          <Link to="/login" className="flex items-center justify-center gap-2 w-full py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20">
+          <h1 className="text-2xl font-pixel font-bold text-text mb-4 uppercase tracking-wider">Access Denied</h1>
+          <p className="text-muted mb-8 text-lg">Please login to access your guild dashboard.</p>
+          <Link to="/login" className="flex items-center justify-center gap-2 w-full py-4 bg-primary-600 text-text font-bold text-sm uppercase shadow-sm hover:-translate-y-1 transition-transform rounded-2xl border border-border">
             Login to Account
           </Link>
         </div>
@@ -117,40 +117,37 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-24 pb-12 sm:pt-32">
+    <div className="min-h-screen bg-background text-text pt-24 pb-12 sm:pt-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Welcome Section */}
         <header className="mb-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <motion.h1 
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                className="text-3xl sm:text-5xl font-black tracking-tighter mb-2"
-              >
-                Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
-              </motion.h1>
-              <p className="text-gray-500 text-lg font-medium">
-                Here's what's happening with your job search today.
+              <h1 className="text-3xl sm:text-4xl font-pixel font-bold text-text mb-4 tracking-wide leading-relaxed drop-shadow-sm">
+                Welcome back, {user?.name?.split(' ')[0] || 'Hero'}! 👋
+              </h1>
+              <p className="text-muted text-lg">
+                Here's what's happening with your quests today.
               </p>
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600/10 border border-blue-500/20 rounded-full text-blue-400 text-sm font-bold">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-primary-200 rounded-2xl shadow-sm text-primary-500 font-bold text-[10px] uppercase tracking-wider">
               <Zap size={14} fill="currentColor" />
-              8 PM Update: Atomic AI Jobs are live
+              Guild Update: New AI Quests
             </div>
           </div>
 
-          <div className="mt-8 relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-blue-900/20">
+          <div className="mt-8 relative overflow-hidden bg-primary-50 border border-primary-100 rounded-3xl p-6 sm:p-8 shadow-adventure">
              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                <p className="text-white font-black text-lg sm:text-xl text-center md:text-left max-w-2xl leading-snug">
-                  Ready to Find Your Dream Job? Join thousands of seekers who found their perfect match.
+                <p className="text-primary-800 font-bold text-sm sm:text-base text-center md:text-left max-w-2xl leading-loose uppercase">
+                  Ready to Find Your Dream Quest? Join thousands of adventurers who found their perfect guild.
                 </p>
-                <Link to="/jobs" className="shrink-0 bg-white text-black px-8 py-4 rounded-2xl font-black text-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                <Link to="/jobs" className="shrink-0 bg-primary-600 text-white border border-primary-700 rounded-2xl px-8 py-4 font-bold text-xs uppercase shadow-sm hover:-translate-y-1 active:translate-y-1 transition-transform flex items-center gap-2">
                   Launch Search <ArrowUpRight size={18} />
                 </Link>
              </div>
-             {/* Decorative Circles */}
-             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+             {/* Decorative Grid */}
+             <div className="absolute top-0 right-0 -mr-10 -mt-10 w-64 h-64 opacity-20 bg-[linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] bg-[size:16px_16px]" />
           </div>
         </header>
 
@@ -161,63 +158,63 @@ const Dashboard = () => {
             
             {/* Quick Actions Grid */}
             <section>
-              <h2 className="text-sm font-black text-gray-500 uppercase tracking-[0.2em] mb-4 ml-1">Shortcuts</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <h2 className="text-[10px] font-bold text-muted uppercase tracking-wider mb-4 ml-1">Shortcuts</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {quickActions.map((action, index) => (
-                  <Link key={index} to={action.link} className="group relative bg-white/[0.03] border border-white/5 rounded-3xl p-6 hover:bg-white/[0.05] hover:border-white/20 transition-all">
-                    <div className={`${action.color} w-12 h-12 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
-                      <action.icon className="h-6 w-6 text-white" />
+                  <Link key={index} to={action.link} className="group relative bg-surface border border-border rounded-3xl shadow-sm p-6 hover:-translate-y-2 hover:shadow-adventure transition-all">
+                    <div className={`${action.color} rounded-2xl border border-border w-16 h-16 flex items-center justify-center mb-6 shadow-sm`}>
+                      <action.icon className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="text-lg font-black mb-1 flex items-center justify-between">
+                    <h3 className="text-sm font-bold mb-2 flex items-center justify-between uppercase tracking-wider">
                       {action.title}
-                      <Plus className="h-4 w-4 text-gray-600 group-hover:text-white" />
+                      <Plus className="h-4 w-4 text-muted group-hover:text-primary-500" />
                     </h3>
-                    <p className="text-sm text-gray-500 font-medium">{action.description}</p>
+                    <p className="text-lg text-muted font-medium">{action.description}</p>
                   </Link>
                 ))}
               </div>
             </section>
 
             {/* Recent Jobs Section */}
-            <section className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] overflow-hidden">
-              <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                <h2 className="text-xl font-black">Recent Jobs</h2>
-                <Link to="/jobs" className="text-blue-500 hover:text-blue-400 text-sm font-black flex items-center gap-1 uppercase tracking-wider">
+            <section className="bg-surface border border-border rounded-3xl shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-border/50 flex items-center justify-between bg-background/50">
+                <h2 className="text-lg font-pixel font-bold uppercase tracking-wider">Recent Quests</h2>
+                <Link to="/jobs" className="text-primary-500 hover:text-primary-400 text-xs font-bold flex items-center gap-1 uppercase tracking-wider">
                   View All <ChevronRight size={16} />
                 </Link>
               </div>
 
               <div className="p-6">
                 {loadingJobs ? (
-                  <div className="text-center py-20">
-                    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600 mx-auto"></div>
+                  <div className="text-center py-20 font-bold uppercase tracking-wider text-primary-500 animate-pulse">
+                    Loading Quests...
                   </div>
                 ) : recentJobs.length > 0 ? (
                   <div className="grid gap-4">
                     {recentJobs.map((job) => (
-                      <div key={job.id} className="group bg-white/[0.02] border border-white/5 rounded-2xl p-5 hover:bg-white/[0.04] hover:border-white/10 transition-all">
+                      <div key={job.id} className="group bg-white rounded-2xl border border-border p-5 hover:border-primary-200 transition-colors shadow-sm hover:shadow-adventure">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="space-y-2">
-                            <h3 className="text-lg font-black group-hover:text-blue-400 transition-colors">
+                          <div className="space-y-3">
+                           <h3 className="text-sm font-bold uppercase tracking-wider group-hover:text-primary-500 transition-colors">
                               <Link to={`/jobs/${job.slug}`}>{job.title}</Link>
                             </h3>
-                            <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-sm text-gray-500 font-bold">
-                              <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg">
-                                <Building size={14} className="text-blue-500" /> {job.company}
+                            <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-sm text-muted font-medium">
+                              <div className="flex items-center gap-1.5 bg-surface px-2.5 py-1 rounded-lg border border-border">
+                                <Building size={14} className="text-primary-400" /> {job.company}
                               </div>
                               <div className="flex items-center gap-1.5">
-                                <MapPin size={14} /> {job.location}
+                                <MapPin size={14} className="text-primary-400" /> {job.location}
                               </div>
-                              <div className="flex items-center gap-1.5 text-emerald-500">
-                                <IndianRupee size={14} /> {utils.formatSalary(job.salary_min, job.salary_max)}
+                              <div className="flex items-center gap-1.5 text-warning-500 font-bold text-[10px] uppercase">
+                                <IndianRupee size={12} /> {utils.formatSalary(job.salary_min, job.salary_max)} Gold
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center justify-between sm:justify-end gap-4 border-t border-white/5 pt-4 sm:border-0 sm:pt-0">
-                            <span className="text-xs text-gray-600 font-black flex items-center gap-1">
-                              <Clock size={14} /> {utils.formatPostedDate(job.created_at)}
+                          <div className="flex items-center justify-between sm:justify-end gap-4 border-t border-border/50 pt-4 sm:border-0 sm:pt-0">
+                            <span className="text-xs text-muted font-medium flex items-center gap-1">
+                              <Clock size={12} /> {utils.formatPostedDate(job.created_at)}
                             </span>
-                            <Link to={`/jobs/${job.slug}`} className="px-5 py-2.5 bg-white/10 hover:bg-blue-600 text-white rounded-xl text-xs font-black transition-all active:scale-95">
+                            <Link to={`/jobs/${job.slug}`} className="px-5 py-2.5 bg-primary-50 rounded-xl border border-primary-100 hover:bg-primary-100 text-primary-600 text-xs font-bold uppercase transition-transform active:scale-95">
                               Details
                             </Link>
                           </div>
@@ -226,10 +223,10 @@ const Dashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-16 bg-white/[0.01] rounded-3xl border border-dashed border-white/10">
-                    <Briefcase className="h-12 w-12 text-gray-700 mx-auto mb-4" />
-                    <p className="text-gray-500 font-bold">No recent jobs found</p>
-                    <Link to="/jobs" className="mt-4 inline-block text-blue-500 font-black text-sm uppercase">Start Searching</Link>
+                  <div className="text-center py-16 bg-background rounded-2xl border border-dashed border-border shadow-sm">
+                    <Briefcase className="h-16 w-16 text-primary-200 mx-auto mb-6" />
+                    <p className="text-muted font-bold text-sm uppercase tracking-wider">No recent quests found</p>
+                    <Link to="/jobs" className="mt-6 inline-block text-primary-500 font-bold text-xs uppercase tracking-wider hover:text-primary-600">Start Searching</Link>
                   </div>
                 )}
               </div>
@@ -240,40 +237,40 @@ const Dashboard = () => {
           <aside className="lg:col-span-4 space-y-6">
             
             {/* Profile Completion Card */}
-            <div className="bg-gradient-to-b from-white/[0.05] to-transparent border border-white/10 rounded-[2.5rem] p-8 sticky top-32">
-              <div className="flex items-center justify-between mb-8">
-                <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-600/20">
-                  <User className="text-white" size={24} />
+            <div className="bg-surface border border-border rounded-3xl shadow-sm p-8 sticky top-32">
+              <div className="flex items-center justify-between mb-8 pb-6 border-b border-border/50">
+                <div className="w-16 h-16 bg-primary-100 rounded-2xl border border-primary-200 flex items-center justify-center shadow-sm">
+                  <User className="text-primary-600" size={32} />
                 </div>
                 <div className="text-right">
-                  <span className="block text-3xl font-black text-white">{profileCompletion}%</span>
-                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Complete</span>
+                  <span className="block text-2xl font-game font-bold text-text">{profileCompletion}%</span>
+                  <span className="text-[10px] font-bold text-muted uppercase tracking-wider mt-1 block">Complete</span>
                 </div>
               </div>
               
-              <h2 className="text-xl font-black mb-2">Profile Strength</h2>
-              <p className="text-gray-500 text-sm font-medium mb-6">A complete profile increases your visibility to recruiters by 3x.</p>
+              <h2 className="text-lg font-bold uppercase tracking-wider mb-3">Profile Stats</h2>
+              <p className="text-muted text-sm font-medium mb-6">A complete profile increases your visibility to guild masters by 3x.</p>
               
-              <div className="space-y-4">
-                <div className="w-full bg-white/5 rounded-full h-3 overflow-hidden border border-white/5 p-0.5">
+              <div className="space-y-6">
+                <div className="w-full bg-background h-3 rounded-full overflow-hidden border border-border">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${profileCompletion}%` }}
-                    className="h-full bg-gradient-to-r from-blue-600 to-indigo-500 rounded-full" 
+                    className="h-full bg-primary-500" 
                   />
                 </div>
                 
-                <Link to="/profile" className="flex items-center justify-center gap-2 w-full py-4 bg-white text-black rounded-2xl font-black text-sm hover:bg-gray-200 transition-all mt-4 group">
+                <Link to="/profile" className="flex items-center justify-center gap-2 w-full py-4 bg-white rounded-2xl border border-border text-text font-bold text-xs uppercase shadow-sm hover:-translate-y-1 hover:shadow-adventure transition-all group">
                   <Edit size={16} /> Update Profile
                   <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
 
               {/* Tips for user */}
-              <div className="mt-8 pt-8 border-t border-white/5">
-                <p className="text-xs font-black text-blue-500 uppercase tracking-[0.2em] mb-4">Pro Tip</p>
-                <div className="bg-white/5 rounded-2xl p-4 text-xs font-bold text-gray-400 italic">
-                  "Add your latest projects to stand out in the AI-powered search results."
+              <div className="mt-8 pt-8 border-t border-border/50">
+                <p className="text-[10px] font-bold text-primary-500 uppercase tracking-wider mb-4">Guild Tip</p>
+                <div className="bg-primary-50 rounded-2xl border border-primary-100 p-4 text-sm font-medium text-primary-800">
+                  "Add your latest campaigns to stand out in the magic-powered search results."
                 </div>
               </div>
             </div>

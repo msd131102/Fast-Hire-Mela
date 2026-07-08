@@ -73,13 +73,13 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
       transition={{ duration: 0.3, delay: index * 0.05 }}
       className="h-full"
     >
-      <Card className="h-full hover:shadow-md transition-all duration-200 border-gray-200 group relative overflow-hidden flex flex-col">
+      <Card className="h-full hover:shadow-adventure-hover transition-all duration-300 border border-border bg-surface group relative overflow-hidden flex flex-col hover:-translate-y-1 rounded-[2rem]">
         <Link to={`/jobs/${job.slug}`} className="flex flex-col h-full">
           <CardContent className="p-3 sm:p-5 flex flex-col h-full">
             
             {/* Header: Logo and Save */}
             <div className="flex justify-between items-start mb-2.5">
-              <div className="bg-white p-1 rounded-lg border border-gray-100 shadow-sm flex-shrink-0">
+              <div className="bg-white p-2 rounded-2xl border border-border shadow-sm flex-shrink-0">
                 <img
                    src={job.company_logo || '/api/placeholder/40/40'}
                   alt={job.company_name}
@@ -90,7 +90,7 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
                 onClick={handleSave}
                 disabled={isSaving}
                 className={`p-1.5 rounded-full transition-colors ${
-                  isSaved ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-400 hover:text-red-500'
+                  isSaved ? 'bg-danger-500/20 text-danger-500' : 'bg-secondary-800 text-muted hover:bg-danger-500/20 hover:text-danger-500'
                 }`}
               >
                 <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isSaved ? 'fill-current' : ''}`} />
@@ -99,26 +99,26 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
 
             {/* Title & Company - Line clamp keeps grid even */}
             <div className="flex-1">
-              <h3 className="text-[13px] sm:text-base font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+              <h3 className="text-[13px] sm:text-base font-pixel font-bold text-text line-clamp-2 leading-tight group-hover:text-primary-500 transition-colors">
                 {job.title}
               </h3>
-              <p className="text-[11px] sm:text-sm text-gray-500 mt-1 truncate font-medium">
+              <p className="text-[11px] sm:text-sm text-muted mt-1 truncate font-medium">
                 {job.company_name}
               </p>
             </div>
 
             {/* Bottom Meta Section */}
-            <div className="mt-3 pt-3 border-t border-gray-50 space-y-1.5">
-              <div className="flex items-center text-[10px] sm:text-xs text-gray-600">
-                <MapPin className="w-3 h-3 mr-1 text-gray-400 shrink-0" />
+            <div className="mt-3 pt-3 border-t border-border space-y-1.5">
+              <div className="flex items-center text-[10px] sm:text-xs text-muted">
+                <MapPin className="w-3 h-3 mr-1 text-primary-500 shrink-0" />
                 <span className="truncate">{job.location}</span>
               </div>
               <div className="flex items-center justify-between mt-auto">
-                <div className="flex items-center text-[10px] sm:text-xs font-bold text-green-600">
+                <div className="flex items-center text-[10px] sm:text-xs font-bold text-warning-500 text-lg">
                   <IndianRupee className="w-3 h-3 mr-0.5 shrink-0" />
-                  <span>{formatSalaryShort(job.salary_max)}</span>
+                  <span>{formatSalaryShort(job.salary_max)} Gold</span>
                 </div>
-                <div className="flex items-center text-[9px] sm:text-[11px] text-gray-400">
+                <div className="flex items-center text-[9px] sm:text-[11px] text-muted font-medium">
                   <Clock className="w-2.5 h-2.5 mr-1" />
                   {formatPostedDate(job.posted_date)}
                 </div>
@@ -132,24 +132,24 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
 };
 
 const LoadingSkeleton = () => (
-  <div className="bg-white rounded-xl p-4 shadow-sm border animate-pulse">
+  <div className="bg-surface rounded-3xl p-4 shadow-sm border border-border animate-pulse">
     <div className="flex justify-between mb-4">
-      <div className="w-10 h-10 bg-gray-100 rounded-lg" />
-      <div className="w-8 h-8 bg-gray-100 rounded-full" />
+      <div className="w-12 h-12 bg-primary-50/50 rounded-2xl" />
+      <div className="w-8 h-8 bg-primary-50/50 rounded-full" />
     </div>
     <div className="space-y-2">
-      <div className="h-3 bg-gray-100 rounded w-full" />
-      <div className="h-3 bg-gray-100 rounded w-2/3" />
-      <div className="h-2 bg-gray-50 rounded w-1/2 mt-4" />
+      <div className="h-3 bg-border rounded w-full" />
+      <div className="h-3 bg-border rounded w-2/3" />
+      <div className="h-2 bg-background rounded w-1/2 mt-4" />
     </div>
   </div>
 );
 
 const EmptyState = ({ onClearFilters }) => (
-  <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
-    <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-    <h3 className="text-lg font-bold text-gray-900 mb-1">No jobs found</h3>
-    <p className="text-gray-500 text-sm mb-6">Try adjusting your filters.</p>
+  <div className="text-center py-20 bg-surface rounded-3xl border border-dashed border-border shadow-sm">
+    <Briefcase className="w-12 h-12 text-primary-200 mx-auto mb-4" />
+    <h3 className="text-lg font-pixel font-bold text-text mb-1 tracking-wide">No Quests Found</h3>
+    <p className="text-muted text-sm mb-6">Try adjusting your filters.</p>
     <Button onClick={onClearFilters} variant="primary">Clear All</Button>
   </div>
 );
@@ -228,25 +228,25 @@ const JobsList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-background text-text">
       {/* Fixed Search Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+      <header className="bg-surface border-b border-border sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-4 py-3">
           <div className="flex gap-3 items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
               <input
                 type="text"
-                placeholder="Search jobs..."
+                placeholder="Search quests..."
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-border focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 font-medium text-lg outline-none text-text placeholder-muted rounded-2xl transition-all"
               />
             </div>
             <Button
               onClick={() => setShowFilters(true)}
               variant="outline"
-              className="lg:hidden p-2.5 h-auto rounded-xl border-gray-200"
+              className="lg:hidden p-2.5 h-auto rounded-xl border-border bg-surface text-text hover:bg-secondary-800"
             >
               <Filter className="w-5 h-5" />
             </Button>
@@ -264,7 +264,7 @@ const JobsList = () => {
                 {isMobile && (
                   <motion.div
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-gray-900/60 z-50 lg:hidden"
+                    className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 lg:hidden"
                     onClick={() => setShowFilters(false)}
                   />
                 )}
@@ -272,21 +272,21 @@ const JobsList = () => {
                   initial={isMobile ? { y: '100%' } : { opacity: 0, x: -20 }}
                   animate={isMobile ? { y: 0 } : { opacity: 1, x: 0 }}
                   exit={isMobile ? { y: '100%' } : { opacity: 0 }}
-                  className={`${isMobile ? 'fixed bottom-0 left-0 right-0 h-[80vh] bg-white z-[60] rounded-t-3xl overflow-y-auto shadow-2xl' : 'w-64 flex-shrink-0 sticky top-24 h-fit'}`}
+                  className={`${isMobile ? 'fixed bottom-0 left-0 right-0 h-[80vh] bg-surface border-t border-border z-[60] overflow-y-auto shadow-adventure rounded-t-3xl' : 'w-64 flex-shrink-0 sticky top-24 h-fit border border-border bg-surface shadow-sm rounded-3xl'}`}
                 >
                   <div className="p-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="font-bold flex items-center gap-2"><SlidersHorizontal className="w-4 h-4" /> Filters</h3>
-                      <button onClick={clearFilters} className="text-xs text-blue-600 font-bold">Reset</button>
+                    <div className="flex items-center justify-between mb-6 border-b border-border/50 pb-4">
+                      <h3 className="font-pixel font-bold text-sm uppercase tracking-wider flex items-center gap-2 text-primary-600"><SlidersHorizontal className="w-4 h-4" /> Filters</h3>
+                      <button onClick={clearFilters} className="text-xs text-muted hover:text-primary-500 font-semibold uppercase transition-colors">Reset</button>
                     </div>
                     
                     <div className="space-y-6">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</label>
+                        <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Category</label>
                         <select
                           value={filters.category}
                           onChange={(e) => handleFilterChange('category', e.target.value)}
-                          className="w-full p-2 bg-gray-50 border border-gray-100 rounded-lg text-sm outline-none"
+                          className="w-full p-2 bg-background border border-border rounded-lg text-sm text-text outline-none focus:border-primary-500"
                         >
                           <option value="">All Categories</option>
                           {categories?.data?.categories?.map(c => <option key={c.id} value={c.slug}>{c.name}</option>)}
@@ -294,13 +294,13 @@ const JobsList = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Salary Range</label>
+                        <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Salary Range</label>
                         <div className="grid grid-cols-2 gap-2">
                           {['0-3L', '3-6L', '6-10L', '10-15L'].map(range => (
                             <button
                               key={range}
                               onClick={() => handleFilterChange('salary', filters.salary === range ? '' : range)}
-                              className={`p-2 text-[10px] rounded-lg border transition-all ${filters.salary === range ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-200 text-gray-600'}`}
+                              className={`p-2 text-[10px] sm:text-xs font-semibold rounded-xl border transition-all ${filters.salary === range ? 'bg-primary-50 border-primary-300 text-primary-700 shadow-sm' : 'bg-white border-border text-muted hover:border-primary-300 hover:text-primary-600 hover:bg-primary-50/50'}`}
                             >
                               {range}
                             </button>
@@ -310,7 +310,7 @@ const JobsList = () => {
                     </div>
                   </div>
                   {isMobile && (
-                    <div className="p-4 bg-white border-t sticky bottom-0">
+                    <div className="p-4 bg-surface border-t border-border sticky bottom-0">
                       <Button className="w-full py-3 rounded-xl" onClick={() => setShowFilters(false)}>Show Results</Button>
                     </div>
                   )}
@@ -322,8 +322,8 @@ const JobsList = () => {
           {/* Main Feed */}
           <div className="flex-1">
             <div className="flex justify-between items-center mb-5">
-              <h2 className="text-lg font-bold text-gray-900">
-                {jobsLoading ? 'Searching...' : `${jobsData?.data?.pagination?.total_jobs || 0} Jobs`}
+              <h2 className="text-xl font-pixel font-bold text-text tracking-wide">
+                {jobsLoading ? 'Searching...' : `${jobsData?.data?.pagination?.total_jobs || 0} Quests`}
               </h2>
             </div>
 
@@ -332,7 +332,7 @@ const JobsList = () => {
               {jobsLoading ? (
                 [...Array(6)].map((_, i) => <LoadingSkeleton key={i} />)
               ) : jobsError ? (
-                <div className="col-span-full text-center p-10 bg-white rounded-xl border">Error loading jobs.</div>
+                <div className="col-span-full text-center p-10 bg-surface border-4 border-border shadow-pixel font-game text-xl">Error loading quests.</div>
               ) : jobsData?.data?.jobs?.length > 0 ? (
                 jobsData.data.jobs.map((job, index) => (
                   <JobCard

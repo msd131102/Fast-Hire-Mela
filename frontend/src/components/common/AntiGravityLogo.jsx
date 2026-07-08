@@ -1,41 +1,14 @@
-import React, { useState, useEffect } from 'react';
-
-// Import all images from the logo directory
-// keys will be relative paths, values will be the image URL string
-const logoFiles = import.meta.glob('../../logo/logo_*.png', { eager: true, import: 'default' });
-
-// Sort keys to ensure correct order (logo_000.png, logo_001.png, etc.)
-const frameKeys = Object.keys(logoFiles).sort((a, b) => {
-    const numA = parseInt(a.match(/logo_(\d+)/)?.[1] || "0");
-    const numB = parseInt(b.match(/logo_(\d+)/)?.[1] || "0");
-    return numA - numB;
-});
-const frames = frameKeys.map(key => logoFiles[key]);
+import React from 'react';
+import logoImage from '../../assets/logo.jpg';
 
 const AntiGravityLogo = ({ variant = 'full', className = "" }) => {
-    const [currentFrame, setCurrentFrame] = useState(0);
-
-    useEffect(() => {
-        // 30 FPS playback for the image sequence
-        const interval = setInterval(() => {
-            setCurrentFrame((prev) => (prev + 1) % frames.length);
-        }, 33);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    if (frames.length === 0) {
-        if (variant === 'compact') return null;
-        return <div className="text-white">No logo frames found</div>;
-    }
-
-    // COMPACT VARIANT (For Header/Navigation)
+    // COMPACT VARIANT (For Header/Navigation/Footer)
     if (variant === 'compact') {
         return (
             <div className={`relative flex items-center justify-center ${className}`}>
                 <div className="animate-float-compact">
                     <img
-                        src={frames[currentFrame]}
+                        src={logoImage}
                         alt="Fast Hire Mela"
                         className="w-full h-full object-contain filter brightness-110 contrast-105 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
                     />
@@ -61,7 +34,7 @@ const AntiGravityLogo = ({ variant = 'full', className = "" }) => {
 
     // FULL PREVIEW VARIANT (Cinematic Splash Screen)
     return (
-        <div className={`flex items-center justify-center min-h-screen bg-[#050510] overflow-hidden relative font-sans ${className}`}>
+        <div className={`flex items-center justify-center min-h-screen bg-[#050510] overflow-hidden relative font-game ${className}`}>
             {/* Dark gradient background with cinematic lighting */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f2c] via-[#050510] to-black opacity-90"></div>
 
@@ -74,8 +47,8 @@ const AntiGravityLogo = ({ variant = 'full', className = "" }) => {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-blue-600/20 blur-[60px] rounded-full animate-pulse-slow pointer-events-none"></div>
 
                 <img
-                    src={frames[currentFrame]}
-                    alt="Anti Gravity Logo"
+                    src={logoImage}
+                    alt="Fast Hire Mela Logo"
                     className="w-full max-w-[500px] h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] filter brightness-110 contrast-105"
                     style={{
                         maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
@@ -89,10 +62,10 @@ const AntiGravityLogo = ({ variant = 'full', className = "" }) => {
 
             {/* Text overlay */}
             <div className="absolute bottom-12 text-center z-10">
-                <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white/60 font-light text-3xl tracking-[0.2em] uppercase drop-shadow-lg">
+                <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white/60 font-light text-3xl tracking-[0.2em] uppercase drop-shadow-lg font-pixel">
                     Fast Hire Mela
                 </h1>
-                <p className="text-blue-200/50 text-xs tracking-[0.5em] mt-2 uppercase">Future of Hiring</p>
+                <p className="text-blue-200/50 text-xs tracking-[0.5em] mt-2 uppercase font-game">Future of Hiring</p>
             </div>
 
             <style>{`

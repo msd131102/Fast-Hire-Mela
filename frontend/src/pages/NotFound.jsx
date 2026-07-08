@@ -24,7 +24,7 @@ const NotFound = () => {
   return (
     <>
       <SEO {...seoConfig} />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-6">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center px-6">
         <div className="max-w-2xl w-full text-center">
           
           {/* 404 Animation */}
@@ -38,23 +38,23 @@ const NotFound = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-32 h-32 mx-auto mb-8 rounded-full bg-blue-100 flex items-center justify-center"
+                className="w-32 h-32 mx-auto mb-8 rounded-full bg-primary-500/20 flex items-center justify-center"
               >
-                <span className="text-6xl font-black text-blue-600">4</span>
+                <span className="text-6xl font-black text-primary-400">4</span>
               </motion.div>
               <motion.div
                 animate={{ y: [-10, 10, -10] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -right-8 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center"
+                className="absolute -right-8 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-secondary-500/20 flex items-center justify-center"
               >
-                <span className="text-4xl font-black text-indigo-600">0</span>
+                <span className="text-4xl font-black text-secondary-400">0</span>
               </motion.div>
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute -left-6 top-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center"
+                className="absolute -left-6 top-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-warning-500/20 flex items-center justify-center"
               >
-                <span className="text-5xl font-black text-purple-600">4</span>
+                <span className="text-5xl font-black text-warning-400">4</span>
               </motion.div>
             </div>
           </motion.div>
@@ -66,13 +66,13 @@ const NotFound = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mb-8"
           >
-            <h1 className="text-4xl md:text-6xl font-black text-gray-900 mb-4">
+            <h1 className="text-4xl md:text-6xl font-black text-text mb-4">
               Oops! Page Not Found
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-2">
+            <p className="text-lg md:text-xl text-muted mb-2">
               The page you're looking for seems to have vanished into thin air.
             </p>
-            <p className="text-gray-500">
+            <p className="text-muted/70">
               But don't worry, your dream job is still waiting for you!
             </p>
           </motion.div>
@@ -82,10 +82,10 @@ const NotFound = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 mb-8"
+            className="bg-surface rounded-3xl p-8 shadow-adventure border border-border mb-8"
           >
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-2">
-              <Search className="w-5 h-5 text-blue-600" />
+            <h2 className="text-xl font-bold text-text mb-4 flex items-center justify-center gap-2">
+              <Search className="w-5 h-5 text-primary-400" />
               What were you looking for?
             </h2>
             
@@ -121,14 +121,14 @@ const NotFound = () => {
               <input
                 type="text"
                 placeholder="Try searching for jobs, companies, or skills..."
-                className="w-full px-4 py-3 pl-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 pl-12 bg-background border border-border text-text placeholder-muted rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     window.location.href = `/jobs?q=${encodeURIComponent(e.target.value)}`;
                   }
                 }}
               />
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
             </div>
           </motion.div>
 
@@ -168,9 +168,9 @@ const NotFound = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-12 pt-8 border-t border-gray-200"
+            className="mt-12 pt-8 border-t border-border"
           >
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-muted/70 mb-4">
               Popular searches right now:
             </p>
             <div className="flex flex-wrap justify-center gap-2">
@@ -178,7 +178,7 @@ const NotFound = () => {
                 <Link
                   key={term}
                   to={`/jobs?q=${encodeURIComponent(term)}`}
-                  className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"
+                  className="px-3 py-1 bg-primary-500/20 text-primary-400 rounded-full text-sm font-medium hover:bg-primary-500/30 transition-colors"
                 >
                   {term}
                 </Link>

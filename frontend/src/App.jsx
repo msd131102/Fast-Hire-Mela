@@ -62,7 +62,7 @@ function App() {
               <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <SEO />
                 <RouteTracker />
-                <div className="min-h-screen bg-gray-50 transition-colors">
+                <div className="min-h-screen bg-background text-text transition-colors">
                   <Routes>
                     <Route path="/logo-preview" element={<AntiGravityLogo />} />
                     {/* Public Routes */}

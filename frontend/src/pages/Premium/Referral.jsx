@@ -72,12 +72,12 @@ const Referral = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-background text-text">
       {/* Dynamic Header Section */}
-      <div className="bg-[#050505] pt-24 pb-16 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-purple-600/20 blur-[100px] rounded-full" />
+      <div className="bg-background border-b border-border pt-24 pb-16 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary-500/20 blur-[100px] rounded-full" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <Link to="/dashboard" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8 group">
+          <Link to="/dashboard" className="inline-flex items-center text-muted hover:text-text transition-colors mb-8 group">
             <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
             <span className="text-sm font-bold uppercase tracking-widest">Back to Dashboard</span>
           </Link>
@@ -85,29 +85,29 @@ const Referral = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-2xl">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-400">
+                <div className="p-2 bg-primary-500/10 border border-primary-500/20 rounded-lg text-primary-400">
                   <Gift size={24} />
                 </div>
-                <span className="text-purple-400 font-black tracking-widest uppercase text-xs">Premium Access</span>
+                <span className="text-primary-400 font-black tracking-widest uppercase text-xs">Premium Access</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">
-                Refer Friends, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Go Premium.</span>
+              <h1 className="text-4xl md:text-5xl font-black text-text tracking-tighter mb-4">
+                Refer Friends, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400">Go Premium.</span>
               </h1>
-              <p className="text-gray-400 text-lg font-medium">
+              <p className="text-muted text-lg font-medium">
                 Unlock exclusive tools and priority visibility by sharing FastHireMela with 20 friends.
               </p>
             </div>
 
-            <div className="bg-white/5 border border-white/10 backdrop-blur-md p-6 rounded-[2rem] text-center min-w-[200px]">
-              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Your Progress</p>
-              <div className={`text-5xl font-black mb-1 ${isEligible ? 'text-green-400' : 'text-purple-400'}`}>
-                {referralCount}<span className="text-2xl text-gray-600">/20</span>
+            <div className="bg-surface border border-border backdrop-blur-md p-6 rounded-[2rem] text-center min-w-[200px]">
+              <p className="text-muted text-xs font-bold uppercase tracking-widest mb-1">Your Progress</p>
+              <div className={`text-5xl font-black mb-1 ${isEligible ? 'text-success-400' : 'text-primary-400'}`}>
+                {referralCount}<span className="text-2xl text-muted/50">/20</span>
               </div>
-              <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mt-3">
+              <div className="w-full bg-background h-1.5 rounded-full overflow-hidden mt-3">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min((referralCount / 20) * 100, 100)}%` }}
-                  className={`h-full ${isEligible ? 'bg-green-400' : 'bg-purple-400'}`}
+                  className={`h-full ${isEligible ? 'bg-success-400 shadow-sm' : 'bg-primary-400 shadow-sm'}`}
                 />
               </div>
             </div>
@@ -120,9 +120,9 @@ const Referral = () => {
 
           {/* Left Side: Benefits (Col 5) */}
           <div className="lg:col-span-5 space-y-6 order-2 lg:order-1">
-            <Card className="p-8 border-none shadow-xl shadow-purple-900/5 bg-white rounded-[2.5rem]">
-              <h2 className="text-xl font-black text-gray-900 mb-8 flex items-center gap-2">
-                <Sparkles className="text-purple-500" size={20} />
+            <Card className="p-8 shadow-adventure border-border bg-surface rounded-[2.5rem]">
+              <h2 className="text-xl font-black text-text mb-8 flex items-center gap-2">
+                <Sparkles className="text-primary-400" size={20} />
                 Premium Features
               </h2>
 
@@ -134,27 +134,27 @@ const Referral = () => {
                   { icon: <BarChart3 />, title: "Advanced Analytics", desc: "See who viewed your profile." }
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4 group">
-                    <div className="w-12 h-12 shrink-0 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-purple-50 group-hover:text-purple-600 transition-colors">
+                    <div className="w-12 h-12 shrink-0 rounded-2xl bg-background border border-border flex items-center justify-center text-muted group-hover:bg-primary-500/20 group-hover:text-primary-400 transition-colors">
                       {item.icon}
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900 leading-none mb-1">{item.title}</h3>
-                      <p className="text-sm text-gray-500 font-medium">{item.desc}</p>
+                      <h3 className="font-bold text-text leading-none mb-1">{item.title}</h3>
+                      <p className="text-sm text-muted font-medium">{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-10 pt-8 border-t border-gray-100">
-                <h4 className="font-black text-xs uppercase tracking-[0.2em] text-gray-400 mb-4">How it works</h4>
+              <div className="mt-10 pt-8 border-t border-border">
+                <h4 className="font-black text-xs uppercase tracking-[0.2em] text-muted mb-4">How it works</h4>
                 <div className="space-y-4">
                   {[
                     "List 20+ friend emails/names below",
                     "Our team verifies the referrals",
                     "Premium features unlock instantly"
                   ].map((text, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                      <div className="w-5 h-5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[10px]">
+                    <div key={i} className="flex items-center gap-3 text-sm font-bold text-text">
+                      <div className="w-5 h-5 rounded-full bg-primary-500/20 text-primary-400 flex items-center justify-center text-[10px]">
                         {i + 1}
                       </div>
                       {text}
@@ -164,10 +164,10 @@ const Referral = () => {
               </div>
             </Card>
 
-            <div className="bg-blue-600 rounded-[2rem] p-8 text-white relative overflow-hidden">
+            <div className="bg-primary-600 rounded-[2rem] p-8 text-text shadow-adventure relative overflow-hidden">
               <div className="relative z-10">
                 <h3 className="font-black mb-2">Need Help?</h3>
-                <p className="text-blue-100 text-sm mb-4">Facing issues with referral tracking?</p>
+                <p className="text-text/80 text-sm mb-4">Facing issues with referral tracking?</p>
                 <a href="mailto:fasthiremela@gmail.com" className="inline-flex items-center gap-2 font-bold bg-white/10 px-4 py-2 rounded-xl hover:bg-white/20 transition-colors">
                   fasthiremela@gmail.com
                 </a>
@@ -180,34 +180,34 @@ const Referral = () => {
 
           {/* Right Side: Form (Col 7) */}
           <div className="lg:col-span-7 order-1 lg:order-2">
-            <Card className="p-8 md:p-10 border-none shadow-2xl shadow-gray-200/50 bg-white rounded-[2.5rem]">
+            <Card className="p-8 md:p-10 shadow-adventure border-border bg-surface rounded-[2.5rem]">
               <div className="flex items-center gap-3 mb-8">
-                <Users className="text-purple-600" />
-                <h2 className="text-2xl font-black text-gray-900">Submission Form</h2>
+                <Users className="text-primary-400" />
+                <h2 className="text-2xl font-black text-text">Submission Form</h2>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Full Name</label>
+                    <label className="text-xs font-black uppercase tracking-widest text-muted ml-1">Full Name</label>
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-purple-500 transition-all font-medium"
+                      className="w-full px-5 py-4 bg-background border border-border text-text rounded-2xl focus:ring-2 focus:ring-primary-500/50 transition-all font-medium"
                       placeholder="John Doe"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Mobile Number</label>
+                    <label className="text-xs font-black uppercase tracking-widest text-muted ml-1">Mobile Number</label>
                     <input
                       type="tel"
                       name="mobile"
                       value={formData.mobile}
                       onChange={handleInputChange}
-                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-purple-500 transition-all font-medium"
+                      className="w-full px-5 py-4 bg-background border border-border text-text rounded-2xl focus:ring-2 focus:ring-primary-500/50 transition-all font-medium"
                       placeholder="+91 00000 00000"
                       required
                     />
@@ -215,13 +215,13 @@ const Referral = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Email Address</label>
+                  <label className="text-xs font-black uppercase tracking-widest text-muted ml-1">Email Address</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-purple-500 transition-all font-medium"
+                    className="w-full px-5 py-4 bg-background border border-border text-text rounded-2xl focus:ring-2 focus:ring-primary-500/50 transition-all font-medium"
                     placeholder="john@example.com"
                     required
                   />
@@ -229,8 +229,8 @@ const Referral = () => {
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center ml-1">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-400">Referred Users List</label>
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${isEligible ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
+                    <label className="text-xs font-black uppercase tracking-widest text-muted">Referred Users List</label>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${isEligible ? 'bg-success-500/20 text-success-400' : 'bg-warning-500/20 text-warning-400'}`}>
                       {referralCount} detected
                     </span>
                   </div>
@@ -239,7 +239,7 @@ const Referral = () => {
                     value={formData.referred_users}
                     onChange={handleInputChange}
                     rows="8"
-                    className="w-full px-5 py-4 bg-gray-50 border-none rounded-[2rem] focus:ring-2 focus:ring-purple-500 transition-all font-medium resize-none"
+                    className="w-full px-5 py-4 bg-background border border-border text-text rounded-[2rem] focus:ring-2 focus:ring-primary-500/50 transition-all font-medium resize-none"
                     placeholder="Enter one email/name per line..."
                     required
                   />
@@ -247,13 +247,13 @@ const Referral = () => {
 
                 <AnimatePresence>
                   {error && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100">
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 p-4 bg-danger-500/10 text-danger-500 rounded-2xl border border-danger-500/20">
                       <AlertCircle size={18} />
                       <p className="text-sm font-bold">{error}</p>
                     </motion.div>
                   )}
                   {success && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 p-4 bg-green-50 text-green-700 rounded-2xl border border-green-100">
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 p-4 bg-success-500/10 text-success-500 rounded-2xl border border-success-500/20">
                       <CheckCircle size={18} />
                       <p className="text-sm font-bold">{success}</p>
                     </motion.div>
@@ -263,9 +263,9 @@ const Referral = () => {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className={`w-full py-5 rounded-[2rem] font-black text-white uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 ${isEligible
-                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 shadow-green-500/20'
-                      : 'bg-gradient-to-r from-purple-600 to-pink-600 shadow-purple-500/20'
+                  className={`w-full py-5 rounded-[2rem] font-black text-text uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 ${isEligible
+                      ? 'bg-gradient-to-r from-success-500 to-success-600 shadow-adventure'
+                      : 'bg-gradient-to-r from-primary-600 to-secondary-600 shadow-adventure'
                     }`}
                 >
                   {loading ? (

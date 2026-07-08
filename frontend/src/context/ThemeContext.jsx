@@ -49,7 +49,7 @@ export const ThemeProvider = ({ children }) => {
   }, []);
 
   const toggleTheme = () => {
-    setDarkMode(!darkMode);
+    setDarkMode((prev) => !prev);
   };
 
   const setTheme = (theme) => {

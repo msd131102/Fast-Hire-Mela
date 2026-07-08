@@ -7,7 +7,7 @@ import { cn } from '../../utils/cn';
 
 const Layout = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafafa] selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-background text-text transition-colors selection:bg-primary-500 selection:text-white">
       {/* Utility to reset scroll position on route change */}
       <ScrollToTop />
       
@@ -32,7 +32,7 @@ const Layout = () => {
       </main>
 
       {/* Footer: Clean, minimalist separation */}
-      <footer className="w-full border-t border-black/[0.03] bg-white">
+      <footer className="w-full border-t border-border bg-surface transition-colors">
         <Footer />
       </footer>
     </div>

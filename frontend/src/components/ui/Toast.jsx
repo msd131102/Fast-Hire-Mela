@@ -91,30 +91,30 @@ const ToastItem = ({ toast, onRemove }) => {
 
   const getStyles = () => {
     switch (toast.type) {
-      case 'success': return 'border-green-100 bg-white/95 text-green-900 shadow-green-900/5';
-      case 'error': return 'border-red-100 bg-white/95 text-red-900 shadow-red-900/5';
-      case 'warning': return 'border-yellow-100 bg-white/95 text-yellow-900 shadow-yellow-900/5';
-      case 'info': return 'border-blue-100 bg-white/95 text-blue-900 shadow-blue-900/5';
-      case 'loading': return 'border-gray-100 bg-white/95 text-gray-900 shadow-gray-900/5';
-      default: return 'border-gray-100 bg-white/95 text-gray-900';
+      case 'success': return 'border-success-500 bg-surface text-success-500 shadow-adventure';
+      case 'error': return 'border-danger-500 bg-surface text-danger-500 shadow-adventure';
+      case 'warning': return 'border-warning-500 bg-surface text-warning-500 shadow-adventure';
+      case 'info': return 'border-primary-500 bg-surface text-primary-400 shadow-adventure';
+      case 'loading': return 'border-border bg-surface text-text shadow-adventure';
+      default: return 'border-border bg-surface text-text shadow-adventure';
     }
   };
 
   const getIconStyles = () => {
     switch (toast.type) {
-      case 'success': return 'bg-green-100 text-green-600';
-      case 'error': return 'bg-red-100 text-red-600';
-      case 'warning': return 'bg-yellow-100 text-yellow-600';
-      case 'info': return 'bg-blue-100 text-blue-600';
-      default: return 'bg-gray-100 text-gray-600';
+      case 'success': return 'bg-success-500/20 text-success-500';
+      case 'error': return 'bg-danger-500/20 text-danger-500';
+      case 'warning': return 'bg-warning-500/20 text-warning-500';
+      case 'info': return 'bg-primary-500/20 text-primary-400';
+      default: return 'bg-secondary-800 text-muted';
     }
   };
 
   return (
     <div
       className={cn(
-        'pointer-events-auto group relative overflow-hidden',
-        'max-w-md w-full md:w-80 border rounded-2xl p-4 shadow-2xl backdrop-blur-md transition-all duration-300 ease-out',
+        'pointer-events-auto group relative overflow-hidden font-game',
+        'max-w-md w-full md:w-80 border-2 rounded-[2rem] p-4 transition-all duration-300 ease-out',
         getStyles(),
         isLeaving ? 'opacity-0 translate-y-2 md:translate-x-12' : 'opacity-100 translate-y-0 translate-x-0',
         !isLeaving ? 'animate-in' : ''
@@ -126,7 +126,7 @@ const ToastItem = ({ toast, onRemove }) => {
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold tracking-tight">{toast.message}</p>
+          <p className="text-xl font-bold tracking-tight">{toast.message}</p>
           {toast.description && (
             <p className="text-xs mt-0.5 font-medium opacity-60 line-clamp-2">{toast.description}</p>
           )}
@@ -135,7 +135,7 @@ const ToastItem = ({ toast, onRemove }) => {
         {toast.type !== 'loading' && (
           <button
             onClick={handleRemove}
-            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition-all"
+            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:bg-secondary-800 hover:text-text transition-all"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
@@ -143,12 +143,12 @@ const ToastItem = ({ toast, onRemove }) => {
       </div>
 
       {toast.duration > 0 && (
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-100/50">
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-border">
           <div
             className={cn("h-full transition-all ease-linear", 
-              toast.type === 'success' ? 'bg-green-500' : 
-              toast.type === 'error' ? 'bg-red-500' : 
-              'bg-blue-500'
+              toast.type === 'success' ? 'bg-success-500' : 
+              toast.type === 'error' ? 'bg-danger-500' : 
+              'bg-primary-500'
             )}
             style={{ animation: `shrink ${toast.duration}ms linear forwards` }}
           />

@@ -18,10 +18,10 @@ const Card = React.forwardRef(({
   };
 
   const cardClasses = cn(
-    'bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden relative',
+    'bg-surface border border-border shadow-adventure rounded-[2rem] overflow-hidden relative transition-all duration-300',
     paddingClasses[padding],
-    // Upgraded hover effect with a smooth lift and deeper shadow
-    hover && 'hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 ease-out cursor-pointer',
+    // Smooth adventure hover effect
+    hover && 'hover:-translate-y-1 hover:shadow-adventure-hover hover:border-primary-200 cursor-pointer',
     className
   );
 
@@ -68,7 +68,7 @@ const CardTitle = React.forwardRef(({
   return (
     <h3
       ref={ref}
-      className={cn('text-lg sm:text-xl font-bold text-gray-900 tracking-tight leading-snug', className)}
+      className={cn('text-lg sm:text-xl font-bold font-game text-text tracking-wider leading-snug uppercase', className)}
       {...props}
     >
       {children}
@@ -86,7 +86,7 @@ const CardDescription = React.forwardRef(({
   return (
     <p
       ref={ref}
-      className={cn('text-sm sm:text-base text-gray-500 font-medium leading-relaxed', className)}
+      className={cn('text-sm sm:text-base text-muted font-game font-medium leading-relaxed', className)}
       {...props}
     >
       {children}
@@ -122,7 +122,7 @@ const CardFooter = React.forwardRef(({
   return (
     <div
       ref={ref}
-      className={cn('mt-6 pt-5 border-t border-gray-50 flex items-center justify-between', className)}
+      className={cn('mt-6 pt-5 border-t border-border flex items-center justify-between', className)}
       {...props}
     >
       {children}

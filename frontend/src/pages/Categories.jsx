@@ -39,22 +39,22 @@ const Categories = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
-          <p className="text-gray-600">{error}</p>
+          <h2 className="text-2xl font-bold text-danger-500 mb-4">Error</h2>
+          <p className="text-muted">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-background text-text py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Job Categories</h1>
-          <p className="text-xl text-gray-600">
-            Explore jobs by category and find your perfect career match
+          <h1 className="text-4xl md:text-5xl font-pixel text-text mb-6 tracking-widest">Quest Types</h1>
+          <p className="text-xl text-muted font-game">
+            Choose your path and find your perfect adventure
           </p>
         </div>
 
@@ -63,31 +63,31 @@ const Categories = () => {
             <Link
               key={category.id}
               to={`/jobs?category=${category.slug}`}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-6 block"
+              className="bg-surface border border-border rounded-[2rem] shadow-adventure hover:border-primary-500 hover:-translate-y-2 transition-all duration-100 p-6 block group"
             >
               <div className="flex items-center mb-4">
                 {category.icon && (
-                  <div className="text-3xl mr-3">
+                  <div className="text-3xl mr-3 text-primary-400 group-hover:text-primary-300 transition-colors">
                     {category.icon}
                   </div>
                 )}
-                <h3 className="text-xl font-semibold text-gray-900">
+                <h3 className="text-xl font-pixel text-text group-hover:text-primary-400 transition-colors">
                   {category.name}
                 </h3>
               </div>
 
               {category.description && (
-                <p className="text-gray-600 mb-4 line-clamp-2">
+                <p className="text-muted mb-4 line-clamp-2 font-game text-lg">
                   {category.description}
                 </p>
               )}
 
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">
-                  {category.job_count || 0} jobs available
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <span className="text-xs font-bold text-warning-500 uppercase">
+                  {category.job_count || 0} Quests
                 </span>
-                <span className="text-blue-600 hover:text-blue-800 font-medium">
-                  View Jobs →
+                <span className="text-primary-500 group-hover:text-primary-400 font-bold text-[10px] uppercase transition-colors">
+                  Enter →
                 </span>
               </div>
             </Link>
@@ -96,7 +96,7 @@ const Categories = () => {
 
         {categories.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-600">No categories available at the moment.</p>
+            <p className="text-muted">No categories available at the moment.</p>
           </div>
         )}
       </div>

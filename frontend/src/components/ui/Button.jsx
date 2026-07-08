@@ -18,23 +18,23 @@ const Button = React.forwardRef(({
   // Filter out non-DOM props - Preserving logic
   const { isLoading, ...domProps } = props;
   
-  // Base classes optimized for better click/touch interaction
-  const baseClasses = 'inline-flex items-center justify-center font-semibold tracking-wide rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 select-none active:opacity-90';
+  // Base classes optimized for modern adventure look
+  const baseClasses = 'inline-flex items-center justify-center font-game font-semibold tracking-wider rounded-2xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background select-none hover:-translate-y-0.5 active:translate-y-1';
   
   const variants = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-md hover:shadow-lg shadow-blue-600/20',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
-    outline: 'border-2 border-gray-200 bg-white text-gray-700 hover:border-blue-600 hover:text-blue-600 focus:ring-blue-500',
-    ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
-    success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm',
+    primary: 'bg-primary-600 text-white hover:bg-primary-500 shadow-sm border border-transparent',
+    secondary: 'bg-secondary-100 text-secondary-800 hover:bg-secondary-200 shadow-sm border border-transparent',
+    outline: 'border-2 border-border bg-surface text-text hover:border-primary-400 hover:bg-primary-50/50 shadow-sm',
+    ghost: 'text-muted hover:bg-surface hover:text-text',
+    danger: 'bg-danger-500 text-white hover:bg-danger-400 shadow-sm border border-transparent',
+    success: 'bg-success-500 text-white hover:bg-success-400 shadow-sm border border-transparent',
   };
   
   const sizes = {
-    sm: 'px-4 py-2 text-sm', // Slightly larger for better mobile tap target
-    md: 'px-6 py-2.5 text-sm sm:text-base',
-    lg: 'px-8 py-3.5 text-base sm:text-lg',
-    xl: 'px-10 py-4 text-lg sm:text-xl font-bold',
+    sm: 'px-4 py-2 text-xs',
+    md: 'px-5 py-3 text-sm',
+    lg: 'px-8 py-4 text-base',
+    xl: 'px-10 py-5 text-lg',
   };
 
   const buttonClasses = cn(
@@ -83,9 +83,6 @@ const Button = React.forwardRef(({
       type={type}
       className={cn("group", buttonClasses)}
       onClick={onClick}
-      whileHover={{ scale: 1.01, translateY: -1 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
       {...domProps}
     >
       {content}

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
 
 const FAQ = () => {
-  const { isDarkMode } = useTheme();
   const [activeCategory, setActiveCategory] = useState('general');
   const [expandedItems, setExpandedItems] = useState(new Set());
 
@@ -177,15 +175,15 @@ const FAQ = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className="min-h-screen bg-background text-text">
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-4xl font-bold mb-4 font-pixel">
             Frequently Asked Questions
           </h1>
-          <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className="text-lg text-muted">
             Find answers to common questions about Fast Hire Mela
           </p>
         </div>
@@ -196,11 +194,7 @@ const FAQ = () => {
             <input
               type="text"
               placeholder="Search for answers..."
-              className={`w-full px-4 py-3 pl-12 rounded-lg border ${
-                isDarkMode 
-                  ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' 
-                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-              } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className="w-full px-4 py-3 pl-12 rounded-lg border bg-surface border-border text-text placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
             />
             <svg
               className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"
@@ -219,12 +213,10 @@ const FAQ = () => {
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg font-bold transition-all ${
                 activeCategory === category.id
-                  ? 'bg-blue-600 text-white'
-                  : isDarkMode
-                  ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                  ? 'bg-primary-600 text-text shadow-adventure'
+                  : 'bg-surface text-muted hover:bg-secondary-800 border border-border'
               }`}
             >
               <span className="mr-2">{category.icon}</span>
@@ -240,17 +232,11 @@ const FAQ = () => {
             ?.questions.map((item) => (
               <div
                 key={item.id}
-                className={`rounded-lg border ${
-                  isDarkMode 
-                    ? 'bg-gray-800 border-gray-700' 
-                    : 'bg-white border-gray-200'
-                } overflow-hidden transition-all duration-200`}
+                className="rounded-2xl border bg-surface border-border overflow-hidden transition-all duration-200"
               >
                 <button
                   onClick={() => toggleExpanded(item.id)}
-                  className={`w-full px-6 py-4 text-left flex items-center justify-between ${
-                    isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
-                  } transition-colors`}
+                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-secondary-800 transition-colors"
                 >
                   <span className="font-medium pr-4">{item.question}</span>
                   <svg
@@ -265,11 +251,7 @@ const FAQ = () => {
                   </svg>
                 </button>
                 {expandedItems.has(item.id) && (
-                  <div className={`px-6 py-4 border-t ${
-                    isDarkMode 
-                      ? 'bg-gray-750 border-gray-700 text-gray-300' 
-                      : 'bg-gray-50 border-gray-200 text-gray-600'
-                  }`}>
+                  <div className="px-6 py-4 border-t bg-background border-border text-muted">
                     <p className="leading-relaxed">{item.answer}</p>
                   </div>
                 )}
@@ -278,27 +260,21 @@ const FAQ = () => {
         </div>
 
         {/* Contact Support */}
-        <div className={`mt-12 text-center p-8 rounded-lg ${
-          isDarkMode ? 'bg-gray-800' : 'bg-white'
-        }`}>
+        <div className="mt-12 text-center p-8 rounded-3xl bg-surface border border-border shadow-adventure">
           <h2 className="text-2xl font-bold mb-4">Still have questions?</h2>
-          <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className="mb-6 text-muted">
             Can't find the answer you're looking for? Our support team is here to help.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/contact"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-6 py-3 bg-primary-600 text-text font-bold rounded-lg hover:bg-primary-500 shadow-adventure transition-all"
             >
               Contact Support
             </a>
             <a
               href="mailto:support@fasthiremela.com"
-              className={`px-6 py-3 rounded-lg border transition-colors ${
-                isDarkMode 
-                  ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
+              className="px-6 py-3 rounded-lg border border-border text-text font-bold hover:bg-secondary-800 transition-colors"
             >
               Email Us
             </a>
@@ -309,39 +285,31 @@ const FAQ = () => {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           <a
             href="/about"
-            className={`text-center p-4 rounded-lg ${
-              isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
-            } transition-colors`}
+            className="text-center p-4 rounded-2xl bg-surface border border-border hover:bg-secondary-800 shadow-adventure transition-colors"
           >
             <div className="text-2xl mb-2">ℹ️</div>
-            <div className="font-medium">About Us</div>
+            <div className="font-bold text-text">About Us</div>
           </a>
           <a
             href="/contact"
-            className={`text-center p-4 rounded-lg ${
-              isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
-            } transition-colors`}
+            className="text-center p-4 rounded-2xl bg-surface border border-border hover:bg-secondary-800 shadow-adventure transition-colors"
           >
             <div className="text-2xl mb-2">📞</div>
-            <div className="font-medium">Contact</div>
+            <div className="font-bold text-text">Contact</div>
           </a>
           <a
             href="/premium"
-            className={`text-center p-4 rounded-lg ${
-              isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
-            } transition-colors`}
+            className="text-center p-4 rounded-2xl bg-surface border border-border hover:bg-secondary-800 shadow-adventure transition-colors"
           >
             <div className="text-2xl mb-2">⭐</div>
-            <div className="font-medium">Premium</div>
+            <div className="font-bold text-text">Premium</div>
           </a>
           <a
             href="/terms"
-            className={`text-center p-4 rounded-lg ${
-              isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
-            } transition-colors`}
+            className="text-center p-4 rounded-2xl bg-surface border border-border hover:bg-secondary-800 shadow-adventure transition-colors"
           >
             <div className="text-2xl mb-2">📋</div>
-            <div className="font-medium">Terms</div>
+            <div className="font-bold text-text">Terms</div>
           </a>
         </div>
       </div>

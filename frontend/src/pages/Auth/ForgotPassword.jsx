@@ -51,32 +51,32 @@ const ForgotPassword = () => {
 
   if (isEmailSent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <div className="mx-auto h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
-              <Mail className="h-6 w-6 text-green-600" />
+            <div className="mx-auto h-12 w-12 rounded-full bg-success-500/20 flex items-center justify-center shadow-adventure">
+              <Mail className="h-6 w-6 text-success-500" />
             </div>
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-6 text-3xl font-extrabold text-text">
               Check Your Email
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-muted">
               We've sent a password reset link to<br />
-              <span className="font-medium text-gray-900">{email}</span>
+              <span className="font-bold text-text">{email}</span>
             </p>
           </div>
 
           <div className="mt-8 space-y-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+            <div className="bg-primary-900/20 border border-primary-500/50 rounded-md p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <Mail className="h-5 w-5 text-blue-400" />
+                  <Mail className="h-5 w-5 text-primary-400" />
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-blue-800">
+                  <h3 className="text-sm font-bold text-primary-300">
                     Didn't receive the email?
                   </h3>
-                  <div className="mt-2 text-sm text-blue-700">
+                  <div className="mt-2 text-sm text-primary-200">
                     <ul className="list-disc list-inside space-y-1">
                       <li>Check your spam folder</li>
                       <li>Make sure the email address is correct</li>
@@ -90,14 +90,14 @@ const ForgotPassword = () => {
             <div className="space-y-3">
               <button
                 onClick={() => setIsEmailSent(false)}
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full flex justify-center py-2 px-4 border border-border rounded-md shadow-sm text-sm font-bold text-text bg-surface hover:bg-secondary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all"
               >
                 Try Another Email
               </button>
               
               <Link
                 to="/login"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-adventure text-sm font-black text-text bg-primary-600 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all"
               >
                 Back to Login
               </Link>
@@ -109,24 +109,24 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <Link
             to="/login"
-            className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6"
+            className="inline-flex items-center text-sm font-bold text-muted hover:text-text mb-6 transition-all"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
             Back to login
           </Link>
           
-          <div className="mx-auto h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-            <Mail className="h-6 w-6 text-blue-600" />
+          <div className="mx-auto h-12 w-12 rounded-full bg-primary-500/20 shadow-adventure flex items-center justify-center">
+            <Mail className="h-6 w-6 text-primary-400" />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-black text-text">
             Reset Your Password
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm font-medium text-muted">
             Enter your email address and we'll send you a link to reset your password.
           </p>
         </div>
@@ -152,7 +152,7 @@ const ForgotPassword = () => {
           <div>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-12 bg-primary-600 hover:bg-primary-500 shadow-adventure text-text font-bold rounded-xl transition-all"
               disabled={isLoading || !watchedEmail}
               isLoading={isLoading}
             >
@@ -161,11 +161,11 @@ const ForgotPassword = () => {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm font-medium text-muted">
               Remember your password?{' '}
               <Link
                 to="/login"
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-bold text-primary-500 hover:text-primary-400"
               >
                 Sign in
               </Link>

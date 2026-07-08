@@ -55,7 +55,7 @@ const Modal = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
             aria-hidden="true"
             onClick={handleBackdropClick}
           />
@@ -67,7 +67,7 @@ const Modal = ({
             exit={{ opacity: 0, y: 100, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className={cn(
-              "relative w-full bg-white shadow-2xl transition-all overflow-hidden",
+              "relative w-full bg-card border border-border shadow-adventure transition-all overflow-hidden",
               // Mobile: Bottom sheet style | Desktop: Centered card style
               "rounded-t-[2.5rem] sm:rounded-3xl", 
               sizes[size],
@@ -79,15 +79,15 @@ const Modal = ({
             {...props}
           >
             {/* Mobile Handle (Visual Cue) */}
-            <div className="block sm:hidden w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2" />
+            <div className="block sm:hidden w-12 h-1.5 bg-border rounded-full mx-auto mt-4 mb-2" />
 
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 border-b border-gray-50">
+              <div className="flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 border-b border-border">
                 {title && (
                   <h3
                     id="modal-title"
-                    className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight"
+                    className="text-xl sm:text-2xl font-bold font-pixel text-text tracking-tight"
                   >
                     {title}
                   </h3>
@@ -95,7 +95,7 @@ const Modal = ({
                 {showCloseButton && (
                   <button
                     type="button"
-                    className="group rounded-full p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="group rounded-full p-2 text-muted hover:text-text hover:bg-surface transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
                     onClick={onClose}
                     aria-label="Close"
                   >

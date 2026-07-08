@@ -138,19 +138,19 @@ const Settings = () => {
   const isPremium = user?.is_premium;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] pb-12">
+    <div className="min-h-screen bg-background text-text pb-12">
       {/* Top Background Gradient Accent */}
-      <div className="h-48 w-full bg-gradient-to-r from-blue-600 to-indigo-700 absolute top-0 left-0 z-0" />
+      <div className="h-48 w-full bg-gradient-to-r from-primary-600/20 to-secondary-600/20 border-b border-border absolute top-0 left-0 z-0" />
 
       <div className="container mx-auto px-4 pt-12 relative z-10 max-w-6xl">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 text-white"
+          className="mb-8 text-text"
         >
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Settings</h1>
-          <p className="text-blue-100 mt-2 opacity-90">Manage your account preferences and profile settings</p>
+          <p className="text-muted mt-2 opacity-90">Manage your account preferences and profile settings</p>
         </motion.div>
 
         <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8">
@@ -160,7 +160,7 @@ const Settings = () => {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl shadow-blue-900/5 border border-white p-3 sticky top-6"
+              className="bg-surface backdrop-blur-sm rounded-[2rem] shadow-adventure border border-border p-3 sticky top-6"
             >
               <div className="space-y-1">
                 {tabs.map((tab) => (
@@ -169,17 +169,17 @@ const Settings = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full group flex items-center justify-between p-4 rounded-xl transition-all duration-200 ${
                       activeTab === tab.id
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                        : 'text-slate-600 hover:bg-slate-50'
+                        ? 'bg-primary-600 text-text shadow-adventure'
+                        : 'text-muted hover:bg-secondary-800'
                     }`}
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`p-2 rounded-lg transition-colors ${activeTab === tab.id ? 'bg-white/20' : 'bg-slate-100 group-hover:bg-white'}`}>
+                      <div className={`p-2 rounded-lg transition-colors ${activeTab === tab.id ? 'bg-white/20' : 'bg-background group-hover:bg-surface'}`}>
                         <tab.icon className="w-5 h-5" />
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm leading-none">{tab.label}</div>
-                        <div className={`text-[11px] mt-1 ${activeTab === tab.id ? 'text-blue-100' : 'text-slate-400'}`}>
+                        <div className={`text-[11px] mt-1 ${activeTab === tab.id ? 'text-muted' : 'text-muted/70'}`}>
                           {tab.desc}
                         </div>
                       </div>
@@ -190,19 +190,19 @@ const Settings = () => {
               </div>
 
               {/* Quick Status Info */}
-              <div className="mt-6 pt-6 border-t border-slate-100 px-4 pb-2">
+              <div className="mt-6 pt-6 border-t border-border px-4 pb-2">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                      <img 
                         src={profileData.profile_picture || "https://ui-avatars.com/api/?name=" + profileData.name} 
-                        className="w-10 h-10 rounded-full border-2 border-white shadow-sm" 
+                        className="w-10 h-10 rounded-full border-2 border-surface shadow-sm" 
                         alt="User"
                      />
                      {isPremium && <div className="absolute -top-1 -right-1 bg-yellow-400 rounded-full p-0.5 shadow-sm"><Crown className="w-3 h-3 text-white" /></div>}
                   </div>
                   <div className="overflow-hidden">
-                    <p className="text-sm font-bold text-slate-900 truncate">{profileData.name || 'User'}</p>
-                    <p className="text-xs text-slate-500 truncate">{profileData.email}</p>
+                    <p className="text-sm font-bold text-text truncate">{profileData.name || 'User'}</p>
+                    <p className="text-xs text-muted truncate">{profileData.email}</p>
                   </div>
                 </div>
               </div>
@@ -213,38 +213,38 @@ const Settings = () => {
           <main className="lg:col-span-8 xl:col-span-9">
             <AnimatePresence mode="wait">
               {activeTab === 'profile' && (
-                <motion.div
+                  <motion.div
                   key="profile"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden"
+                  className="bg-surface rounded-[2rem] shadow-adventure border border-border overflow-hidden"
                 >
-                  <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/50">
-                    <h2 className="text-xl font-bold text-slate-900">Profile Information</h2>
-                    <p className="text-sm text-slate-500">Update your public profile and contact details</p>
+                  <div className="px-8 py-6 border-b border-border bg-background">
+                    <h2 className="text-xl font-bold text-text">Profile Information</h2>
+                    <p className="text-sm text-muted">Update your public profile and contact details</p>
                   </div>
                   
                   <form onSubmit={handleProfileUpdate} className="p-8 space-y-8">
                     {/* Profile Picture Section */}
-                    <div className="flex flex-col md:flex-row md:items-center gap-6 p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div className="flex flex-col md:flex-row md:items-center gap-6 p-6 rounded-2xl bg-background border border-border">
                         <div className="relative group">
-                          <div className="w-24 h-24 rounded-2xl overflow-hidden ring-4 ring-white shadow-md bg-white flex items-center justify-center">
+                          <div className="w-24 h-24 rounded-2xl overflow-hidden ring-4 ring-surface shadow-md bg-background flex items-center justify-center">
                             {profileData.profile_picture ? (
                               <img src={profileData.profile_picture} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
-                              <User className="w-10 h-10 text-slate-300" />
+                              <User className="w-10 h-10 text-muted" />
                             )}
                           </div>
                         </div>
                         <div className="flex-1 space-y-2">
-                          <label className="text-sm font-bold text-slate-700">Profile Image URL</label>
+                          <label className="text-sm font-bold text-text">Profile Image URL</label>
                           <Input
                             type="url"
                             placeholder="https://example.com/photo.jpg"
                             value={profileData.profile_picture || ''}
                             onChange={(e) => setProfileData(prev => ({ ...prev, profile_picture: e.target.value }))}
-                            className="bg-white border-slate-200 focus:ring-blue-500/20"
+                            className="bg-surface border-border text-text focus:ring-primary-500/20"
                           />
                         </div>
                     </div>
@@ -252,54 +252,54 @@ const Settings = () => {
                     {/* Grid Inputs */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><User className="w-4 h-4 opacity-50"/> Full Name</label>
+                        <label className="text-sm font-bold text-text flex items-center gap-2"><User className="w-4 h-4 opacity-50"/> Full Name</label>
                         <Input
                           value={profileData.name || ''}
                           onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                          className="py-2.5"
+                          className="py-2.5 bg-surface border-border focus:ring-primary-500 text-text"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><Mail className="w-4 h-4 opacity-50"/> Email Address</label>
+                        <label className="text-sm font-bold text-text flex items-center gap-2"><Mail className="w-4 h-4 opacity-50"/> Email Address</label>
                         <Input
                           type="email"
                           value={profileData.email || ''}
                           onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                          className="py-2.5"
+                          className="py-2.5 bg-surface border-border focus:ring-primary-500 text-text"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><Smartphone className="w-4 h-4 opacity-50"/> Phone Number</label>
+                        <label className="text-sm font-bold text-text flex items-center gap-2"><Smartphone className="w-4 h-4 opacity-50"/> Phone Number</label>
                         <Input
                           type="tel"
                           value={profileData.phone || ''}
                           onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                          className="py-2.5"
+                          className="py-2.5 bg-surface border-border focus:ring-primary-500 text-text"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><MapPin className="w-4 h-4 opacity-50"/> Current City</label>
+                        <label className="text-sm font-bold text-text flex items-center gap-2"><MapPin className="w-4 h-4 opacity-50"/> Current City</label>
                         <Input
                           value={profileData.city || ''}
                           onChange={(e) => setProfileData(prev => ({ ...prev, city: e.target.value }))}
-                          className="py-2.5"
+                          className="py-2.5 bg-surface border-border focus:ring-primary-500 text-text"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Professional Bio</label>
+                      <label className="text-sm font-bold text-text">Professional Bio</label>
                       <textarea
                         value={profileData.bio || ''}
                         onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))}
                         rows={4}
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-700"
+                        className="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all text-text placeholder-muted"
                         placeholder="Write a short summary about your professional background..."
                       />
                     </div>
 
-                    <div className="flex justify-end pt-4 border-t border-slate-50">
-                      <Button type="submit" disabled={loading} className="px-8 py-6 rounded-xl bg-blue-600 shadow-lg shadow-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    <div className="flex justify-end pt-4 border-t border-border">
+                      <Button type="submit" disabled={loading} className="px-8 py-6 rounded-2xl bg-primary-600 shadow-adventure hover:scale-[1.02] active:scale-[0.98] transition-all">
                         <div className="flex items-center gap-2 font-bold">
                           <Save className="w-5 h-5" />
                           {loading ? 'Saving...' : 'Save Changes'}
@@ -316,11 +316,11 @@ const Settings = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100 p-8"
+                  className="bg-surface rounded-[2rem] shadow-adventure border border-border p-8"
                 >
                   <div className="mb-8">
-                    <h2 className="text-xl font-bold text-slate-900">Communication Preferences</h2>
-                    <p className="text-sm text-slate-500">Control how and when you want to be contacted</p>
+                    <h2 className="text-xl font-bold text-text">Communication Preferences</h2>
+                    <p className="text-sm text-muted">Control how and when you want to be contacted</p>
                   </div>
                   
                   <div className="grid gap-4">
@@ -329,10 +329,10 @@ const Settings = () => {
                       { key: 'job_alerts', label: 'Smart Job Alerts', desc: 'Personalized notifications for matching opportunities' },
                       { key: 'newsletter_subscription', label: 'Industry Insights Newsletter', desc: 'Weekly digest of top trends and hiring news' }
                     ].map(setting => (
-                      <label key={setting.key} className="group flex items-center justify-between p-6 border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all cursor-pointer">
+                      <label key={setting.key} className="group flex items-center justify-between p-6 border border-border rounded-2xl hover:border-primary-500 hover:bg-primary-500/10 transition-all cursor-pointer">
                         <div className="max-w-[80%]">
-                          <div className="font-bold text-slate-900 group-hover:text-blue-700 transition-colors">{setting.label}</div>
-                          <div className="text-sm text-slate-500 mt-1">{setting.desc}</div>
+                          <div className="font-bold text-text group-hover:text-primary-400 transition-colors">{setting.label}</div>
+                          <div className="text-sm text-muted mt-1">{setting.desc}</div>
                         </div>
                         <div className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -342,7 +342,7 @@ const Settings = () => {
                                 setProfileData(prev => ({ ...prev, [setting.key]: e.target.checked }));
                                 handleSettingsUpdate(setting.key);
                             }}
-                            className="w-6 h-6 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all"
+                            className="w-6 h-6 rounded-lg border-border text-primary-500 focus:ring-primary-500 transition-all"
                             />
                         </div>
                       </label>
@@ -360,54 +360,57 @@ const Settings = () => {
                   className="space-y-6"
                 >
                   {/* Security Card */}
-                  <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100 p-8">
-                    <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                      <div className="p-2 bg-red-50 rounded-lg text-red-600"><Lock className="w-5 h-5" /></div>
+                  <div className="bg-surface rounded-[2rem] shadow-adventure border border-border p-8">
+                    <h2 className="text-xl font-bold text-text mb-6 flex items-center gap-3">
+                      <div className="p-2 bg-danger-500/10 rounded-lg text-danger-400"><Lock className="w-5 h-5" /></div>
                       Security Settings
                     </h2>
                     
                     <form onSubmit={handlePasswordChange} className="space-y-5 max-w-md">
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Current Password</label>
+                        <label className="text-sm font-bold text-text">Current Password</label>
                         <Input
                           type="password"
                           value={passwordData.current_password}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, current_password: e.target.value }))}
                           placeholder="••••••••"
                           required
+                          className="bg-surface border-border focus:ring-primary-500 text-text"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">New Password</label>
+                        <label className="text-sm font-bold text-text">New Password</label>
                         <Input
                           type="password"
                           value={passwordData.new_password}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, new_password: e.target.value }))}
                           placeholder="••••••••"
                           required
+                          className="bg-surface border-border focus:ring-primary-500 text-text"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Confirm New Password</label>
+                        <label className="text-sm font-bold text-text">Confirm New Password</label>
                         <Input
                           type="password"
                           value={passwordData.confirm_password}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, confirm_password: e.target.value }))}
                           placeholder="••••••••"
                           required
+                          className="bg-surface border-border focus:ring-primary-500 text-text"
                         />
                       </div>
-                      <Button type="submit" className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-xl shadow-md transition-all">
+                      <Button type="submit" className="w-full py-4 bg-surface hover:bg-secondary-800 text-text border border-border rounded-xl shadow-md transition-all">
                         Update Password
                       </Button>
                     </form>
                   </div>
 
                   {/* Subscription Card */}
-                  <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
+                  <div className="bg-surface rounded-[2rem] shadow-adventure border border-border overflow-hidden">
                     <div className="p-8">
-                        <h3 className="text-xl font-bold text-slate-900 mb-6">Subscription Status</h3>
-                        <div className={`rounded-3xl p-8 transition-all ${isPremium ? 'bg-gradient-to-br from-indigo-600 to-blue-700 text-white shadow-lg shadow-blue-200' : 'bg-slate-50 border border-slate-100'}`}>
+                        <h3 className="text-xl font-bold text-text mb-6">Subscription Status</h3>
+                        <div className={`rounded-[2rem] p-8 transition-all ${isPremium ? 'bg-gradient-to-br from-secondary-600 to-primary-600 text-text shadow-adventure' : 'bg-background border border-border'}`}>
                         {isPremium ? (
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div className="flex items-center gap-5">
@@ -417,7 +420,7 @@ const Settings = () => {
                                 <div>
                                     <span className="text-xs uppercase tracking-widest font-black opacity-80">Current Plan</span>
                                     <h4 className="text-2xl font-black">Premium Account</h4>
-                                    <p className="text-blue-100 text-sm mt-1">Unlimited applications & Priority support</p>
+                                    <p className="text-muted text-sm mt-1">Unlimited applications & Priority support</p>
                                 </div>
                             </div>
                             <Button variant="outline" className="bg-white/10 border-white/20 hover:bg-white/20 text-white px-6 rounded-xl backdrop-blur-sm">
@@ -426,16 +429,16 @@ const Settings = () => {
                             </div>
                         ) : (
                             <div className="text-center space-y-4">
-                                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto shadow-sm">
-                                    <Shield className="w-8 h-8 text-slate-400" />
+                                <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center mx-auto shadow-adventure">
+                                    <Shield className="w-8 h-8 text-muted" />
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-bold text-slate-900 tracking-tight">Standard Member</h4>
-                                    <p className="text-slate-500 text-sm mt-1 max-w-xs mx-auto">Upgrade to access premium job filters and direct recruitment tools.</p>
+                                    <h4 className="text-xl font-bold text-text tracking-tight">Standard Member</h4>
+                                    <p className="text-muted text-sm mt-1 max-w-xs mx-auto">Upgrade to access premium job filters and direct recruitment tools.</p>
                                 </div>
                                 <Button 
                                     onClick={() => navigate('/premium')}
-                                    className="px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-200 transition-all hover:scale-105"
+                                    className="px-10 py-4 bg-primary-600 hover:bg-primary-500 text-text font-bold rounded-2xl shadow-adventure transition-all hover:scale-105"
                                 >
                                     Get Premium Access
                                 </Button>

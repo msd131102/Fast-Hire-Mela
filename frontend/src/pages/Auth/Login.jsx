@@ -49,47 +49,46 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] relative flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
-      {/* Premium Background Mesh - Soft & Modern */}
+    <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
+      {/* Pixel Art Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] rounded-full bg-blue-50/60 blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[60%] h-[60%] rounded-full bg-indigo-50/60 blur-[120px]" />
+        <img 
+          src="/src/assets/pixel_auth_bg.png" 
+          alt="Login Background" 
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null; 
+            e.target.src = 'https://picsum.photos/1920/1080?random=2'; // Fallback
+          }}
+        />
+        <div className="absolute inset-0 bg-background/80" />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-[450px] z-10"
-      >
-        <Card className="border border-white/40 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden">
-          <CardHeader className="text-center pt-10 pb-4">
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-            >
-              <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform">
-                <User className="w-7 h-7 text-white" />
+      <div className="w-full max-w-[450px] z-10 relative">
+        <div className="border border-white/20 bg-surface/95 backdrop-blur-md rounded-[2.5rem] p-8 shadow-adventure">
+          <div className="text-center pt-2 pb-6">
+            <div>
+              <div className="w-16 h-16 bg-primary-50 border border-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                <User className="w-8 h-8 text-primary-500" />
               </div>
-              <CardTitle className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                Welcome back
-              </CardTitle>
-              <p className="text-slate-500 mt-2 text-sm sm:text-base font-medium">
-                Enter your details to access your account
+              <h1 className="text-3xl font-pixel font-bold text-text tracking-wide">
+                Welcome Back
+              </h1>
+              <p className="text-muted mt-4 text-sm sm:text-base font-medium">
+                Equip your credentials to continue
               </p>
-            </motion.div>
-          </CardHeader>
+            </div>
+          </div>
 
-          <CardContent className="px-6 sm:px-10 pb-12">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div className="pb-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Email Field */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Email Address</label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-muted uppercase tracking-wider ml-1">Email Address</label>
                 <Input
                   type="email"
                   placeholder="name@company.com"
-                  icon={<Mail className="w-5 h-5 text-slate-400" />}
+                  icon={<Mail className="w-5 h-5 text-muted" />}
                   {...register('email', {
                     required: 'Email is required',
                     pattern: {
@@ -98,18 +97,18 @@ const Login = () => {
                     },
                   })}
                   error={errors.email?.message}
-                  className="h-13 bg-white/50 border-slate-200 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all rounded-xl"
+                  className="h-13 bg-background border-border text-text placeholder-muted focus:bg-surface focus:ring-4 focus:ring-primary-500/20 transition-all rounded-xl"
                 />
               </div>
 
               {/* Password Field */}
               <div className="space-y-1.5 relative">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Password</label>
+                <label className="text-xs font-bold text-muted uppercase tracking-wider ml-1">Password</label>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
-                    icon={<Lock className="w-5 h-5 text-slate-400" />}
+                    icon={<Lock className="w-5 h-5 text-muted" />}
                     {...register('password', {
                       required: 'Password is required',
                       minLength: {
@@ -118,12 +117,12 @@ const Login = () => {
                       },
                     })}
                     error={errors.password?.message}
-                    className="h-13 bg-white/50 border-slate-200 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all pr-12 rounded-xl"
+                    className="h-13 bg-background border-border text-text placeholder-muted focus:bg-surface focus:ring-4 focus:ring-primary-500/20 transition-all pr-12 rounded-xl"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-[14px] text-slate-400 hover:text-blue-600 transition-colors p-1"
+                    className="absolute right-3 top-[14px] text-muted hover:text-primary-400 transition-colors p-1"
                     tabIndex="-1"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -132,18 +131,18 @@ const Login = () => {
               </div>
 
               {/* Action Row */}
-              <div className="flex items-center justify-between px-1">
+              <div className="flex items-center justify-between px-1 pt-2">
                 <label className="flex items-center group cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 text-slate-900 border-slate-300 rounded focus:ring-slate-500 transition-all cursor-pointer"
+                    className="w-4 h-4 text-primary-500 border border-border bg-background cursor-pointer rounded"
                     {...register('remember')}
                   />
-                  <span className="ml-2 text-sm text-slate-600 font-medium group-hover:text-slate-900 transition-colors">Remember me</span>
+                  <span className="ml-3 text-sm text-muted font-medium group-hover:text-text transition-colors">Remember me</span>
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-all"
+                  className="text-xs font-bold text-primary-500 hover:text-primary-600 transition-all"
                 >
                   Forgot password?
                 </Link>
@@ -156,10 +155,10 @@ const Login = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-center gap-3"
+                    className="bg-danger-500/10 border border-danger-500/50 rounded-xl p-4 flex items-center gap-3"
                   >
-                    <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
-                    <span className="text-sm font-semibold text-red-700">{errors.root.message}</span>
+                    <AlertCircle className="w-5 h-5 text-danger-500 shrink-0" />
+                    <span className="text-sm font-semibold text-danger-500">{errors.root.message}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -167,7 +166,7 @@ const Login = () => {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full h-13 text-base font-bold rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200 transition-all active:scale-[0.98] mt-2"
+                className="w-full h-13 text-base font-bold rounded-xl bg-primary-600 hover:bg-primary-500 text-text shadow-glow-primary transition-all active:scale-[0.98] mt-2"
                 disabled={isLoading}
                 loading={isLoading}
               >
@@ -181,19 +180,16 @@ const Login = () => {
 
             {/* Social Login Section */}
             <div className="mt-8">
-              <div className="relative mb-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-100" />
-                </div>
-                <div className="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold">
-                  <span className="px-4 bg-white/0 text-slate-400 backdrop-blur-sm">Or Secure Login With</span>
-                </div>
+              <div className="relative mb-8 text-center border-t border-border/50 pt-6">
+                <span className="px-4 bg-surface text-muted font-bold text-xs tracking-wider absolute -top-3 left-1/2 -translate-x-1/2">
+                  Or continue with
+                </span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all font-bold text-slate-700 text-sm"
+                  className="flex items-center justify-center gap-2 h-12 rounded-xl border border-border bg-background hover:bg-secondary-800 hover:border-primary-500/50 transition-all font-bold text-text text-sm"
                   onClick={async () => {
                     try {
                       const response = await fetch('https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api/oauth/auth-url', {
@@ -213,7 +209,7 @@ const Login = () => {
                 </button>
                 <button
                   type="button"
-                  className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all font-bold text-slate-700 text-sm"
+                  className="flex items-center justify-center gap-2 h-12 rounded-xl border border-border bg-background hover:bg-secondary-800 hover:border-primary-500/50 transition-all font-bold text-text text-sm"
                   onClick={async () => {
                     try {
                       const response = await fetch('https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api/oauth/auth-url', {
@@ -242,38 +238,33 @@ const Login = () => {
 
               {/* Footer Link */}
               <div className="mt-10 text-center">
-                <p className="text-sm text-slate-500 font-medium">
-                  New to the platform?{' '}
+                <p className="text-sm text-muted font-medium">
+                  New to the realm?{' '}
                   <Link
                     to="/register"
-                    className="font-bold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                    className="font-bold text-primary-500 hover:text-primary-600 transition-colors ml-2"
                   >
                     Create account
                   </Link>
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Bottom Trust Indicators */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-8 flex justify-center items-center gap-6"
-        >
-          <div className="flex items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-2 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            System Secure
+        <div className="mt-8 flex justify-center items-center gap-6">
+          <div className="flex items-center text-[10px] text-white/80 font-bold uppercase tracking-wider">
+            <div className="w-2 h-2 rounded-full bg-success-500 mr-2 shadow-sm" />
+            Realm Secure
           </div>
-          <div className="w-px h-3 bg-slate-200" />
-          <div className="flex items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+          <div className="w-1 h-1 rounded-full bg-white/20" />
+          <div className="flex items-center text-[10px] text-white/80 font-bold uppercase tracking-wider">
+            <div className="w-2 h-2 rounded-full bg-primary-500 mr-2 shadow-sm" />
             v2.4.0 Live
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };

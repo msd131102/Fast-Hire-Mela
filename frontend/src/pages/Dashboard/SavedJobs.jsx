@@ -70,11 +70,11 @@ const SavedJobs = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center">
         <div className="text-center">
-          <Bookmark className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Login Required</h2>
-          <p className="text-gray-600 mb-4">Please login to view your saved jobs.</p>
+          <Bookmark className="w-16 h-16 text-muted mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-text mb-2">Login Required</h2>
+          <p className="text-muted mb-4">Please login to view your saved jobs.</p>
           <Link to="/login">
             <Button>Login</Button>
           </Link>
@@ -85,21 +85,21 @@ const SavedJobs = () => {
 
   if (!isPremium) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="max-w-2xl w-full"
         >
-          <Card className="shadow-2xl border-0">
+          <Card className="bg-surface shadow-adventure rounded-3xl border border-border">
             <CardContent className="p-12 text-center">
               {/* Premium Icon */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="w-24 h-24 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
+                className="w-24 h-24 bg-gradient-to-r from-warning-500 to-warning-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-adventure"
               >
                 <Bookmark className="w-12 h-12 text-white" />
               </motion.div>
@@ -109,10 +109,10 @@ const SavedJobs = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-full mb-6"
+                className="inline-flex items-center px-4 py-2 bg-warning-500/20 rounded-full mb-6"
               >
-                <Crown className="w-4 h-4 text-purple-600 mr-2" />
-                <span className="text-purple-800 font-semibold text-sm">PREMIUM FEATURE</span>
+                <Crown className="w-4 h-4 text-warning-400 mr-2" />
+                <span className="text-warning-400 font-semibold text-sm">PREMIUM FEATURE</span>
               </motion.div>
 
               {/* Title */}
@@ -120,7 +120,7 @@ const SavedJobs = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="text-4xl font-bold text-gray-900 mb-4"
+                className="text-4xl font-bold text-text mb-4"
               >
                 Save Your Dream Jobs
               </motion.h1>
@@ -130,7 +130,7 @@ const SavedJobs = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="text-xl text-gray-600 mb-8 leading-relaxed"
+                className="text-xl text-muted mb-8 leading-relaxed"
               >
                 Unlock the ability to save jobs and track your applications with our Premium plan. 
                 Never lose track of opportunities that matter to you.
@@ -143,21 +143,21 @@ const SavedJobs = () => {
                 transition={{ delay: 0.6 }}
                 className="space-y-4 mb-8"
               >
-                <div className="flex items-center justify-center space-x-3 text-gray-700">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <Star className="w-4 h-4 text-green-600" />
+                <div className="flex items-center justify-center space-x-3 text-muted">
+                  <div className="w-6 h-6 bg-success-500/20 rounded-full flex items-center justify-center">
+                    <Star className="w-4 h-4 text-success-400" />
                   </div>
                   <span>Save unlimited jobs</span>
                 </div>
-                <div className="flex items-center justify-center space-x-3 text-gray-700">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-green-600" />
+                <div className="flex items-center justify-center space-x-3 text-muted">
+                  <div className="w-6 h-6 bg-success-500/20 rounded-full flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-success-400" />
                   </div>
                   <span>Track application status</span>
                 </div>
-                <div className="flex items-center justify-center space-x-3 text-gray-700">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <Bookmark className="w-4 h-4 text-green-600" />
+                <div className="flex items-center justify-center space-x-3 text-muted">
+                  <div className="w-6 h-6 bg-success-500/20 rounded-full flex items-center justify-center">
+                    <Bookmark className="w-4 h-4 text-success-400" />
                   </div>
                   <span>Organize your job search</span>
                 </div>
@@ -171,7 +171,7 @@ const SavedJobs = () => {
                 className="flex flex-col sm:flex-row gap-4 justify-center"
               >
                 <Link to="/premium/plans">
-                  <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-3 text-lg font-semibold shadow-lg">
+                  <Button className="bg-warning-500 hover:bg-warning-400 text-text px-8 py-3 text-lg font-semibold shadow-adventure rounded-2xl">
                     <Crown className="w-5 h-5 mr-2" />
                     Upgrade to Premium
                   </Button>
@@ -191,7 +191,7 @@ const SavedJobs = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -199,9 +199,9 @@ const SavedJobs = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background text-text flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-500 mb-4">Error loading saved jobs</div>
+          <div className="text-danger-500 mb-4">Error loading saved jobs</div>
           <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
@@ -209,7 +209,7 @@ const SavedJobs = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background text-text py-8">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -219,8 +219,8 @@ const SavedJobs = () => {
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Saved Jobs</h1>
-              <p className="text-gray-600 mt-2">
+              <h1 className="text-3xl font-bold text-text">Saved Jobs</h1>
+              <p className="text-muted mt-2">
                 {savedJobs.length || 0} jobs saved for later review
               </p>
             </div>
@@ -296,11 +296,11 @@ const SavedJobs = () => {
           {filteredJobs.length === 0 ? (
             <Card>
               <CardContent className="p-12 text-center">
-                <Bookmark className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <Bookmark className="w-16 h-16 text-muted mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-text mb-2">
                   {searchTerm || filterType !== 'all' ? 'No matching jobs found' : 'No saved jobs yet'}
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-muted mb-6">
                   {searchTerm || filterType !== 'all'
                     ? 'Try adjusting your search or filters'
                     : 'Start saving jobs you\'re interested in to see them here'
@@ -320,7 +320,7 @@ const SavedJobs = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="hover:shadow-lg transition-shadow">
+                  <Card className="bg-surface border-border shadow-adventure rounded-2xl hover:border-primary-500/50 transition-all">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4 flex-1">
@@ -333,25 +333,25 @@ const SavedJobs = () => {
                             <div className="flex items-start justify-between mb-2">
                               <div className="min-w-0 flex-1">
                                 <Link to={`/jobs/${job.slug}`}>
-                                  <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors truncate">
+                                  <h3 className="text-lg font-semibold text-text hover:text-primary-400 transition-colors truncate">
                                     {job.title}
                                   </h3>
                                 </Link>
-                                <div className="flex items-center text-gray-600 mt-1">
+                                <div className="flex items-center text-muted mt-1">
                                   <Building2 className="w-4 h-4 mr-1" />
                                   <span className="truncate">{job.company_name}</span>
                                 </div>
                               </div>
-                              <span className={`px-2 py-1 text-xs rounded-full ml-2 flex-shrink-0 ${job.job_type === 'Full-time' ? 'bg-green-100 text-green-800' :
-                                  job.job_type === 'Part-time' ? 'bg-blue-100 text-blue-800' :
-                                    job.job_type === 'Remote' ? 'bg-purple-100 text-purple-800' :
-                                      'bg-gray-100 text-gray-800'
+                              <span className={`px-2 py-1 text-xs rounded-full ml-2 flex-shrink-0 ${job.job_type === 'Full-time' ? 'bg-success-500/20 text-success-400' :
+                                  job.job_type === 'Part-time' ? 'bg-primary-500/20 text-primary-400' :
+                                    job.job_type === 'Remote' ? 'bg-secondary-500/20 text-secondary-400' :
+                                      'bg-background text-muted border border-border'
                                 }`}>
                                 {job.job_type}
                               </span>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-muted mb-3">
                               <div className="flex items-center">
                                 <MapPin className="w-4 h-4 mr-1" />
                                 {job.location}
@@ -371,13 +371,13 @@ const SavedJobs = () => {
                                 {job.skills_required.slice(0, 4).map((skill, skillIndex) => (
                                   <span
                                     key={skillIndex}
-                                    className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                                    className="px-2 py-1 bg-background text-muted border border-border rounded text-xs"
                                   >
                                     {skill}
                                   </span>
                                 ))}
                                 {job.skills_required.length > 4 && (
-                                  <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                  <span className="px-2 py-1 bg-background text-muted border border-border rounded text-xs">
                                     +{job.skills_required.length - 4} more
                                   </span>
                                 )}
@@ -385,7 +385,7 @@ const SavedJobs = () => {
                             )}
 
                             <div className="flex items-center justify-between mt-4">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-muted">
                                 Saved {utils.formatPostedDate(job.saved_at)}
                               </div>
                               <div className="flex gap-2">
@@ -409,7 +409,7 @@ const SavedJobs = () => {
                                   size="sm"
                                   onClick={() => handleUnsaveJob(job.id)}
                                   disabled={unsaveJobMutation.isLoading}
-                                  className="text-red-600 hover:text-red-700 hover:border-red-300"
+                                  className="text-danger-500 hover:text-danger-400 hover:border-danger-500/50"
                                 >
                                   <X className="w-4 h-4 mr-1" />
                                   Remove

@@ -289,10 +289,10 @@ const Profile = () => {
 
   const renderPersonalInfo = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+      <div className="bg-surface p-6 rounded-2xl border border-border">
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="relative group">
-            <div className="w-28 h-28 rounded-2xl bg-white shadow-md flex items-center justify-center overflow-hidden border-2 border-white ring-1 ring-gray-100">
+            <div className="w-28 h-28 rounded-[2rem] bg-background shadow-adventure flex items-center justify-center overflow-hidden border-2 border-border ring-1 ring-border">
               {profileData.profile_picture ? (
                 <img
                   src={profileData.profile_picture}
@@ -305,24 +305,24 @@ const Profile = () => {
                   }}
                 />
               ) : null}
-              <div className="text-4xl font-bold text-blue-200" style={{ display: profileData.profile_picture ? 'none' : 'flex' }}>
+              <div className="text-4xl font-bold text-primary-400" style={{ display: profileData.profile_picture ? 'none' : 'flex' }}>
                 {user?.name?.[0] || user?.email?.[0] || 'U'}
               </div>
             </div>
-            <div className="absolute -bottom-2 -right-2 bg-blue-600 text-white p-1.5 rounded-lg shadow-lg">
+            <div className="absolute -bottom-2 -right-2 bg-primary-600 text-text p-1.5 rounded-xl shadow-adventure">
               <Camera size={16} />
             </div>
           </div>
           
           <div className="flex-1 text-center md:text-left space-y-1">
-            <h3 className="text-xl font-bold text-gray-900">{user?.name || 'Your Name'}</h3>
-            <p className="text-gray-500 font-medium">{user?.email}</p>
+            <h3 className="text-xl font-bold text-text">{user?.name || 'Your Name'}</h3>
+            <p className="text-muted font-medium">{user?.email}</p>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-2">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-500/20 text-primary-400">
                   Member since {getMemberSinceDate(profileData)}
                 </span>
                 {profileData.is_premium && (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning-500/20 text-warning-400">
                       Premium Member
                     </span>
                 )}
@@ -331,17 +331,17 @@ const Profile = () => {
         </div>
 
         <div className="mt-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Profile Picture URL</label>
+          <label className="block text-sm font-semibold text-text mb-2">Profile Picture URL</label>
           <div className="flex gap-2">
             <input
               type="url"
               value={profileData.profile_picture}
               onChange={(e) => handleProfilePictureUrlChange(e.target.value)}
-              className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
+              className="flex-1 px-4 py-2.5 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-text text-sm"
               placeholder="https://example.com/image.jpg"
             />
           </div>
-          <p className="text-[11px] text-gray-400 mt-2 italic">Use a high-quality square image URL for best results</p>
+          <p className="text-[11px] text-muted mt-2 italic">Use a high-quality square image URL for best results</p>
         </div>
       </div>
 
@@ -354,25 +354,25 @@ const Profile = () => {
         <Input label="Postal Code" name="postal_code" value={profileData.postal_code} onChange={handleInputChange} placeholder="e.g., 560001" />
         
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+          <label className="block text-sm font-semibold text-text mb-2">Address</label>
           <textarea
             name="address"
             value={profileData.address}
             onChange={handleInputChange}
             rows={2}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-text"
             placeholder="Enter your full address"
           />
         </div>
         
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
+          <label className="block text-sm font-semibold text-text mb-2">Bio</label>
           <textarea
             name="bio"
             value={profileData.bio}
             onChange={handleInputChange}
             rows={4}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-text"
             placeholder="Tell us about your professional journey..."
           />
         </div>
@@ -389,12 +389,12 @@ const Profile = () => {
         <Input label="Industry" name="industry" value={profileData.industry} onChange={handleInputChange} placeholder="e.g., Information Technology" />
         
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Education Level</label>
+          <label className="block text-sm font-semibold text-text mb-2">Education Level</label>
           <select
             name="education_level"
             value={profileData.education_level}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all appearance-none text-text"
           >
             <option value="">Select Education Level</option>
             <option value="high_school">High School</option>
@@ -412,16 +412,16 @@ const Profile = () => {
   const renderSkillsEducation = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="md:col-span-2">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">Skills</label>
+        <label className="block text-sm font-semibold text-text mb-2">Skills</label>
         <textarea
           name="skills"
           value={profileData.skills}
           onChange={handleInputChange}
           rows={5}
-          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+          className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-text"
           placeholder="e.g., JavaScript, React, Node.js, Python, AWS..."
         />
-        <div className="flex items-center gap-2 mt-3 text-blue-600 bg-blue-50 w-fit px-3 py-1 rounded-lg">
+        <div className="flex items-center gap-2 mt-3 text-primary-400 bg-primary-500/10 w-fit px-3 py-1 rounded-lg">
             <Plus size={14} />
             <span className="text-xs font-medium uppercase tracking-wider">Separate skills with commas</span>
         </div>
@@ -433,24 +433,24 @@ const Profile = () => {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Preferred Job Types</label>
+          <label className="block text-sm font-semibold text-text mb-2">Preferred Job Types</label>
           <textarea
             name="preferred_job_types"
             value={profileData.preferred_job_types}
             onChange={handleInputChange}
             rows={2}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-text"
             placeholder="e.g., Full-time, Remote, Contract"
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Preferred Locations</label>
+          <label className="block text-sm font-semibold text-text mb-2">Preferred Locations</label>
           <textarea
             name="preferred_locations"
             value={profileData.preferred_locations}
             onChange={handleInputChange}
             rows={2}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-text"
             placeholder="e.g., Bangalore, Mumbai, Remote"
           />
         </div>
@@ -458,12 +458,12 @@ const Profile = () => {
         <Input label="Max Expected Salary" name="preferred_salary_max" type="number" value={profileData.preferred_salary_max} onChange={handleInputChange} />
         
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Salary Currency</label>
+          <label className="block text-sm font-semibold text-text mb-2">Salary Currency</label>
           <select
             name="salary_currency"
             value={profileData.salary_currency}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 appearance-none"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 appearance-none text-text"
           >
             <option value="USD">USD - US Dollar</option>
             <option value="INR">INR - Indian Rupee</option>
@@ -472,7 +472,7 @@ const Profile = () => {
           </select>
         </div>
 
-        <div className="md:col-span-2 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
+        <div className="md:col-span-2 bg-primary-500/10 p-4 rounded-2xl border border-primary-500/20">
           <label className="flex items-center cursor-pointer group">
             <div className="relative">
               <input
@@ -482,20 +482,20 @@ const Profile = () => {
                 onChange={handleInputChange}
                 className="sr-only"
               />
-              <div className={`w-11 h-6 rounded-full transition-colors ${profileData.is_open_to_work ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
-              <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${profileData.is_open_to_work ? 'translate-x-5' : 'translate-x-0'}`}></div>
+              <div className={`w-11 h-6 rounded-full transition-colors ${profileData.is_open_to_work ? 'bg-primary-600' : 'bg-surface'}`}></div>
+              <div className={`absolute left-1 top-1 bg-text w-4 h-4 rounded-full transition-transform ${profileData.is_open_to_work ? 'translate-x-5' : 'translate-x-0'}`}></div>
             </div>
-            <span className="ml-3 text-sm font-bold text-gray-700">Open to work opportunities</span>
+            <span className="ml-3 text-sm font-bold text-text">Open to work opportunities</span>
           </label>
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Profile Visibility</label>
+          <label className="block text-sm font-semibold text-text mb-2">Profile Visibility</label>
           <select
             name="profile_visibility"
             value={profileData.profile_visibility}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 appearance-none"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 appearance-none text-text"
           >
             <option value="public">Public - Anyone can view my profile</option>
             <option value="private">Private - Only recruiters can view my profile</option>
@@ -530,39 +530,39 @@ const Profile = () => {
 
   if (fetchingProfile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-white">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background text-text">
         <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-50 border-t-blue-600"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-500/20 border-t-primary-600"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-                <User size={20} className="text-blue-600" />
+                <User size={20} className="text-primary-500" />
             </div>
         </div>
-        <p className="mt-4 text-gray-600 font-semibold animate-pulse tracking-wide">Synchronizing profile data...</p>
+        <p className="mt-4 text-muted font-semibold animate-pulse tracking-wide">Synchronizing profile data...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-12">
+    <div className="min-h-screen bg-background text-text pb-12">
       <div className="max-w-6xl mx-auto px-4 pt-8 md:pt-12">
         
         {/* Profile Completion Card */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-200/60 mb-8 overflow-hidden">
+        <div className="bg-surface rounded-[2.5rem] shadow-adventure border border-border mb-8 overflow-hidden">
           <div className="p-6 md:p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-1 flex-1">
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Complete Your Identity</h2>
-                <p className="text-gray-500 text-sm font-medium">A complete profile increases recruiter visibility by 75%.</p>
+                <h2 className="text-2xl font-black font-pixel text-text tracking-tight">Complete Your Identity</h2>
+                <p className="text-muted text-sm font-medium">A complete profile increases recruiter visibility by 75%.</p>
               </div>
               <div className="flex items-center gap-4 min-w-[200px]">
                 <div className="flex-1">
                     <div className="flex justify-between text-sm mb-2">
-                        <span className="font-bold text-blue-600">{profileCompletion}%</span>
-                        <span className="text-gray-400 font-semibold italic">Goal: 100%</span>
+                        <span className="font-bold text-primary-400">{profileCompletion}%</span>
+                        <span className="text-muted font-semibold italic">Goal: 100%</span>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-3.5 p-1">
+                    <div className="w-full bg-background rounded-full h-3.5 p-1">
                         <div
-                        className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(37,99,235,0.3)]"
+                        className="bg-gradient-to-r from-primary-500 to-secondary-600 h-full rounded-full transition-all duration-1000 ease-out shadow-sm"
                         style={{ width: `${profileCompletion}%` }}
                         ></div>
                     </div>
@@ -576,18 +576,18 @@ const Profile = () => {
           
           {/* Navigation Sidebar (Desktop) / Header (Mobile) */}
           <div className="lg:col-span-3 space-y-2 sticky top-8">
-            <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-200/60 flex lg:flex-col overflow-x-auto no-scrollbar gap-1">
+            <div className="bg-surface p-2 rounded-2xl border border-border flex lg:flex-col overflow-x-auto no-scrollbar gap-1">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-3 py-3.5 px-5 rounded-xl font-bold text-sm whitespace-nowrap transition-all duration-200 group ${
                     activeTab === tab.id
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-primary-600 text-text shadow-adventure'
+                      : 'text-muted hover:bg-secondary-800 hover:text-text'
                   }`}
                 >
-                  <span className={`${activeTab === tab.id ? 'text-white' : 'text-gray-400 group-hover:text-blue-500'}`}>
+                  <span className={`${activeTab === tab.id ? 'text-text' : 'text-muted group-hover:text-primary-400'}`}>
                     {tab.icon}
                   </span>
                   {tab.label}
@@ -598,29 +598,29 @@ const Profile = () => {
 
           {/* Form Content */}
           <div className="lg:col-span-9">
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-200/60">
+            <div className="bg-surface rounded-[2.5rem] shadow-adventure border border-border">
               <form onSubmit={handleSubmit} className="p-6 md:p-10">
                 <div className="min-h-[400px]">
                     {renderTabContent()}
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-end items-center gap-4">
+                <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-end items-center gap-4">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => window.history.back()}
-                    className="w-full md:w-auto border-gray-200 text-gray-600 font-bold px-8 h-12 rounded-xl"
+                    className="w-full md:w-auto border-border text-muted font-bold px-8 h-12 rounded-xl"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full md:w-auto min-w-[180px] bg-blue-600 hover:bg-blue-700 text-white font-bold h-12 rounded-xl shadow-xl shadow-blue-100 transition-all hover:-translate-y-0.5"
+                    className="w-full md:w-auto min-w-[180px] bg-primary-600 hover:bg-primary-500 text-text font-bold h-12 rounded-2xl shadow-adventure transition-all hover:-translate-y-0.5"
                   >
                     {loading ? (
                         <div className="flex items-center justify-center gap-2">
-                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                            <div className="w-4 h-4 border-2 border-text/20 border-t-text rounded-full animate-spin"></div>
                             <span>Saving...</span>
                         </div>
                     ) : 'Save Changes'}

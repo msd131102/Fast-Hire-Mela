@@ -19,18 +19,18 @@ const Input = React.forwardRef(({
   
   const inputClasses = cn(
     // Base styles: increased height (h-12) for better touch targets and modern feel
-    'flex h-12 w-full rounded-xl border border-gray-200 bg-white px-4 py-2 text-base transition-all duration-200 outline-none',
+    'w-full px-4 py-3 bg-surface border-2 border-border shadow-sm rounded-2xl transition-all duration-100 outline-none',
     // Mobile-friendly font size (text-base prevents auto-zoom on iOS)
-    'text-gray-900 placeholder:text-gray-400',
-    // Focus states: subtle blue glow instead of a harsh ring
-    'focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10',
+    'text-text font-game text-lg placeholder:text-muted',
+    // Focus states: pixel highlight instead of a harsh ring
+    'focus:border-primary-400 focus:ring-0',
     // Conditional padding for icons
     displayIcon && 'pl-11',
     rightIcon && 'pr-11',
     // Error states
-    error && 'border-red-500 focus:ring-red-500/10 focus:border-red-500',
+    error && 'border-danger-500 focus:border-danger-500 focus:shadow-pixel-danger',
     // Disabled states
-    'disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-70',
+    'disabled:cursor-not-allowed disabled:bg-background disabled:opacity-70',
     className
   );
 
@@ -51,16 +51,16 @@ const Input = React.forwardRef(({
   return (
     <div className="w-full group">
       {label && (
-        <label className="block text-sm font-bold text-gray-700 mb-2 ml-1 transition-colors group-focus-within:text-blue-600">
+        <label className="block text-sm font-game text-text uppercase tracking-widest mb-2 ml-1 transition-colors group-focus-within:text-primary-400">
           {label}
-          {required && <span className="text-red-500 ml-1 font-black">*</span>}
+          {required && <span className="text-danger-500 ml-1 font-black">*</span>}
         </label>
       )}
       
       <div className="relative flex items-center">
         {displayIcon && (
-          <div className="absolute left-4 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500">
-            <span className="text-gray-400">{displayIcon}</span>
+          <div className="absolute left-4 flex items-center pointer-events-none transition-colors group-focus-within:text-primary-500">
+            <span className="text-muted">{displayIcon}</span>
           </div>
         )}
         
@@ -72,8 +72,8 @@ const Input = React.forwardRef(({
         />
         
         {rightIcon && (
-          <div className="absolute right-4 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500">
-            <span className="text-gray-400">{rightIcon}</span>
+          <div className="absolute right-4 flex items-center pointer-events-none transition-colors group-focus-within:text-primary-500">
+            <span className="text-muted">{rightIcon}</span>
           </div>
         )}
       </div>
@@ -83,15 +83,15 @@ const Input = React.forwardRef(({
         <motion.p 
           initial={{ opacity: 0, y: -5 }} 
           animate={{ opacity: 1, y: 0 }}
-          className="mt-2 ml-1 text-xs font-bold text-red-600 flex items-center gap-1"
+          className="mt-2 ml-1 text-xs font-bold text-danger-500 flex items-center gap-1"
         >
-          <span className="inline-block w-1 h-1 rounded-full bg-red-600" />
+          <span className="inline-block w-1 h-1 rounded-full bg-danger-500" />
           {error}
         </motion.p>
       )}
       
       {helperText && !error && (
-        <p className="mt-2 ml-1 text-xs text-gray-500 font-medium">
+        <p className="mt-2 ml-1 text-xs text-muted font-medium">
           {helperText}
         </p>
       )}

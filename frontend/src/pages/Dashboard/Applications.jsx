@@ -29,15 +29,15 @@ const Applications = () => {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning-500/20 text-warning-400';
       case 'accepted':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-500/20 text-success-400';
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-danger-500/20 text-danger-400';
       case 'reviewed':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-secondary-500/20 text-secondary-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-background text-muted border border-border';
     }
   };
 
@@ -77,10 +77,10 @@ const Applications = () => {
 
   if (isLoading) {
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-background text-text pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
         </div>
       </div>
@@ -89,14 +89,14 @@ const Applications = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-24">
+      <div className="min-h-screen bg-background text-text pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Applications</h2>
-            <p className="text-gray-600 mb-4">There was an error loading your job applications.</p>
+            <h2 className="text-2xl font-bold text-text mb-4">Error Loading Applications</h2>
+            <p className="text-muted mb-4">There was an error loading your job applications.</p>
             <button
               onClick={() => refetch()}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              className="bg-primary-600 text-text px-4 py-2 rounded-md hover:bg-primary-500"
             >
               Try Again
             </button>
@@ -107,16 +107,16 @@ const Applications = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-background text-text pt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
-          <p className="mt-2 text-gray-600">Track the status of your job applications</p>
+          <h1 className="text-3xl font-bold text-text">My Applications</h1>
+          <p className="mt-2 text-muted">Track the status of your job applications</p>
         </div>
 
         {/* Filter Tabs */}
-        <div className="mb-6 border-b border-gray-200">
+        <div className="mb-6 border-b border-border">
           <nav className="-mb-px flex space-x-8">
             {['all', 'pending', 'accepted', 'rejected', 'reviewed'].map((status) => (
               <button
@@ -124,8 +124,8 @@ const Applications = () => {
                 onClick={() => setFilter(status)}
                 className={`py-2 px-1 border-b-2 font-medium text-sm capitalize ${
                   filter === status
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary-500 text-primary-400'
+                    : 'border-transparent text-muted/70 hover:text-muted hover:border-border'
                 }`}
               >
                 {status}
@@ -138,13 +138,13 @@ const Applications = () => {
         <div className="space-y-4">
           {filteredApplications?.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
+              <div className="text-muted mb-4">
                 <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No applications found</h3>
-              <p className="text-gray-500">
+              <h3 className="text-lg font-medium text-text mb-2">No applications found</h3>
+              <p className="text-muted">
                 {filter === 'all' 
                   ? "You haven't applied to any jobs yet. Start browsing jobs to apply!"
                   : `No ${filter} applications found.`}
@@ -152,7 +152,7 @@ const Applications = () => {
               {filter === 'all' && (
                 <button
                   onClick={() => window.location.href = '/jobs'}
-                  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                  className="mt-4 bg-primary-600 text-text px-4 py-2 rounded-md hover:bg-primary-500"
                 >
                   Browse Jobs
                 </button>
@@ -160,11 +160,11 @@ const Applications = () => {
             </div>
           ) : (
             filteredApplications?.map((application) => (
-              <div key={application.id} className="bg-white shadow rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div key={application.id} className="bg-surface border border-border shadow-adventure rounded-[2rem] p-6 hover:border-primary-500/50 transition-all group">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900 mr-3">
+                      <h3 className="text-lg font-semibold text-text group-hover:text-primary-400 mr-3">
                         {application.job_title || 'Job Title'}
                       </h3>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
@@ -172,7 +172,7 @@ const Applications = () => {
                       </span>
                     </div>
                     
-                    <div className="space-y-2 text-sm text-gray-600">
+                    <div className="space-y-2 text-sm text-muted">
                       <div className="flex items-center">
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -200,7 +200,7 @@ const Applications = () => {
                   <div className="ml-4 flex flex-col items-end space-y-2">
                     <button
                       onClick={() => window.location.href = `/jobs/${application.job_slug || application.job_id}`}
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      className="text-primary-500 hover:text-primary-400 text-sm font-medium"
                     >
                       View Job
                     </button>
@@ -209,7 +209,7 @@ const Applications = () => {
                         href={application.resume_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-600 hover:text-gray-800 text-sm"
+                        className="text-muted hover:text-text text-sm"
                       >
                         View Resume
                       </a>

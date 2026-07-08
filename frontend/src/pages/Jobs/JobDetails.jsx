@@ -134,14 +134,14 @@ const JobDetails = () => {
     }
   };
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-white"><LoadingSpinner size="lg" /></div>;
-  if (error || !job) return <div className="p-20 text-center font-black">Job Not Found</div>;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-background"><LoadingSpinner size="lg" /></div>;
+  if (error || !job) return <div className="p-20 text-center font-black bg-background text-text">Job Not Found</div>;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-text">
 
       {/* MOBILE HEADER - APP STYLE */}
-      <div className="lg:hidden sticky top-0 z-50 bg-white/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+      <div className="lg:hidden sticky top-0 z-50 bg-surface/80 border-b border-border backdrop-blur-md px-6 py-4 flex items-center justify-between">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2"><ArrowLeft size={24} /></button>
         <div className="flex gap-2">
           <button onClick={handleShare} className="p-2"><Share2 size={22} /></button>
@@ -155,7 +155,7 @@ const JobDetails = () => {
             {/* HERO SECTION */}
             <section className="px-6 lg:px-0 space-y-8">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 p-2 shadow-sm">
+                <div className="w-16 h-16 rounded-3xl bg-white border border-border p-3 shadow-sm">
                   <OptimizedImage 
                      src={job.company_logo || '/api/placeholder/40/40'} 
                     alt={`${job.company_name} logo`} 
@@ -165,28 +165,28 @@ const JobDetails = () => {
                   />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 flex items-center gap-1">
-                    {job.company_name} <ShieldCheck size={16} className="text-blue-500 fill-blue-50" />
+                  <h3 className="text-lg font-bold text-text flex items-center gap-1">
+                    {job.company_name} <ShieldCheck size={16} className="text-primary-500 fill-primary-500/20" />
                   </h3>
-                  <p className="text-slate-500 font-medium text-sm">{job.location}</p>
+                  <p className="text-muted font-medium text-sm">{job.location}</p>
                 </div>
               </div>
 
-              <h1 className="text-5xl lg:text-7xl font-black tracking-tight text-slate-900 leading-[0.95]">
+              <h1 className="text-4xl lg:text-6xl font-pixel font-bold text-text leading-[1.1]">
                 {job.title}
               </h1>
 
               {/* DATA STRIP - HIGH END APP LOOK */}
               <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
                 {[
-                  { label: 'Package', val: utils.formatSalary(job.salary_min, job.salary_max), color: 'bg-emerald-50 text-emerald-700' },
-                  { label: 'Exp', val: utils.formatExperience(job.experience_min, job.experience_max), color: 'bg-blue-50 text-blue-700' },
-                  { label: 'Type', val: job.job_type, color: 'bg-slate-100 text-slate-700' },
-                  { label: 'Status', val: 'Active', color: 'bg-orange-50 text-orange-700' },
+                  { label: 'Package', val: utils.formatSalary(job.salary_min, job.salary_max), color: 'bg-success-50 text-success-700 border border-success-200' },
+                  { label: 'Exp', val: utils.formatExperience(job.experience_min, job.experience_max), color: 'bg-primary-50 text-primary-700 border border-primary-200' },
+                  { label: 'Type', val: job.job_type, color: 'bg-surface text-muted border border-border' },
+                  { label: 'Status', val: 'Active', color: 'bg-warning-50 text-warning-700 border border-warning-200' },
                 ].map((item, idx) => (
-                  <div key={idx} className={`${item.color} px-5 py-3 rounded-2xl shrink-0`}>
-                    <p className="text-[10px] font-black uppercase opacity-60 mb-0.5 tracking-widest">{item.label}</p>
-                    <p className="text-sm font-black">{item.val}</p>
+                  <div key={idx} className={`${item.color} px-5 py-3 rounded-2xl shrink-0 shadow-sm`}>
+                    <p className="text-[10px] font-bold uppercase opacity-80 mb-0.5 tracking-wider">{item.label}</p>
+                    <p className="text-sm font-bold">{item.val}</p>
                   </div>
                 ))}
               </div>
@@ -194,26 +194,26 @@ const JobDetails = () => {
 
             {/* TABBED CONTENT */}
             <section className="mt-12">
-              <div className="flex px-6 lg:px-0 gap-8 border-b border-slate-100">
+              <div className="flex px-6 lg:px-0 gap-8 border-b border-border">
                 {['description', 'requirements', 'benefits'].map((t) => (
                   <button
                     key={t}
                     onClick={() => setActiveTab(t)}
-                    className={`pb-4 text-xs font-black uppercase tracking-[0.2em] relative transition-all ${activeTab === t ? 'text-blue-600' : 'text-slate-400'}`}
+                    className={`pb-4 text-xs font-black uppercase tracking-[0.2em] relative transition-all ${activeTab === t ? 'text-primary-400' : 'text-muted hover:text-text'}`}
                   >
                     {t}
-                    {activeTab === t && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-full" />}
+                    {activeTab === t && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary-500 rounded-full shadow-glow-primary" />}
                   </button>
                 ))}
               </div>
 
-              <div className="px-6 lg:px-0 py-10 prose prose-slate max-w-none">
+              <div className="px-6 lg:px-0 py-10 prose prose-invert max-w-none">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-slate-600 text-lg leading-relaxed font-medium"
+                    className="text-muted text-lg leading-relaxed font-medium"
                   >
                     {activeTab === 'description' && <div dangerouslySetInnerHTML={{ __html: job.description }} />}
                     {activeTab === 'requirements' && <div dangerouslySetInnerHTML={{ __html: job.responsibilities }} />}
@@ -226,40 +226,39 @@ const JobDetails = () => {
 
           {/* DESKTOP SIDEBAR */}
           <aside className="hidden lg:block w-96">
-            <div className="sticky top-12 p-10 bg-slate-50 rounded-[3rem] space-y-8 border border-slate-100 shadow-sm">
+            <div className="sticky top-24 p-8 bg-surface rounded-[2.5rem] space-y-6 border border-border shadow-adventure">
               <div>
-                <h4 className="text-2xl font-black mb-2 text-slate-900">Start Application</h4>
-                <p className="text-slate-500 font-medium">Join a fast-growing team at {job.company_name}.</p>
+                <h4 className="text-2xl font-pixel font-bold mb-2 text-text">Start Application</h4>
+                <p className="text-muted text-sm font-medium">Join a fast-growing team at {job.company_name}.</p>
               </div>
-              <Button onClick={handleApplyJob} className="w-full py-8 rounded-[2rem] bg-blue-600 text-white font-black text-xl shadow-2xl shadow-blue-200">
+              <Button onClick={handleApplyJob} variant="primary" className="w-full py-4 rounded-2xl text-lg">
                 Apply Now
               </Button>
               <button
                 onClick={handleSaveJob}
-                className="w-full py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-white transition-all"
+                className="w-full py-4 rounded-2xl border border-border font-bold text-muted hover:bg-primary-50 hover:text-primary-600 hover:border-primary-200 transition-all shadow-sm"
               >
                 {isJobSaved ? 'Saved in Collection' : (user && !user.is_premium ? 'Save for Later (Premium)' : 'Save for Later')}
               </button>
               <button
                 onClick={handleShare}
-                className="w-full py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-white transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-2xl border border-border font-bold text-muted hover:bg-primary-50 hover:text-primary-600 hover:border-primary-200 transition-all flex items-center justify-center gap-2 shadow-sm"
               >
                 <Share2 size={18} />
-                Share Job
+                Share Quest
               </button>
             </div>
           </aside>
         </div>
       </main>
 
-      {/* THE ELITE DOCK (MOBILE ONLY) */}
       <div className="lg:hidden fixed bottom-8 left-6 right-6 z-50">
-        <div className="bg-slate-900/95 backdrop-blur-2xl rounded-[2.5rem] p-3 flex items-center gap-2 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] border border-white/10">
+        <div className="bg-surface/95 backdrop-blur-2xl rounded-3xl p-3 flex items-center gap-2 shadow-adventure border border-border">
 
           {/* SHARE BUTTON */}
           <button
             onClick={handleShare}
-            className="w-14 h-14 flex items-center justify-center rounded-[1.8rem] bg-slate-800 text-slate-300 active:scale-90 transition-all"
+            className="w-14 h-14 flex items-center justify-center rounded-2xl bg-primary-50 text-primary-600 active:scale-95 transition-all hover:bg-primary-100"
             aria-label="Share Job"
           >
             <Share2 size={22} />
@@ -268,7 +267,7 @@ const JobDetails = () => {
           {/* SAVE BUTTON */}
           <button
             onClick={handleSaveJob}
-            className={`w-14 h-14 flex items-center justify-center rounded-[1.8rem] transition-all active:scale-90 ${isJobSaved ? 'bg-blue-600 text-white shadow-inner' : 'bg-slate-800 text-slate-400'
+            className={`w-14 h-14 flex items-center justify-center rounded-2xl transition-all active:scale-95 ${isJobSaved ? 'bg-danger-500 text-white shadow-sm' : 'bg-primary-50 text-primary-600 hover:bg-danger-50 hover:text-danger-500'
               }`}
           >
             <Bookmark size={24} className={isJobSaved ? 'fill-white' : ''} />
@@ -277,9 +276,9 @@ const JobDetails = () => {
           {/* APPLY BUTTON */}
           <button
             onClick={handleApplyJob}
-            className="flex-1 h-14 bg-white text-black font-black rounded-[1.8rem] text-[11px] tracking-[0.15em] flex items-center justify-center gap-1 active:scale-95 transition-all shadow-xl"
+            className="flex-1 h-14 bg-primary-500 text-white font-bold rounded-2xl text-xs tracking-wider flex items-center justify-center gap-1 active:scale-95 transition-all shadow-sm"
           >
-            APPLY NOW <Zap size={16} className="fill-black" />
+            APPLY NOW
           </button>
         </div>
       </div>

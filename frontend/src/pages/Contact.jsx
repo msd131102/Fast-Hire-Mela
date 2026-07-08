@@ -52,21 +52,21 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-background text-text">
       {/* Enhanced Hero Section */}
-      <div className="relative bg-slate-900 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 z-0" />
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="relative bg-background overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-600/20 to-secondary-600/20 z-0" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="text-center">
-            <span className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wide text-blue-400 uppercase bg-blue-400/10 rounded-full">
+            <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-wide text-primary-400 uppercase bg-primary-400/10 rounded-full shadow-glow-primary">
               Get in Touch
             </span>
-            <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
-              How can we <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">help you?</span>
+            <h1 className="text-4xl md:text-6xl font-black text-text mb-6 tracking-tight">
+              How can we <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-400">help you?</span>
             </h1>
-            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-muted max-w-2xl mx-auto leading-relaxed">
               Whether you're looking for your next career move or seeking world-class talent, our team is ready to assist.
             </p>
           </div>
@@ -81,19 +81,19 @@ const Contact = () => {
           <div className="lg:col-span-4 space-y-6">
             <div className="grid grid-cols-1 gap-4">
               {[
-                { icon: Mail, color: "text-blue-600", bg: "bg-blue-50", title: "Email Us", detail: "fasthiremela@gmail.com", sub: "Response within 24 hours" },
-                { icon: Phone, color: "text-emerald-600", bg: "bg-emerald-50", title: "Call Us", detail: "+91 900-XXX-XXX", sub: "Mon-Fri, 9AM-6PM IST" },
-                { icon: MapPin, color: "text-purple-600", bg: "bg-purple-50", title: "Location", detail: "Kakinada, India", sub: "Available for meetings" }
+                { icon: Mail, color: "text-primary-400", bg: "bg-primary-500/20", title: "Email Us", detail: "fasthiremela@gmail.com", sub: "Response within 24 hours" },
+                { icon: Phone, color: "text-success-400", bg: "bg-success-500/20", title: "Call Us", detail: "+91 900-XXX-XXX", sub: "Mon-Fri, 9AM-6PM IST" },
+                { icon: MapPin, color: "text-secondary-400", bg: "bg-secondary-500/20", title: "Location", detail: "Kakinada, India", sub: "Available for meetings" }
               ].map((item, idx) => (
-                <Card key={idx} className="p-6 border-none shadow-sm hover:shadow-md transition-shadow duration-300">
+                <Card key={idx} className="p-6 border border-border bg-surface shadow-adventure transition-shadow duration-300">
                   <div className="flex items-center space-x-4">
                     <div className={`${item.bg} p-3 rounded-2xl`}>
                       <item.icon className={`h-6 w-6 ${item.color}`} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">{item.title}</p>
-                      <p className="text-lg font-bold text-slate-900">{item.detail}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{item.sub}</p>
+                      <p className="text-sm font-medium text-muted uppercase tracking-wider">{item.title}</p>
+                      <p className="text-lg font-black text-text">{item.detail}</p>
+                      <p className="text-xs text-muted/70 mt-0.5">{item.sub}</p>
                     </div>
                   </div>
                 </Card>
@@ -101,12 +101,12 @@ const Contact = () => {
             </div>
 
             {/* Support Hours Card */}
-            <Card className="p-6 border-none shadow-sm bg-white overflow-hidden relative">
+            <Card className="p-6 border border-border shadow-adventure bg-surface overflow-hidden relative">
               <div className="absolute top-0 right-0 p-4 opacity-5">
                 <Clock className="h-24 w-24" />
               </div>
-              <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Clock className="h-5 w-5 text-blue-600" />
+              <h3 className="font-bold text-text mb-4 flex items-center gap-2">
+                <Clock className="h-5 w-5 text-primary-500" />
                 Support Hours
               </h3>
               <div className="space-y-3 text-sm">
@@ -114,7 +114,7 @@ const Contact = () => {
                   { day: "Monday - Friday", time: "9:00 AM - 6:00 PM" },
                   { day: "Saturday - Sunday", time: "Closed", dim: true }
                 ].map((row, i) => (
-                  <div key={i} className={`flex justify-between items-center py-2 border-b border-slate-50 last:border-0 ${row.dim ? 'text-slate-400' : 'text-slate-700'}`}>
+                  <div key={i} className={`flex justify-between items-center py-2 border-b border-border last:border-0 ${row.dim ? 'text-muted' : 'text-text'}`}>
                     <span>{row.day}</span>
                     <span className="font-semibold">{row.time}</span>
                   </div>
@@ -125,27 +125,27 @@ const Contact = () => {
 
           {/* Right Column: Form & FAQ */}
           <div className="lg:col-span-8 space-y-8">
-            <Card className="p-8 border-none shadow-xl bg-white">
+            <Card className="p-8 border border-border shadow-adventure bg-surface">
               <div className="mb-8">
-                <h2 className="text-2xl font-bold text-slate-900">Send us a Message</h2>
-                <p className="text-slate-500 mt-1">Fields marked with an asterisk (*) are required.</p>
+                <h2 className="text-2xl font-black text-text">Send us a Message</h2>
+                <p className="text-muted mt-1 font-medium">Fields marked with an asterisk (*) are required.</p>
               </div>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700">Your Name *</label>
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider">Your Name *</label>
                     <Input
                       name="name"
                       required
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="John Doe"
-                      className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                      className="bg-background border-border text-text placeholder-muted focus:bg-surface transition-all"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700">Email Address *</label>
+                    <label className="text-sm font-bold text-muted uppercase tracking-wider">Email Address *</label>
                     <Input
                       name="email"
                       type="email"
@@ -153,45 +153,45 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="john@example.com"
-                      className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                      className="bg-background border-border text-text placeholder-muted focus:bg-surface transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Subject *</label>
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider">Subject *</label>
                   <Input
                     name="subject"
                     required
                     value={formData.subject}
                     onChange={handleChange}
                     placeholder="How can we help you?"
-                    className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                    className="bg-background border-border text-text placeholder-muted focus:bg-surface transition-all"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Message *</label>
+                  <label className="text-sm font-bold text-muted uppercase tracking-wider">Message *</label>
                   <textarea
                     name="message"
                     required
                     rows={5}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                    className="w-full px-4 py-3 bg-background border border-border text-text rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all placeholder:text-muted"
                     placeholder="Tell us more about your needs..."
                   />
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
-                  <div className="flex items-center text-slate-500 text-sm gap-2">
-                    <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border">
+                  <div className="flex items-center text-muted text-sm gap-2 font-medium">
+                    <ShieldCheck className="h-4 w-4 text-success-500" />
                     We value your privacy.
                   </div>
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto px-8 py-6 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 active:scale-95 transition-all"
+                    className="w-full sm:w-auto px-8 py-6 rounded-xl bg-primary-600 hover:bg-primary-500 shadow-glow-primary text-text active:scale-95 transition-all"
                   >
                     <div className="flex items-center justify-center gap-2">
                       {isSubmitting ? 'Sending...' : (
@@ -212,9 +212,9 @@ const Contact = () => {
                 { q: "How quickly will I hear back?", a: "We typically respond to all inquiries within 24 hours during business days." },
                 { q: "Can I schedule a demo?", a: "Absolutely! Contact us to schedule a personalized demo of our platform." }
               ].map((faq, i) => (
-                <Card key={i} className="p-6 border-none shadow-sm bg-white hover:bg-slate-50 transition-colors">
-                  <h3 className="font-bold text-slate-900 mb-2">{faq.q}</h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+                <Card key={i} className="p-6 border border-border shadow-adventure bg-surface hover:bg-secondary-800 transition-colors">
+                  <h3 className="font-black text-text mb-2">{faq.q}</h3>
+                  <p className="text-muted text-sm leading-relaxed font-medium">{faq.a}</p>
                 </Card>
               ))}
             </div>

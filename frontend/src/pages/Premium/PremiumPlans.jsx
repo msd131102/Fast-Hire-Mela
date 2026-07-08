@@ -14,35 +14,35 @@ const PremiumPlans = () => {
   const plans = [
     {
       id: 'basic',
-      name: 'Basic',
-      description: 'Perfect for job seekers starting out',
+      name: 'Basic Pass',
+      description: 'Perfect for new adventurers',
       icon: Star,
       price: billingCycle === 'monthly' ? 0 : 0,
-      features: ['Browse all job listings', 'Basic search filters', 'Save up to 10 jobs', 'Basic profile'],
-      excluded: ['Advanced filters', 'AI recommendations', 'Priority support', 'Resume builder', 'WhatsApp alerts'],
+      features: ['Browse all quests', 'Basic search filters', 'Save up to 10 quests', 'Basic profile'],
+      excluded: ['Advanced magic filters', 'AI recommendations', 'Priority raven support', 'Profile builder', 'Guild alerts'],
       color: 'gray',
       popular: false,
     },
     {
       id: 'professional',
-      name: 'Professional',
-      description: 'For serious job seekers',
+      name: 'Pro Pass',
+      description: 'For serious bounty hunters',
       icon: TrendingUp,
       price: billingCycle === 'monthly' ? 99 : 499,
       originalPrice: billingCycle === 'monthly' ? 399 : 2999,
-      features: ['Everything in Basic', 'Advanced search filters', 'Save up to 50 jobs', 'AI job recommendations', 'Resume builder', 'Application tracking', 'Email & SMS notifications', 'Priority customer support'],
-      excluded: ['Early access to jobs', 'Ad-free experience', 'WhatsApp alerts', 'Direct company connections'],
+      features: ['Everything in Basic', 'Advanced magic filters', 'Save up to 50 quests', 'AI recommendations', 'Profile builder', 'Quest tracking', 'Raven notifications', 'Priority support'],
+      excluded: ['Early access to quests', 'Ad-free experience', 'Instant alerts', 'Direct guild connections'],
       color: 'blue',
       popular: true,
     },
     {
       id: 'premium',
-      name: 'Premium',
-      description: 'Ultimate job hunting experience',
+      name: 'Master Pass',
+      description: 'Ultimate treasure hunting experience',
       icon: Crown,
       price: billingCycle === 'monthly' ? 199 : 999,
       originalPrice: billingCycle === 'monthly' ? 799 : 9999,
-      features: ['Everything in Professional', 'Early access to new jobs', 'Ad-free experience', 'Save unlimited jobs', 'WhatsApp job alerts', 'Direct company messaging', 'Resume optimization', 'Interview prep tools', 'Career counseling', 'VIP customer support'],
+      features: ['Everything in Pro', 'Early access to new quests', 'Ad-free experience', 'Save unlimited quests', 'Instant guild alerts', 'Direct guild messaging', 'Profile optimization', 'Tavern prep tools', 'Guild counseling', 'VIP raven support'],
       excluded: [],
       color: 'purple',
       popular: false,
@@ -56,38 +56,38 @@ const PremiumPlans = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8 md:py-16 transition-colors duration-300">
+    <div className="min-h-screen bg-background text-text py-8 md:py-16 font-game">
       <div className="max-w-7xl mx-auto px-4">
         
         {/* Header - Scaled for Mobile/Desktop */}
         <div className="text-center mb-10 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs font-bold mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-background border rounded-full border-warning-500 shadow-adventure text-warning-500 font-bold text-[10px] uppercase mb-4">
             <Zap size={14} className="fill-current" />
-            <span>PRICING PLANS</span>
+            <span>TREASURE PASSES</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">
-            Choose Your <span className="text-purple-600">Perfect Plan</span>
+          <h1 className="text-3xl md:text-5xl font-pixel text-text mb-6 tracking-widest drop-shadow-md">
+            Choose Your <span className="text-warning-500">Guild Pass</span>
           </h1>
-          <p className="text-sm md:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto px-4">
-            Unlock premium features and accelerate your job search with our tailored plans.
+          <p className="text-lg md:text-xl text-muted max-w-2xl mx-auto px-4">
+            Unlock magical features and accelerate your questing with our tailored passes.
           </p>
         </div>
 
         {/* Billing Switcher */}
         <div className="flex justify-center mb-10 md:mb-14">
-          <div className="flex bg-gray-200 dark:bg-gray-800 p-1 rounded-xl">
+          <div className="flex bg-surface border rounded-[2rem] border-border p-1 shadow-adventure">
             {['monthly', 'yearly'].map((cycle) => (
               <button
                 key={cycle}
                 onClick={() => setBillingCycle(cycle)}
-                className={`px-6 py-2 rounded-lg text-xs md:text-sm font-bold transition-all ${
+                className={`px-6 py-3 font-bold text-[10px] uppercase rounded-[2rem] tracking-widest transition-all border ${
                   billingCycle === cycle 
-                    ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-white shadow-md' 
-                    : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                    ? 'bg-warning-500 text-text shadow-sm border-border' 
+                    : 'text-muted border-transparent hover:text-text hover:bg-background'
                 }`}
               >
                 {cycle.charAt(0).toUpperCase() + cycle.slice(1)}
-                {cycle === 'yearly' && <span className="ml-1 text-[10px] text-green-500 font-black">SAVE 70%</span>}
+                {cycle === 'yearly' && <span className="ml-2 text-[8px] text-success-500">SAVE 70%</span>}
               </button>
             ))}
           </div>
@@ -100,58 +100,58 @@ const PremiumPlans = () => {
             const isPopular = plan.popular;
             
             return (
-              <div key={plan.id} className={`flex flex-col rounded-3xl p-6 md:p-8 border-2 transition-all ${
+              <div key={plan.id} className={`flex flex-col p-6 md:p-8 border rounded-[2.5rem] transition-transform hover:-translate-y-2 ${
                 isPopular 
-                  ? 'bg-gray-900 border-purple-500 shadow-2xl scale-100 md:scale-105 z-10' 
-                  : 'bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800'
+                  ? 'bg-surface border-warning-500 shadow-adventure z-10' 
+                  : 'bg-surface border-border shadow-adventure'
               }`}>
                 {isPopular && (
                   <div className="text-center mb-4">
-                    <span className="bg-purple-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">
+                    <span className="bg-warning-500 border border-border text-text rounded-full text-[10px] font-bold px-4 py-2 uppercase tracking-widest shadow-adventure">
                       Most Popular
                     </span>
                   </div>
                 )}
                 
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${isPopular ? 'bg-purple-500 text-white' : 'bg-purple-100 text-purple-600'}`}>
-                  <Icon size={24} />
+                <div className={`w-16 h-16 border rounded-2xl flex items-center justify-center mb-6 shadow-adventure ${isPopular ? 'bg-warning-500 border-warning-400 text-text' : 'bg-background border-border text-primary-500'}`}>
+                  <Icon size={32} />
                 </div>
 
-                <h3 className={`text-xl font-black mb-1 ${isPopular ? 'text-white' : 'text-gray-900 dark:text-white'}`}>{plan.name}</h3>
-                <p className={`text-xs mb-6 ${isPopular ? 'text-gray-400' : 'text-gray-500'}`}>{plan.description}</p>
+                <h3 className={`text-2xl font-pixel mb-3 text-text`}>{plan.name}</h3>
+                <p className={`text-lg mb-6 text-muted font-game`}>{plan.description}</p>
 
-                <div className="mb-6">
+                <div className="mb-6 font-game">
                   <div className="flex items-baseline gap-1">
-                    <span className={`text-4xl font-black ${isPopular ? 'text-white' : 'text-gray-900 dark:text-white'}`}>₹{plan.price}</span>
-                    <span className={`text-xs ${isPopular ? 'text-gray-500' : 'text-gray-400'}`}>/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+                    <span className={`text-4xl font-game text-text`}>₹{plan.price}</span>
+                    <span className={`text-lg text-muted`}>/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
                   </div>
                   {plan.originalPrice && (
-                    <span className="text-xs line-through text-red-500 font-bold">₹{plan.originalPrice}</span>
+                    <span className="text-sm line-through text-danger-500 font-bold mt-1 block">₹{plan.originalPrice}</span>
                   )}
                 </div>
 
-                <div className="flex-grow space-y-3 mb-8">
+                <div className="flex-grow space-y-4 mb-8 font-game text-lg">
                   {plan.features.map((feat, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className={`text-xs font-medium ${isPopular ? 'text-gray-300' : 'text-gray-600 dark:text-gray-400'}`}>{feat}</span>
+                    <div key={i} className="flex items-start gap-3">
+                      <Check size={18} className="text-success-500 mt-1 flex-shrink-0" />
+                      <span className={`text-text`}>{feat}</span>
                     </div>
                   ))}
                   {plan.excluded.map((feat, i) => (
-                    <div key={i} className="flex items-start gap-2 opacity-40">
-                      <X size={14} className="text-gray-400 mt-0.5 flex-shrink-0" />
-                      <span className={`text-xs line-through ${isPopular ? 'text-gray-500' : 'text-gray-500'}`}>{feat}</span>
+                    <div key={i} className="flex items-start gap-3 opacity-50">
+                      <X size={18} className="text-danger-500 mt-1 flex-shrink-0" />
+                      <span className={`text-muted`}>{feat}</span>
                     </div>
                   ))}
                 </div>
 
                 <Button
                   onClick={() => handlePlanSelect(plan)}
-                  className={`w-full py-4 rounded-xl font-bold text-xs uppercase tracking-widest ${
-                    isPopular ? 'bg-purple-500 hover:bg-purple-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200'
+                  className={`w-full py-4 border rounded-2xl font-bold text-[10px] uppercase tracking-widest shadow-adventure hover:-translate-y-1 active:translate-y-1 transition-transform ${
+                    isPopular ? 'bg-warning-500 hover:bg-warning-400 border-border text-text' : 'bg-background border-border text-text hover:bg-primary-500'
                   }`}
                 >
-                  {plan.price === 0 ? 'Start Free' : 'Select Plan'}
+                  {plan.price === 0 ? 'Start Free' : 'Secure Pass'}
                 </Button>
               </div>
             );
@@ -159,31 +159,31 @@ const PremiumPlans = () => {
         </div>
 
         {/* Responsive Table */}
-        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 md:p-10 mb-20 overflow-hidden">
-          <h2 className="text-xl md:text-2xl font-black text-center mb-8 text-gray-900 dark:text-white">Feature Comparison</h2>
+        <div className="bg-surface shadow-adventure border rounded-[2.5rem] border-border p-4 md:p-10 mb-20 overflow-hidden">
+          <h2 className="text-2xl md:text-3xl font-pixel text-center mb-8 text-text tracking-widest">Pass Comparison</h2>
           <div className="overflow-x-auto overflow-y-hidden">
             <table className="w-full min-w-[500px]">
               <thead>
-                <tr className="border-b dark:border-gray-800 text-[10px] md:text-xs text-gray-400 uppercase font-black">
-                  <th className="text-left py-4">Features</th>
+                <tr className="border-b border-border text-[10px] text-muted uppercase font-bold tracking-widest">
+                  <th className="text-left py-4">Magic Features</th>
                   <th className="text-center">Basic</th>
-                  <th className="text-center">Pro</th>
-                  <th className="text-center">Premium</th>
+                  <th className="text-center text-primary-500">Pro</th>
+                  <th className="text-center text-warning-500">Master</th>
                 </tr>
               </thead>
-              <tbody className="text-xs md:text-sm">
+              <tbody className="text-sm md:text-lg font-game">
                 {[
-                  ['Job Listings', true, true, true],
-                  ['AI Recommendations', false, true, true],
+                  ['Quest Listings', true, true, true],
+                  ['Magic Recommendations', false, true, true],
                   ['Early Access', false, false, true],
-                  ['WhatsApp Alerts', false, false, true],
-                  ['Resume Builder', false, true, true]
+                  ['Instant Alerts', false, false, true],
+                  ['Profile Builder', false, true, true]
                 ].map(([label, f1, f2, f3], i) => (
-                  <tr key={i} className="border-b dark:border-gray-800/50">
-                    <td className="py-5 font-bold text-gray-700 dark:text-gray-300">{label}</td>
-                    <td className="text-center">{f1 ? <Check size={16} className="mx-auto text-green-500" /> : '—'}</td>
-                    <td className="text-center">{f2 ? <Check size={16} className="mx-auto text-blue-500" /> : '—'}</td>
-                    <td className="text-center">{f3 ? <Check size={16} className="mx-auto text-purple-500" /> : '—'}</td>
+                  <tr key={i} className="border-b border-border/50 hover:bg-background transition-colors">
+                    <td className="py-5 text-text">{label}</td>
+                    <td className="text-center">{f1 ? <Check size={20} className="mx-auto text-success-500" /> : <span className="text-muted">—</span>}</td>
+                    <td className="text-center">{f2 ? <Check size={20} className="mx-auto text-primary-500" /> : <span className="text-muted">—</span>}</td>
+                    <td className="text-center">{f3 ? <Check size={20} className="mx-auto text-warning-500" /> : <span className="text-muted">—</span>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -192,12 +192,12 @@ const PremiumPlans = () => {
         </div>
 
         {/* Final Compact CTA */}
-        <div className="bg-purple-600 rounded-[2rem] p-8 md:p-16 text-center text-white">
-          <h2 className="text-2xl md:text-4xl font-black mb-4">Supercharge Your Career</h2>
-          <p className="text-sm md:text-lg opacity-80 mb-8 max-w-xl mx-auto">Found your dream job today with Fast Hire Mela.</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button onClick={() => handlePlanSelect(plans[1])} className="bg-white text-purple-600 font-black px-10 py-4 text-xs rounded-xl">Start Trial</Button>
-            <Button onClick={() => navigate('/contact')} className="border border-white/40 text-white font-black px-10 py-4 text-xs rounded-xl hover:bg-white/10">Contact Support</Button>
+        <div className="bg-surface border rounded-[2.5rem] border-border shadow-adventure p-8 md:p-16 text-center text-text mb-10">
+          <h2 className="text-2xl md:text-4xl font-pixel tracking-widest mb-6">Supercharge Your Guild</h2>
+          <p className="text-lg md:text-xl text-muted mb-10 max-w-xl mx-auto font-game">Find your dream quest today with Fast Hire Mela.</p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Button onClick={() => handlePlanSelect(plans[1])} className="bg-warning-500 text-text rounded-2xl hover:bg-warning-400 shadow-adventure border border-border font-bold px-10 py-5 text-[10px] uppercase tracking-widest transition-transform hover:-translate-y-1 active:translate-y-1">Start Quest</Button>
+            <Button onClick={() => navigate('/contact')} className="bg-background border rounded-2xl border-border text-text hover:bg-primary-500 shadow-adventure font-bold px-10 py-5 text-[10px] uppercase tracking-widest transition-transform hover:-translate-y-1 active:translate-y-1">Tavern Support</Button>
           </div>
         </div>
       </div>
