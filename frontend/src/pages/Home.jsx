@@ -184,7 +184,7 @@ const Home = () => {
                 <div key={job.id}>
                   <Card hover padding="md" className="h-full flex flex-col">
                     <div className="flex justify-between items-start mb-4">
-                      <div className="w-12 h-12 bg-white rounded-2xl border border-border flex items-center justify-center p-2 shadow-sm">
+                      <div className="w-12 h-12 shrink-0 bg-white rounded-2xl border border-border flex items-center justify-center p-2 shadow-sm">
                         <OptimizedImage
                           src={job.company_logo || '/api/placeholder/80/80'}
                           alt={job.company_name}
