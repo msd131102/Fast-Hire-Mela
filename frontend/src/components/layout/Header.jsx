@@ -72,7 +72,8 @@ const Header = () => {
   }, [logout, navigate, toast]);
 
   return (
-    <header className={cn(
+    <>
+      <header className={cn(
       "fixed top-0 left-0 right-0 z-[100] transition-all duration-300",
       scrolled ? "h-16 bg-surface/90 backdrop-blur-sm border-b border-border shadow-soft" : "h-20 bg-transparent"
     )}>
@@ -216,7 +217,9 @@ const Header = () => {
         </div>
       </div>
 
-      {/* MOBILE MENU OVERLAY */}
+      </header>
+
+      {/* MOBILE MENU OVERLAY (Moved outside header to avoid backdrop-filter containing block bug) */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -267,7 +270,7 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 };
 
