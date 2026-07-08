@@ -90,7 +90,7 @@ const OptimizedImage = ({
           onLoad={() => setIsLoaded(true)}
           onError={() => setHasError(true)}
           className={`
-            duration-700 ease-in-out transition-all
+            duration-300 ease-in-out transition-all
             ${isLoaded ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-95 blur-sm'}
             ${className}
           `}

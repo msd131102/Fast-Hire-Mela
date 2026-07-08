@@ -190,6 +190,7 @@ const Home = () => {
                           alt={job.company_name}
                           className="object-contain w-full h-full rounded-xl"
                           width={60} height={60}
+                          priority={true}
                         />
                       </div>
                       <span className="text-[10px] font-bold text-warning-500 uppercase tracking-wider bg-warning-50 px-2 py-1 rounded-full">
