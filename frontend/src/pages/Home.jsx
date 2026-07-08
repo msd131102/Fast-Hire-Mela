@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Search, Building2, MapPin, Clock, ArrowRight, Briefcase,
-  Sparkles, Code, Headphones, BarChart, Layers, Globe, TrendingUp
-} from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { Card, CardTitle } from '../components/ui/Card';
@@ -14,9 +11,10 @@ import { getJobs, getCategories, getCompanies, utils } from '../services/api';
 
 /* ---------------- ICON MAPPER ---------------- */
 const CategoryIcon = ({ name, className }) => {
-  const iconMap = { Briefcase, Code, Headphones, BarChart, Layers, Globe, Sparkles };
-  const Icon = iconMap[name] || Briefcase;
-  return <Icon className={className} />;
+  // Dynamically render the icon based on the exact name sent by the backend
+  // If the backend sends 'Rocket', it renders Icons['Rocket']
+  const DynamicIcon = name && Icons[name] ? Icons[name] : Icons.Briefcase;
+  return <DynamicIcon className={className} />;
 };
 
 const Home = () => {
@@ -79,7 +77,7 @@ const Home = () => {
             <div className="text-center max-w-5xl mx-auto mt-20">
               
               <div className="inline-flex items-center gap-2 border border-primary-300 bg-primary-50/80 backdrop-blur-md px-6 py-2 rounded-full mb-8 shadow-sm">
-                <Sparkles className="w-4 h-4 text-primary-500" />
+                <Icons.Sparkles className="w-4 h-4 text-primary-500" />
                 <span className="text-primary-600 font-semibold text-[10px] md:text-sm uppercase tracking-widest">
                   A New Journey Begins
                 </span>
@@ -107,7 +105,7 @@ const Home = () => {
                   <form onSubmit={handleSearch} className="flex flex-col md:flex-row items-center gap-3">
                     
                     <div className="relative flex-1 w-full bg-background border-2 border-border rounded-2xl focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all shadow-inner">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5 group-focus-within:text-primary-500 transition-colors" />
+                      <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5 group-focus-within:text-primary-500 transition-colors" />
                       <input
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -117,7 +115,7 @@ const Home = () => {
                     </div>
 
                     <div className="relative flex-1 w-full bg-background border-2 border-border rounded-2xl focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all shadow-inner">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5" />
+                      <Icons.MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5" />
                       <input
                         value={selectedLocation}
                         onChange={(e) => setSelectedLocation(e.target.value)}
@@ -166,7 +164,7 @@ const Home = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-12 gap-4">
               <div>
                 <div className="flex items-center gap-2 text-warning-500 font-bold text-[10px] md:text-sm uppercase mb-3 tracking-wider">
-                  <TrendingUp className="w-4 h-4" />
+                  <Icons.TrendingUp className="w-4 h-4" />
                   New Quests Available
                 </div>
                 <h2 className="text-3xl lg:text-5xl font-pixel font-bold text-text tracking-wide">
@@ -175,7 +173,7 @@ const Home = () => {
               </div>
               <Link to="/jobs" className="hidden md:block">
                 <Button variant="outline" className="rounded-full border px-8 py-3 font-semibold shadow-sm hover:shadow-adventure transition-all">
-                  View All <ArrowRight className="ml-2 w-4 h-4" />
+                  View All <Icons.ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
             </div>
@@ -204,12 +202,12 @@ const Home = () => {
                     </CardTitle>
 
                     <div className="flex items-center text-[11px] md:text-sm text-muted font-medium mb-2 md:mb-4">
-                      <Building2 className="w-3 h-3 md:w-4 md:h-4 mr-2 text-primary-400 shrink-0" />
+                      <Icons.Building2 className="w-3 h-3 md:w-4 md:h-4 mr-2 text-primary-400 shrink-0" />
                       <span className="truncate">{job.company_name}</span>
                     </div>
 
                     <div className="flex items-center text-[11px] md:text-sm text-muted font-medium mb-3 md:mb-6">
-                      <MapPin className="w-3 h-3 md:w-4 md:h-4 mr-2 text-primary-400 shrink-0" />
+                      <Icons.MapPin className="w-3 h-3 md:w-4 md:h-4 mr-2 text-primary-400 shrink-0" />
                       <span className="truncate">{job.location || 'Remote'}</span>
                     </div>
 
@@ -219,7 +217,7 @@ const Home = () => {
                           {job.salary_min ? `₹${job.salary_min}L Gold` : ''}
                         </span>
                         <div className="flex items-center text-xs text-muted font-medium">
-                          <Clock className="w-3 h-3 mr-1.5" />
+                          <Icons.Clock className="w-3 h-3 mr-1.5" />
                           {utils.formatPostedDate(job.posted_date)}
                         </div>
                       </div>
