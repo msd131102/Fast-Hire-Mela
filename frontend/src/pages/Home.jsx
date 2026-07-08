@@ -63,7 +63,7 @@ const Home = () => {
           {/* Pixel Art Background */}
           <div className="absolute inset-0 z-0">
             <img 
-              src="/src/assets/fasthiremela-hero.png" 
+              src="/hero_bg.png" 
               alt="Pixel Art Landscape" 
               className="w-full h-full object-cover object-bottom"
               onError={(e) => {
