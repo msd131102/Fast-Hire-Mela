@@ -5,12 +5,12 @@ const AntiGravityLogo = ({ variant = 'full', className = "" }) => {
     // COMPACT VARIANT (For Header/Navigation/Footer)
     if (variant === 'compact') {
         return (
-            <div className={`relative flex items-center justify-center ${className}`}>
+            <div className={`relative flex items-center justify-start ${className}`}>
                 <div className="animate-float-compact">
                     <img
                         src={logoImage}
                         alt="Fast Hire Mela"
-                        className="w-full h-full object-contain filter brightness-110 contrast-105 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
+                        className="w-full h-full object-contain object-left filter brightness-110 contrast-105 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
                     />
                 </div>
 
@@ -20,12 +20,11 @@ const AntiGravityLogo = ({ variant = 'full', className = "" }) => {
                 50% { transform: translateY(-3px); } 
             }
             .animate-float-compact {
-                animation: float-compact 4s ease-in-out infinite;
                 width: 100%;
                 height: 100%;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
             }
         `}</style>
             </div>

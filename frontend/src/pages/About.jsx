@@ -27,7 +27,7 @@ const About = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight mb-4 tracking-tighter"
+            className="text-5xl md:text-7xl lg:text-8xl font-pixel font-black text-text leading-tight mb-4 tracking-tighter"
           >
             Fast Hire <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-500">Mela</span>
           </motion.h1>
@@ -177,11 +177,11 @@ const About = () => {
 
       {/* CTA Section: High Conversion */}
       <div className="px-6 pb-20">
-        <div className="max-w-5xl mx-auto bg-primary-600 rounded-[3rem] p-12 md:p-20 text-center text-text relative overflow-hidden shadow-glow-primary">
+        <div className="max-w-5xl mx-auto bg-primary-600 rounded-[3rem] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-glow-primary">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32" />
           <div className="relative z-10">
             <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Ready to Transform Your Career?</h2>
-            <p className="text-lg md:text-xl mb-10 text-text max-w-2xl mx-auto font-medium">
+            <p className="text-lg md:text-xl mb-10 text-white/90 max-w-2xl mx-auto font-medium">
               Join thousands of professionals who found their dream jobs through Fast Hire Mela.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

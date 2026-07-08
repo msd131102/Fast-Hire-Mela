@@ -106,8 +106,8 @@ const Home = () => {
                 <div className="bg-surface/90 backdrop-blur-md border border-border p-3 rounded-[2rem] shadow-adventure">
                   <form onSubmit={handleSearch} className="flex flex-col md:flex-row items-center gap-3">
                     
-                    <div className="relative flex-1 w-full bg-white border border-border rounded-2xl focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/20 transition-all">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5" />
+                    <div className="relative flex-1 w-full bg-background border-2 border-border rounded-2xl focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all shadow-inner">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5 group-focus-within:text-primary-500 transition-colors" />
                       <input
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -116,7 +116,7 @@ const Home = () => {
                       />
                     </div>
 
-                    <div className="relative flex-1 w-full bg-white border border-border rounded-2xl focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/20 transition-all">
+                    <div className="relative flex-1 w-full bg-background border-2 border-border rounded-2xl focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all shadow-inner">
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5" />
                       <input
                         value={selectedLocation}

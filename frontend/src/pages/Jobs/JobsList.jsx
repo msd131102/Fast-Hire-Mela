@@ -230,23 +230,23 @@ const JobsList = () => {
   return (
     <div className="min-h-screen bg-background text-text">
       {/* Fixed Search Header */}
-      <header className="bg-surface border-b border-border sticky top-0 z-40 shadow-sm">
-        <div className="container mx-auto px-4 py-3">
+      <header className="bg-surface border-b border-border sticky top-16 sm:top-20 z-40 shadow-sm">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
           <div className="flex gap-3 items-center">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+            <div className="relative flex-1 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted group-focus-within:text-primary-500 transition-colors" />
               <input
                 type="text"
-                placeholder="Search quests..."
+                placeholder="Search quests by title, skill, or keyword..."
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white border border-border focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 font-medium text-lg outline-none text-text placeholder-muted rounded-2xl transition-all"
+                className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-background border-2 border-border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 font-medium text-base sm:text-lg outline-none text-text placeholder-muted rounded-2xl transition-all shadow-inner"
               />
             </div>
             <Button
               onClick={() => setShowFilters(true)}
               variant="outline"
-              className="lg:hidden p-2.5 h-auto rounded-xl border-border bg-surface text-text hover:bg-secondary-800"
+              className="lg:hidden px-4 py-3 sm:py-3.5 h-auto rounded-2xl border-2 border-border bg-surface text-text hover:border-primary-300 hover:text-primary-500 transition-all flex items-center gap-2 shadow-sm"
             >
               <Filter className="w-5 h-5" />
             </Button>

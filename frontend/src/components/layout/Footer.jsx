@@ -21,7 +21,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="flex flex-col space-y-6">
             <Link to="/" className="inline-block transition-transform duration-300 hover:scale-105">
-              <AntiGravityLogo variant="compact" className="h-14 sm:h-16 w-auto" />
+              <AntiGravityLogo variant="compact" className="h-6 w-auto sm:h-8" />
             </Link>
             <p className="text-muted text-sm leading-relaxed max-w-xs">
               Your trusted platform for finding the best job opportunities.
