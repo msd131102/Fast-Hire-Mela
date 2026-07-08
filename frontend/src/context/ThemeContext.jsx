@@ -4,12 +4,12 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(() => {
-    // Check localStorage first, then system preference - Data Preserved
+    // Check localStorage first, otherwise default to LIGHT mode
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       return savedTheme === 'dark';
     }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return false; // Always prefer light mode by default
   });
 
   useEffect(() => {
@@ -34,19 +34,7 @@ export const ThemeProvider = ({ children }) => {
     return () => clearTimeout(timeout);
   }, [darkMode]);
 
-  // Listen for system theme changes - Logic Preserved
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = (e) => {
-      if (!localStorage.getItem('theme')) {
-        setDarkMode(e.matches);
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  // Listen for system theme changes removed to strictly enforce default light mode
 
   const toggleTheme = () => {
     setDarkMode((prev) => !prev);
