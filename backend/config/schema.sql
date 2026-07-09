@@ -693,12 +693,20 @@ $$ LANGUAGE plpgsql;
 -- =============================================
 
 -- Add check constraints for data integrity
+ALTER TABLE jobs DROP CONSTRAINT IF EXISTS chk_salary_range;
 ALTER TABLE jobs ADD CONSTRAINT chk_salary_range CHECK (salary_min IS NULL OR salary_max IS NULL OR salary_min <= salary_max);
+
+ALTER TABLE jobs DROP CONSTRAINT IF EXISTS chk_experience_range;
 ALTER TABLE jobs ADD CONSTRAINT chk_experience_range CHECK (experience_min IS NULL OR experience_max IS NULL OR experience_min <= experience_max);
+
+ALTER TABLE premium_plans DROP CONSTRAINT IF EXISTS chk_positive_price;
 ALTER TABLE premium_plans ADD CONSTRAINT chk_positive_price CHECK (price > 0);
+
+ALTER TABLE premium_plans DROP CONSTRAINT IF EXISTS chk_positive_duration;
 ALTER TABLE premium_plans ADD CONSTRAINT chk_positive_duration CHECK (duration_days > 0);
+
+ALTER TABLE payment_transactions DROP CONSTRAINT IF EXISTS chk_positive_amount;
 ALTER TABLE payment_transactions ADD CONSTRAINT chk_positive_amount CHECK (amount > 0);
-ALTER TABLE payments ADD CONSTRAINT chk_positive_amount CHECK (amount > 0);
 
 -- =============================================
 -- SEO MANAGEMENT TABLES
