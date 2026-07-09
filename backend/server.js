@@ -99,6 +99,9 @@ app.use(sessionTracker);
 // Rate limiting disabled for unlimited access
 console.log('🚀 Rate limiting disabled - running without limits');
 
+// Ignore favicon requests
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 
 // Serve static files with proper headers for images
 app.use('/uploads', (req, res, next) => {
