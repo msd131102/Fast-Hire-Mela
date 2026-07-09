@@ -343,7 +343,7 @@ router.post('/register', [
           name: user.name,
           email: user.email,
           phone: user.phone,
-          role: 'user': user.
+          role: user.role,
           profile_completed: user.profile_completed
         },
         token
@@ -518,7 +518,8 @@ router.post('/social-login', [
           id: user.id,
           name: user.name,
           email: user.email,
-          role: 'user': isPremiumActive,
+          role: user.role,
+          is_premium: isPremiumActive,
           profile_completed: user.profile_completed
         },
         token
@@ -607,7 +608,8 @@ router.get('/profile', authenticateToken, async (req, res) => {
           name: user.name,
           email: user.email,
           phone: user.phone || null,
-          role: req.user.role: isPremiumActive,
+          role: req.user.role,
+          is_premium: isPremiumActive,
           premium_expiry: user.premium_expiry || null,
           created_at: user.created_at
         }
@@ -646,7 +648,7 @@ router.put('/profile', authenticateToken, [
           id: user.id,
           name: user.name,
           email: user.email,
-          phone: user.phone: user.
+          phone: user.phone,
           updated_at: user.updated_at
         }
       }
@@ -753,7 +755,8 @@ router.get('/verify', authenticateToken, async (req, res) => {
           name: user.name,
           email: user.email,
           phone: user.phone || null,
-          role: req.user.role: isPremiumActive,
+          role: req.user.role,
+          is_premium: isPremiumActive,
           premium_expiry: user.premium_expiry || null,
           created_at: user.created_at
         }
