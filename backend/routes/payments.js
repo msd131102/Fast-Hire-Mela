@@ -1,11 +1,9 @@
 import express from 'express';
-import pkgPrisma from '@prisma/client';
-const { PrismaClient } = pkgPrisma;
+import pool, { query } from '../config/database.js';
 import { authenticateToken } from '../middleware/auth.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
-const prisma = new PrismaClient();
 const router = express.Router();
 
 const razorpay = new Razorpay({
@@ -16,14 +14,13 @@ const razorpay = new Razorpay({
 // Get premium plans
 router.get('/plans', async (req, res) => {
   try {
-    const plans = await prisma.premium_plans.findMany({
-      where: { is_active: true },
-      orderBy: { price: 'asc' }
-    });
+    const plansRes = await query(
+      `SELECT * FROM premium_plans WHERE is_active = true ORDER BY price ASC`
+    );
 
     res.json({
       success: true,
-      data: plans
+      data: plansRes.rows
     });
   } catch (error) {
     console.error('Get plans error:', error);
@@ -44,14 +41,16 @@ router.post('/create-order', authenticateToken, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Plan ID is required' });
     }
 
-    const plan = await prisma.premium_plans.findUnique({
-      where: { id: parseInt(plan_id) }
-    });
+    const planRes = await query(
+      `SELECT * FROM premium_plans WHERE id = $1`,
+      [parseInt(plan_id)]
+    );
 
-    if (!plan || !plan.is_active) {
+    if (planRes.rows.length === 0 || !planRes.rows[0].is_active) {
       return res.status(404).json({ success: false, message: 'Plan not found' });
     }
 
+    const plan = planRes.rows[0];
     const amount = Math.round(Number(plan.price) * 100);
 
     const options = {
@@ -63,36 +62,30 @@ router.post('/create-order', authenticateToken, async (req, res) => {
 
     const order = await razorpay.orders.create(options);
 
-    // Create a pending subscription
-    const pendingSub = await prisma.premium_subscriptions.create({
-      data: {
-        user_id: userId,
-        plan_id: plan.id,
-        plan_name: plan.name,
-        amount: plan.price,
-        currency: 'INR',
-        is_active: false,
-        expires_at: new Date(), // temporary
-      }
-    });
+    // Insert pending subscription
+    const pendingSubRes = await query(
+      `INSERT INTO premium_subscriptions 
+       (user_id, plan_id, plan_name, amount, currency, is_active, expires_at) 
+       VALUES ($1, $2, $3, $4, $5, false, CURRENT_TIMESTAMP) 
+       RETURNING id`,
+      [userId, plan.id, plan.name, plan.price, 'INR']
+    );
+    const pendingSubId = pendingSubRes.rows[0].id;
 
-    // Create a pending transaction
-    const transaction = await prisma.payment_transactions.create({
-      data: {
-        user_id: userId,
-        subscription_id: pendingSub.id,
-        razorpay_order_id: order.id,
-        amount: plan.price,
-        currency: 'INR',
-        status: 'created'
-      }
-    });
+    // Insert pending transaction
+    const transactionRes = await query(
+      `INSERT INTO payment_transactions 
+       (user_id, subscription_id, razorpay_order_id, amount, currency, status) 
+       VALUES ($1, $2, $3, $4, $5, 'created') 
+       RETURNING *`,
+      [userId, pendingSubId, order.id, plan.price, 'INR']
+    );
 
     res.json({
       success: true,
       data: {
         order: order,
-        payment: transaction,
+        payment: transactionRes.rows[0],
         plan: plan
       }
     });
@@ -104,6 +97,7 @@ router.post('/create-order', authenticateToken, async (req, res) => {
 
 // Verify payment and activate premium
 router.post('/verify', authenticateToken, async (req, res) => {
+  let client;
   try {
     const {
       razorpay_order_id,
@@ -126,64 +120,70 @@ router.post('/verify', authenticateToken, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid payment signature' });
     }
 
-    const transaction = await prisma.payment_transactions.findFirst({
-      where: { razorpay_order_id, user_id: userId },
-      include: { premium_subscriptions: true }
-    });
+    const transactionRes = await query(
+      `SELECT * FROM payment_transactions WHERE razorpay_order_id = $1 AND user_id = $2 LIMIT 1`,
+      [razorpay_order_id, userId]
+    );
 
-    if (!transaction) {
+    if (transactionRes.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Payment record not found' });
     }
 
-    const plan = await prisma.premium_plans.findUnique({
-      where: { id: parseInt(plan_id) }
-    });
+    const transaction = transactionRes.rows[0];
 
-    if (!plan) {
+    const planRes = await query(
+      `SELECT * FROM premium_plans WHERE id = $1`,
+      [parseInt(plan_id)]
+    );
+
+    if (planRes.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Plan not found' });
     }
 
+    const plan = planRes.rows[0];
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + plan.duration_days);
 
-    // Transaction to update both
-    await prisma.$transaction([
-      prisma.payment_transactions.update({
-        where: { id: transaction.id },
-        data: {
-          razorpay_payment_id,
-          razorpay_signature,
-          status: 'completed',
-          payment_date: new Date()
-        }
-      }),
-      prisma.premium_subscriptions.update({
-        where: { id: transaction.subscription_id },
-        data: {
-          is_active: true,
-          started_at: new Date(),
-          expires_at: expiryDate
-        }
-      })
-    ]);
+    // Execute transaction to update both
+    client = await pool.connect();
+    await client.query('BEGIN');
 
-    const updatedSub = await prisma.premium_subscriptions.findUnique({
-      where: { id: transaction.subscription_id },
-      include: { premium_plans: true }
-    });
+    await client.query(
+      `UPDATE payment_transactions 
+       SET razorpay_payment_id = $1, razorpay_signature = $2, status = 'completed', payment_date = CURRENT_TIMESTAMP 
+       WHERE id = $3`,
+      [razorpay_payment_id, razorpay_signature, transaction.id]
+    );
+
+    await client.query(
+      `UPDATE premium_subscriptions 
+       SET is_active = true, started_at = CURRENT_TIMESTAMP, expires_at = $1 
+       WHERE id = $2`,
+      [expiryDate, transaction.subscription_id]
+    );
+
+    await client.query('COMMIT');
+
+    const updatedSubRes = await query(
+      `SELECT * FROM premium_subscriptions WHERE id = $1`,
+      [transaction.subscription_id]
+    );
 
     res.json({
       success: true,
       message: 'Payment verified and premium activated successfully',
       data: {
         payment: { ...transaction, status: 'completed' },
-        subscription: updatedSub,
+        subscription: updatedSubRes.rows[0],
         plan: plan
       }
     });
   } catch (error) {
+    if (client) await client.query('ROLLBACK');
     console.error('Verify payment error:', error);
     res.status(500).json({ success: false, message: 'Payment verification failed' });
+  } finally {
+    if (client) client.release();
   }
 });
 
@@ -194,25 +194,26 @@ router.get('/history', authenticateToken, async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
 
-    const [transactions, total] = await Promise.all([
-      prisma.payment_transactions.findMany({
-        where: { user_id: userId },
-        take: parseInt(limit),
-        skip: offset,
-        include: {
-          premium_subscriptions: {
-            include: { premium_plans: true }
-          }
-        },
-        orderBy: { created_at: 'desc' }
-      }),
-      prisma.payment_transactions.count({ where: { user_id: userId } })
+    const [transactionsRes, totalRes] = await Promise.all([
+      query(
+        `SELECT pt.*, ps.plan_name, pp.name as premium_plan_name
+         FROM payment_transactions pt
+         LEFT JOIN premium_subscriptions ps ON pt.subscription_id = ps.id
+         LEFT JOIN premium_plans pp ON ps.plan_id = pp.id
+         WHERE pt.user_id = $1
+         ORDER BY pt.created_at DESC
+         LIMIT $2 OFFSET $3`,
+        [userId, parseInt(limit), parseInt(offset)]
+      ),
+      query(`SELECT COUNT(*) as total FROM payment_transactions WHERE user_id = $1`, [userId])
     ]);
+
+    const total = parseInt(totalRes.rows[0].total);
 
     res.json({
       success: true,
       data: {
-        payments: transactions,
+        payments: transactionsRes.rows,
         pagination: {
           current_page: parseInt(page),
           total_pages: Math.ceil(total / limit),
@@ -230,22 +231,22 @@ router.get('/history', authenticateToken, async (req, res) => {
 router.get('/status', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
-    const activeSub = await prisma.premium_subscriptions.findFirst({
-      where: { 
-        user_id: userId, 
-        is_active: true,
-        expires_at: { gt: new Date() }
-      },
-      include: { premium_plans: true }
-    });
+    const activeSubRes = await query(
+      `SELECT ps.*, pp.name as premium_plan_name, pp.price as premium_plan_price
+       FROM premium_subscriptions ps
+       LEFT JOIN premium_plans pp ON ps.plan_id = pp.id
+       WHERE ps.user_id = $1 AND ps.is_active = true AND ps.expires_at > CURRENT_TIMESTAMP
+       ORDER BY ps.created_at DESC LIMIT 1`,
+      [userId]
+    );
 
-    if (activeSub) {
+    if (activeSubRes.rows.length > 0) {
       res.json({
         success: true,
         data: {
           is_premium: true,
-          plan: activeSub.premium_plans,
-          subscription: activeSub
+          plan: { name: activeSubRes.rows[0].premium_plan_name, price: activeSubRes.rows[0].premium_plan_price },
+          subscription: activeSubRes.rows[0]
         }
       });
     } else {

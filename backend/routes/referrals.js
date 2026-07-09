@@ -1,10 +1,8 @@
 import express from 'express';
-import pkgPrisma from '@prisma/client';
-const { PrismaClient } = pkgPrisma;
+import { query } from '../config/database.js';
 import crypto from 'crypto';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // POST /api/referral - Submit referral
 router.post('/', async (req, res) => {
@@ -35,11 +33,8 @@ router.post('/', async (req, res) => {
     }
 
     // Check if user already submitted referrals
-    const existingReferral = await prisma.referrals.findUnique({
-      where: { email }
-    });
-
-    if (existingReferral) {
+    const existingReferralRes = await query('SELECT id FROM referrals WHERE email = $1', [email]);
+    if (existingReferralRes.rows.length > 0) {
       return res.status(400).json({
         success: false,
         message: 'You have already submitted referrals. Please contact support for assistance.'
@@ -47,9 +42,8 @@ router.post('/', async (req, res) => {
     }
 
     // Check if app_user exists to link user_id (optional, they may be a guest)
-    const existingAppUser = await prisma.app_users.findUnique({
-      where: { email }
-    });
+    const existingAppUserRes = await query('SELECT id FROM app_users WHERE email = $1', [email]);
+    const existingAppUserId = existingAppUserRes.rows.length > 0 ? existingAppUserRes.rows[0].id : null;
 
     // Generate unique referral code
     const baseCode = name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'R');
@@ -57,19 +51,14 @@ router.post('/', async (req, res) => {
     const referral_code = `${baseCode}-${randomHash}`;
 
     // Insert referral into database
-    const newReferral = await prisma.referrals.create({
-      data: {
-        name,
-        email,
-        mobile,
-        referral_history: referredList,
-        referral_count: referredList.length,
-        premium_eligible: true,
-        status: 'pending',
-        referral_code,
-        user_id: existingAppUser ? existingAppUser.id : null
-      }
-    });
+    const newReferralRes = await query(
+      `INSERT INTO referrals 
+        (name, email, mobile, referral_history, referral_count, premium_eligible, status, referral_code, user_id) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+      [name, email, mobile, JSON.stringify(referredList), referredList.length, true, 'pending', referral_code, existingAppUserId]
+    );
+
+    const newReferralId = newReferralRes.rows[0].id;
 
     // Log the referral submission
     console.log(`New referral submitted: ${email} with ${referredList.length} referrals`);
@@ -77,7 +66,7 @@ router.post('/', async (req, res) => {
     res.json({
       success: true,
       premiumEligible: true,
-      referralId: newReferral.id,
+      referralId: newReferralId,
       message: 'Referral submitted successfully! Your referrals are now pending verification. You will receive an email once approved.',
       referralCount: referredList.length
     });
@@ -91,7 +80,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET /api/referral - Get user's referral status
+// GET /api/referral/status - Get user's referral status
 router.get('/status', async (req, res) => {
   try {
     const { email } = req.query;
@@ -103,17 +92,17 @@ router.get('/status', async (req, res) => {
       });
     }
 
-    const referral = await prisma.referrals.findUnique({
-      where: { email }
-    });
+    const referralRes = await query('SELECT * FROM referrals WHERE email = $1', [email]);
 
-    if (!referral) {
+    if (referralRes.rows.length === 0) {
       return res.json({
         success: true,
         hasReferral: false,
         message: 'No referral found'
       });
     }
+
+    const referral = referralRes.rows[0];
 
     res.json({
       success: true,
@@ -126,7 +115,7 @@ router.get('/status', async (req, res) => {
         premiumEligible: referral.premium_eligible,
         status: referral.status,
         createdAt: referral.created_at,
-        referredUsers: referral.referral_history
+        referredUsers: typeof referral.referral_history === 'string' ? JSON.parse(referral.referral_history) : referral.referral_history
       }
     });
 
@@ -153,18 +142,20 @@ router.put('/:id', async (req, res) => {
     }
 
     // Update referral status
-    const updatedReferral = await prisma.referrals.update({
-      where: { id: parseInt(id) },
-      data: {
-        status,
-        admin_notes: admin_notes || null,
-        updated_at: new Date()
-      }
-    });
+    const updatedReferralRes = await query(
+      `UPDATE referrals 
+       SET status = $1, admin_notes = $2, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = $3 RETURNING email`,
+      [status, admin_notes || null, parseInt(id)]
+    );
+
+    if (updatedReferralRes.rows.length === 0) {
+       return res.status(404).json({ success: false, message: 'Referral not found' });
+    }
 
     // If approved, log premium activation
     if (status === 'approved') {
-      const userEmail = updatedReferral.email;
+      const userEmail = updatedReferralRes.rows[0].email;
       console.log(`Referral approved for ${userEmail}. They are now eligible for premium access.`);
     }
 
@@ -188,34 +179,33 @@ router.get('/admin/list', async (req, res) => {
     const { page = 1, limit = 10, status } = req.query;
     const offset = (page - 1) * limit;
 
-    const where = {};
+    let whereClause = '';
+    const params = [];
     if (status && status !== 'all') {
-      where.status = status;
+      whereClause = 'WHERE status = $1';
+      params.push(status);
     }
 
-    const [referrals, count] = await Promise.all([
-      prisma.referrals.findMany({
-        where,
-        orderBy: { created_at: 'desc' },
-        skip: parseInt(offset),
-        take: parseInt(limit),
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          mobile: true,
-          referral_count: true,
-          status: true,
-          created_at: true,
-          updated_at: true
-        }
-      }),
-      prisma.referrals.count({ where })
+    params.push(parseInt(limit), parseInt(offset));
+    
+    const countParams = status && status !== 'all' ? [status] : [];
+
+    const [referralsRes, countRes] = await Promise.all([
+      query(`
+        SELECT id, name, email, mobile, referral_count, status, created_at, updated_at
+        FROM referrals
+        ${whereClause}
+        ORDER BY created_at DESC
+        LIMIT $${status && status !== 'all' ? '2' : '1'} OFFSET $${status && status !== 'all' ? '3' : '2'}
+      `, params),
+      query(`SELECT COUNT(*) as total FROM referrals ${whereClause}`, countParams)
     ]);
     
+    const count = parseInt(countRes.rows[0].total);
+
     res.json({
       success: true,
-      data: referrals,
+      data: referralsRes.rows,
       pagination: {
         total: count,
         page: parseInt(page),

@@ -1,8 +1,6 @@
 import express from 'express';
-import pkgPrisma from '@prisma/client';
-const { PrismaClient } = pkgPrisma;
+import { query } from '../config/database.js';
 
-const prisma = new PrismaClient();
 const router = express.Router();
 
 // Helper to calculate date from days ago
@@ -19,103 +17,119 @@ router.get('/dashboard', async (req, res) => {
     const pastDate = getPastDate(period);
 
     const [
-      totalJobs,
-      activeJobs,
-      totalUsers,
-      premiumUsers,
-      totalApplications,
-      totalViews,
-      recentJobs,
-      recentApplications,
-      recentViews
+      totalJobsRes,
+      activeJobsRes,
+      totalUsersRes,
+      premiumUsersRes,
+      totalApplicationsRes,
+      totalViewsRes,
+      recentJobsRes,
+      recentApplicationsRes,
+      recentViewsRes,
+      topCategoriesRes,
+      topCompaniesRes,
+      mostViewedJobsRes,
+      mostAppliedJobsRes,
+      monthlyStatsRes,
+      applicationTrendsRes
     ] = await Promise.all([
-      prisma.jobs.count(),
-      prisma.jobs.count({ where: { is_active: true } }),
-      prisma.app_users.count(),
-      prisma.premium_subscriptions.count({ where: { is_active: true, expires_at: { gt: new Date() } } }),
-      prisma.job_applications.count(),
-      prisma.analytics.count({ where: { event_type: 'job_view' } }),
-      prisma.jobs.count({ where: { posted_date: { gte: pastDate } } }),
-      prisma.job_applications.count({ where: { applied_at: { gte: pastDate } } }),
-      prisma.analytics.count({ where: { event_type: 'job_view', created_at: { gte: pastDate } } })
+      query(`SELECT COUNT(*) as count FROM jobs`),
+      query(`SELECT COUNT(*) as count FROM jobs WHERE is_active = true`),
+      query(`SELECT COUNT(*) as count FROM app_users`),
+      query(`SELECT COUNT(*) as count FROM premium_subscriptions WHERE is_active = true AND expires_at > CURRENT_TIMESTAMP`),
+      query(`SELECT COUNT(*) as count FROM job_applications`),
+      query(`SELECT COUNT(*) as count FROM analytics WHERE event_type = 'job_view'`),
+      query(`SELECT COUNT(*) as count FROM jobs WHERE posted_date >= $1`, [pastDate]),
+      query(`SELECT COUNT(*) as count FROM job_applications WHERE applied_at >= $1`, [pastDate]),
+      query(`SELECT COUNT(*) as count FROM analytics WHERE event_type = 'job_view' AND created_at >= $1`, [pastDate]),
+
+      // Top categories
+      query(`
+        SELECT c.name, COUNT(j.id) as job_count
+        FROM categories c
+        LEFT JOIN jobs j ON c.id = j.category_id AND j.is_active = true
+        GROUP BY c.id
+        ORDER BY job_count DESC
+        LIMIT 10
+      `),
+
+      // Top companies
+      query(`
+        SELECT comp.name as company_name, COUNT(j.id) as job_count
+        FROM companies comp
+        LEFT JOIN jobs j ON comp.id = j.company_id AND j.is_active = true
+        GROUP BY comp.id
+        ORDER BY job_count DESC
+        LIMIT 10
+      `),
+
+      // Most viewed jobs
+      query(`
+        SELECT j.id, j.title, comp.name as company_name, COUNT(a.id) as view_count
+        FROM jobs j
+        LEFT JOIN companies comp ON j.company_id = comp.id
+        LEFT JOIN analytics a ON j.id = a.job_id AND a.event_type = 'job_view'
+        WHERE j.is_active = true
+        GROUP BY j.id, comp.name
+        ORDER BY view_count DESC
+        LIMIT 10
+      `),
+
+      // Most applied jobs
+      query(`
+        SELECT j.id, j.title, comp.name as company_name, COUNT(ja.id) as application_count
+        FROM jobs j
+        LEFT JOIN companies comp ON j.company_id = comp.id
+        LEFT JOIN job_applications ja ON j.id = ja.job_id
+        WHERE j.is_active = true
+        GROUP BY j.id, comp.name
+        ORDER BY application_count DESC
+        LIMIT 10
+      `),
+
+      // Monthly views trends
+      query(`
+        SELECT DATE_TRUNC('month', created_at) as month, COUNT(*)::int as count
+        FROM analytics
+        WHERE event_type = 'job_view' AND created_at >= CURRENT_TIMESTAMP - INTERVAL '12 months'
+        GROUP BY DATE_TRUNC('month', created_at)
+        ORDER BY month DESC
+      `),
+      
+      // Application trends
+      query(`
+        SELECT DATE_TRUNC('month', applied_at) as month, COUNT(*)::int as count
+        FROM job_applications
+        WHERE applied_at >= CURRENT_TIMESTAMP - INTERVAL '12 months'
+        GROUP BY DATE_TRUNC('month', applied_at)
+        ORDER BY month DESC
+      `)
     ]);
-
-    // Top categories
-    const categories = await prisma.categories.findMany({
-      include: { _count: { select: { jobs: { where: { is_active: true } } } } }
-    });
-    const topCategories = categories.sort((a, b) => b._count.jobs - a._count.jobs).slice(0, 10).map(c => ({
-      name: c.name, job_count: c._count.jobs
-    }));
-
-    // Top companies
-    const companies = await prisma.companies.findMany({
-      include: { _count: { select: { jobs: { where: { is_active: true } } } } }
-    });
-    const topCompanies = companies.sort((a, b) => b._count.jobs - a._count.jobs).slice(0, 10).map(c => ({
-      company_name: c.name, job_count: c._count.jobs
-    }));
-
-    // Most viewed jobs
-    const jobsWithViews = await prisma.jobs.findMany({
-      where: { is_active: true },
-      include: { companies: true, _count: { select: { analytics: { where: { event_type: 'job_view' } } } } }
-    });
-    const mostViewedJobs = jobsWithViews.sort((a, b) => b._count.analytics - a._count.analytics).slice(0, 10).map(j => ({
-      id: j.id, title: j.title, company_name: j.companies?.name, view_count: j._count.analytics
-    }));
-
-    // Most applied jobs
-    const jobsWithApps = await prisma.jobs.findMany({
-      where: { is_active: true },
-      include: { companies: true, _count: { select: { job_applications: true } } }
-    });
-    const mostAppliedJobs = jobsWithApps.sort((a, b) => b._count.job_applications - a._count.job_applications).slice(0, 10).map(j => ({
-      id: j.id, title: j.title, company_name: j.companies?.name, application_count: j._count.job_applications
-    }));
-
-    // Monthly views trends
-    const monthlyStatsQuery = await prisma.$queryRawUnsafe(`
-      SELECT DATE_TRUNC('month', created_at) as month, COUNT(*)::int as count
-      FROM analytics
-      WHERE event_type = 'job_view' AND created_at >= CURRENT_TIMESTAMP - INTERVAL '12 months'
-      GROUP BY DATE_TRUNC('month', created_at)
-      ORDER BY month DESC
-    `);
-    
-    // Application trends
-    const applicationTrendsQuery = await prisma.$queryRawUnsafe(`
-      SELECT DATE_TRUNC('month', applied_at) as month, COUNT(*)::int as count
-      FROM job_applications
-      WHERE applied_at >= CURRENT_TIMESTAMP - INTERVAL '12 months'
-      GROUP BY DATE_TRUNC('month', applied_at)
-      ORDER BY month DESC
-    `);
 
     res.json({
       success: true,
       message: 'Dashboard analytics retrieved successfully',
       data: {
         overview: {
-          totalJobs,
-          activeJobs,
-          totalUsers,
-          premiumUsers,
-          totalApplications,
-          totalViews
+          totalJobs: parseInt(totalJobsRes.rows[0].count),
+          activeJobs: parseInt(activeJobsRes.rows[0].count),
+          totalUsers: parseInt(totalUsersRes.rows[0].count),
+          premiumUsers: parseInt(premiumUsersRes.rows[0].count),
+          totalApplications: parseInt(totalApplicationsRes.rows[0].count),
+          totalViews: parseInt(totalViewsRes.rows[0].count)
         },
         periodStats: {
           period: parseInt(period),
-          recentJobs,
-          recentApplications,
-          recentViews
+          recentJobs: parseInt(recentJobsRes.rows[0].count),
+          recentApplications: parseInt(recentApplicationsRes.rows[0].count),
+          recentViews: parseInt(recentViewsRes.rows[0].count)
         },
-        topCategories: topCategories,
-        topCompanies: topCompanies,
-        mostViewedJobs: mostViewedJobs,
-        mostAppliedJobs: mostAppliedJobs,
-        monthlyStats: monthlyStatsQuery,
-        applicationTrends: applicationTrendsQuery
+        topCategories: topCategoriesRes.rows,
+        topCompanies: topCompaniesRes.rows,
+        mostViewedJobs: mostViewedJobsRes.rows,
+        mostAppliedJobs: mostAppliedJobsRes.rows,
+        monthlyStats: monthlyStatsRes.rows,
+        applicationTrends: applicationTrendsRes.rows
       }
     });
 

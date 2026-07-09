@@ -1,6 +1,4 @@
-import pkgPrisma from '@prisma/client';
-const { PrismaClient } = pkgPrisma;
-const prisma = new PrismaClient();
+import { query } from '../config/database.js';
 
 // Get all payments with filtering and pagination
 export const getAllPayments = async (req, res) => {
@@ -16,68 +14,68 @@ export const getAllPayments = async (req, res) => {
     } = req.query;
 
     // Build filters
-    const where = {};
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramIndex = 1;
     
     if (status) {
-      where.status = status;
+      whereClause += ` AND pt.status = $${paramIndex++}`;
+      params.push(status);
     }
     
     if (paymentMethod) {
-      where.payment_method = paymentMethod;
+      whereClause += ` AND pt.payment_method = $${paramIndex++}`;
+      params.push(paymentMethod);
     }
     
-    if (startDate || endDate) {
-      where.payment_date = {};
-      if (startDate) where.payment_date.gte = new Date(startDate);
-      if (endDate) where.payment_date.lte = new Date(endDate);
+    if (startDate) {
+      whereClause += ` AND pt.payment_date >= $${paramIndex++}`;
+      params.push(new Date(startDate));
+    }
+    if (endDate) {
+      whereClause += ` AND pt.payment_date <= $${paramIndex++}`;
+      params.push(new Date(endDate));
     }
 
     if (search) {
-      where.app_users = {
-        OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { email: { contains: search, mode: 'insensitive' } }
-        ]
-      };
+      whereClause += ` AND (u.name ILIKE $${paramIndex} OR u.email ILIKE $${paramIndex})`;
+      params.push(`%${search}%`);
+      paramIndex++;
     }
 
     const limitNum = parseInt(limit);
     const pageNum = parseInt(page);
     const offset = (pageNum - 1) * limitNum;
 
-    // Get payments and total count
-    const [payments, totalCount] = await Promise.all([
-      prisma.payment_transactions.findMany({
-        where,
-        take: limitNum,
-        skip: offset,
-        include: {
-          app_users: {
-            select: { name: true, email: true }
-          },
-          premium_subscriptions: {
-            select: { plan_name: true }
-          }
-        },
-        orderBy: { payment_date: 'desc' }
-      }),
-      prisma.payment_transactions.count({ where })
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM payment_transactions pt
+      LEFT JOIN app_users u ON pt.user_id = u.id
+      ${whereClause}
+    `;
+
+    const dataQuery = `
+      SELECT pt.*, u.name as user_name, u.email as user_email, ps.plan_name
+      FROM payment_transactions pt
+      LEFT JOIN app_users u ON pt.user_id = u.id
+      LEFT JOIN premium_subscriptions ps ON pt.subscription_id = ps.id
+      ${whereClause}
+      ORDER BY pt.payment_date DESC NULLS LAST, pt.created_at DESC
+      LIMIT $${paramIndex++} OFFSET $${paramIndex++}
+    `;
+
+    const [paymentsRes, totalCountRes] = await Promise.all([
+      query(dataQuery, [...params, limitNum, offset]),
+      query(countQuery, params)
     ]);
 
+    const totalCount = parseInt(totalCountRes.rows[0].total);
     const totalPages = Math.ceil(totalCount / limitNum);
-
-    // Format for frontend
-    const formattedPayments = payments.map(p => ({
-      ...p,
-      user_name: p.app_users?.name,
-      user_email: p.app_users?.email,
-      plan_name: p.premium_subscriptions?.plan_name
-    }));
 
     res.json({
       success: true,
       data: {
-        payments: formattedPayments,
+        payments: paymentsRes.rows,
         pagination: {
           currentPage: pageNum,
           totalPages: totalPages,
@@ -103,40 +101,46 @@ export const getPaymentStats = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
-    const where = {};
-    if (startDate || endDate) {
-      where.payment_date = {};
-      if (startDate) where.payment_date.gte = new Date(startDate);
-      if (endDate) where.payment_date.lte = new Date(endDate);
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramIndex = 1;
+
+    if (startDate) {
+      whereClause += ` AND payment_date >= $${paramIndex++}`;
+      params.push(new Date(startDate));
+    }
+    if (endDate) {
+      whereClause += ` AND payment_date <= $${paramIndex++}`;
+      params.push(new Date(endDate));
     }
 
-    // Get overview stats
-    const totalPayments = await prisma.payment_transactions.count({ where });
-    const successfulPayments = await prisma.payment_transactions.count({ where: { ...where, status: 'completed' } });
-    const failedPayments = await prisma.payment_transactions.count({ where: { ...where, status: 'failed' } });
-    const pendingPayments = await prisma.payment_transactions.count({ where: { ...where, status: 'pending' } });
-    
-    const revenueAggr = await prisma.payment_transactions.aggregate({
-      _sum: { amount: true },
-      where: { ...where, status: 'completed' }
-    });
+    const statsRes = await query(`
+      SELECT 
+        COUNT(*) as total_payments,
+        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as successful_payments,
+        SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_payments,
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_payments,
+        SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_revenue
+      FROM payment_transactions
+      ${whereClause}
+    `, params);
 
+    const row = statsRes.rows[0] || {};
+    
     const overview = {
-      totalRevenue: Number(revenueAggr._sum.amount || 0),
-      totalPayments,
-      successfulPayments,
-      failedPayments,
-      pendingPayments
+      totalRevenue: Number(row.total_revenue || 0),
+      totalPayments: Number(row.total_payments || 0),
+      successfulPayments: Number(row.successful_payments || 0),
+      failedPayments: Number(row.failed_payments || 0),
+      pendingPayments: Number(row.pending_payments || 0)
     };
 
-    // Note: detailed monthly and method stats can be approximated or done via raw queries.
-    // Simplifying for now since schema changed.
     res.json({
       success: true,
       data: {
         overview,
-        monthlyStats: [], // Needs raw query or groupBy
-        paymentMethods: [] // Needs groupBy
+        monthlyStats: [], // Simplified for now
+        paymentMethods: [] // Simplified for now
       }
     });
   } catch (error) {
@@ -154,25 +158,39 @@ export const exportPayments = async (req, res) => {
   try {
     const { format = 'csv', status, paymentMethod, startDate, endDate } = req.query;
 
-    // Build filters
-    const where = {};
-    if (status) where.status = status;
-    if (paymentMethod) where.payment_method = paymentMethod;
-    if (startDate || endDate) {
-      where.payment_date = {};
-      if (startDate) where.payment_date.gte = new Date(startDate);
-      if (endDate) where.payment_date.lte = new Date(endDate);
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramIndex = 1;
+    
+    if (status) {
+      whereClause += ` AND pt.status = $${paramIndex++}`;
+      params.push(status);
+    }
+    
+    if (paymentMethod) {
+      whereClause += ` AND pt.payment_method = $${paramIndex++}`;
+      params.push(paymentMethod);
+    }
+    
+    if (startDate) {
+      whereClause += ` AND pt.payment_date >= $${paramIndex++}`;
+      params.push(new Date(startDate));
+    }
+    if (endDate) {
+      whereClause += ` AND pt.payment_date <= $${paramIndex++}`;
+      params.push(new Date(endDate));
     }
 
-    // Get all payments (no pagination for export)
-    const payments = await prisma.payment_transactions.findMany({
-      where,
-      include: {
-        app_users: { select: { name: true, email: true } },
-        premium_subscriptions: { select: { plan_name: true } }
-      },
-      orderBy: { payment_date: 'desc' }
-    });
+    const paymentsRes = await query(`
+      SELECT pt.*, u.name as user_name, u.email as user_email, ps.plan_name
+      FROM payment_transactions pt
+      LEFT JOIN app_users u ON pt.user_id = u.id
+      LEFT JOIN premium_subscriptions ps ON pt.subscription_id = ps.id
+      ${whereClause}
+      ORDER BY pt.payment_date DESC NULLS LAST, pt.created_at DESC
+    `, params);
+
+    const payments = paymentsRes.rows;
 
     if (format === 'csv') {
       const headers = [
@@ -188,9 +206,9 @@ export const exportPayments = async (req, res) => {
 
       const csvData = payments.map(p => [
         p.transaction_id || 'N/A',
-        p.app_users?.name || 'N/A',
-        p.app_users?.email || 'N/A',
-        p.premium_subscriptions?.plan_name || 'N/A',
+        p.user_name || 'N/A',
+        p.user_email || 'N/A',
+        p.plan_name || 'N/A',
         p.amount || 0,
         p.payment_method || 'N/A',
         p.status || 'N/A',
@@ -233,68 +251,74 @@ export const getAllSubscriptions = async (req, res) => {
       search
     } = req.query;
 
-    // Build filters
-    const where = {};
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramIndex = 1;
     
     if (status === 'active') {
-      where.is_active = true;
+      whereClause += ` AND ps.is_active = true`;
     } else if (status === 'inactive' || status === 'expired') {
-      where.is_active = false;
+      whereClause += ` AND ps.is_active = false`;
     }
     
     if (planType) {
-      where.plan_name = planType;
+      whereClause += ` AND ps.plan_name = $${paramIndex++}`;
+      params.push(planType);
     }
     
-    if (startDate || endDate) {
-      where.started_at = {};
-      if (startDate) where.started_at.gte = new Date(startDate);
-      if (endDate) where.started_at.lte = new Date(endDate);
+    if (startDate) {
+      whereClause += ` AND ps.started_at >= $${paramIndex++}`;
+      params.push(new Date(startDate));
+    }
+    if (endDate) {
+      whereClause += ` AND ps.started_at <= $${paramIndex++}`;
+      params.push(new Date(endDate));
     }
 
     if (search) {
-      where.app_users = {
-        OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { email: { contains: search, mode: 'insensitive' } }
-        ]
-      };
+      whereClause += ` AND (u.name ILIKE $${paramIndex} OR u.email ILIKE $${paramIndex})`;
+      params.push(`%${search}%`);
+      paramIndex++;
     }
 
     const limitNum = parseInt(limit);
     const pageNum = parseInt(page);
     const offset = (pageNum - 1) * limitNum;
 
-    // Get subscriptions and total count
-    const [subscriptions, totalCount] = await Promise.all([
-      prisma.premium_subscriptions.findMany({
-        where,
-        take: limitNum,
-        skip: offset,
-        include: {
-          app_users: { select: { name: true, email: true } },
-          premium_plans: { select: { price: true, duration_days: true } }
-        },
-        orderBy: { created_at: 'desc' }
-      }),
-      prisma.premium_subscriptions.count({ where })
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM premium_subscriptions ps
+      LEFT JOIN app_users u ON ps.user_id = u.id
+      ${whereClause}
+    `;
+
+    const dataQuery = `
+      SELECT ps.*, u.name as user_name, u.email as user_email, pp.duration_days as plan_duration, pp.price as plan_price
+      FROM premium_subscriptions ps
+      LEFT JOIN app_users u ON ps.user_id = u.id
+      LEFT JOIN premium_plans pp ON ps.plan_id = pp.id
+      ${whereClause}
+      ORDER BY ps.created_at DESC
+      LIMIT $${paramIndex++} OFFSET $${paramIndex++}
+    `;
+
+    const [subscriptionsRes, totalCountRes] = await Promise.all([
+      query(dataQuery, [...params, limitNum, offset]),
+      query(countQuery, params)
     ]);
 
-    const totalPages = Math.ceil(totalCount / limitNum);
-
-    const formattedSubscriptions = subscriptions.map(s => ({
+    const subscriptions = subscriptionsRes.rows.map(s => ({
       ...s,
-      user_name: s.app_users?.name,
-      user_email: s.app_users?.email,
-      plan_duration: s.premium_plans?.duration_days,
-      plan_price: s.premium_plans?.price,
       status: s.is_active ? 'active' : 'expired'
     }));
+
+    const totalCount = parseInt(totalCountRes.rows[0].total);
+    const totalPages = Math.ceil(totalCount / limitNum);
 
     res.json({
       success: true,
       data: {
-        subscriptions: formattedSubscriptions,
+        subscriptions: subscriptions,
         pagination: {
           currentPage: pageNum,
           totalPages: totalPages,
@@ -318,17 +342,23 @@ export const getAllSubscriptions = async (req, res) => {
 // Get subscription statistics
 export const getSubscriptionStats = async (req, res) => {
   try {
-    const totalSubscriptions = await prisma.premium_subscriptions.count();
-    const activeSubscriptions = await prisma.premium_subscriptions.count({ where: { is_active: true } });
-    const expiredSubscriptions = await prisma.premium_subscriptions.count({ where: { is_active: false } });
+    const statsRes = await query(`
+      SELECT 
+        COUNT(*) as total_subscriptions,
+        SUM(CASE WHEN is_active = true THEN 1 ELSE 0 END) as active_subscriptions,
+        SUM(CASE WHEN is_active = false THEN 1 ELSE 0 END) as expired_subscriptions
+      FROM premium_subscriptions
+    `);
+
+    const row = statsRes.rows[0] || {};
 
     res.json({
       success: true,
       data: {
         overview: {
-          totalSubscriptions,
-          activeSubscriptions,
-          expiredSubscriptions,
+          totalSubscriptions: Number(row.total_subscriptions || 0),
+          activeSubscriptions: Number(row.active_subscriptions || 0),
+          expiredSubscriptions: Number(row.expired_subscriptions || 0),
           cancelledSubscriptions: 0
         },
         planStats: [],
@@ -350,24 +380,40 @@ export const exportSubscriptions = async (req, res) => {
   try {
     const { format = 'csv', status, planType, startDate, endDate } = req.query;
 
-    const where = {};
-    if (status === 'active') where.is_active = true;
-    if (status === 'expired') where.is_active = false;
-    if (planType) where.plan_name = planType;
-    if (startDate || endDate) {
-      where.started_at = {};
-      if (startDate) where.started_at.gte = new Date(startDate);
-      if (endDate) where.started_at.lte = new Date(endDate);
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramIndex = 1;
+    
+    if (status === 'active') {
+      whereClause += ` AND ps.is_active = true`;
+    } else if (status === 'expired') {
+      whereClause += ` AND ps.is_active = false`;
+    }
+    
+    if (planType) {
+      whereClause += ` AND ps.plan_name = $${paramIndex++}`;
+      params.push(planType);
+    }
+    
+    if (startDate) {
+      whereClause += ` AND ps.started_at >= $${paramIndex++}`;
+      params.push(new Date(startDate));
+    }
+    if (endDate) {
+      whereClause += ` AND ps.started_at <= $${paramIndex++}`;
+      params.push(new Date(endDate));
     }
 
-    const subscriptions = await prisma.premium_subscriptions.findMany({
-      where,
-      include: {
-        app_users: { select: { name: true, email: true } },
-        premium_plans: { select: { price: true, duration_days: true } }
-      },
-      orderBy: { created_at: 'desc' }
-    });
+    const subscriptionsRes = await query(`
+      SELECT ps.*, u.name as user_name, u.email as user_email, pp.duration_days as plan_duration, pp.price as plan_price
+      FROM premium_subscriptions ps
+      LEFT JOIN app_users u ON ps.user_id = u.id
+      LEFT JOIN premium_plans pp ON ps.plan_id = pp.id
+      ${whereClause}
+      ORDER BY ps.created_at DESC
+    `, params);
+
+    const subscriptions = subscriptionsRes.rows;
 
     if (format === 'csv') {
       const headers = [
@@ -383,11 +429,11 @@ export const exportSubscriptions = async (req, res) => {
       ];
 
       const csvData = subscriptions.map(s => [
-        s.app_users?.name || 'N/A',
-        s.app_users?.email || 'N/A',
+        s.user_name || 'N/A',
+        s.user_email || 'N/A',
         s.plan_name || 'N/A',
-        s.premium_plans?.duration_days || 'N/A',
-        s.premium_plans?.price || 'N/A',
+        s.plan_duration || 'N/A',
+        s.plan_price || 'N/A',
         s.is_active ? 'active' : 'expired',
         s.started_at || 'N/A',
         s.expires_at || 'N/A',

@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { prisma } from '../config/database.js';
+import { query } from '../config/database.js';
 
 /**
  * User Model - Handles all user-related database operations
