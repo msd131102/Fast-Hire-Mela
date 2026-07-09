@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import pkgPrisma from '@prisma/client';
+const { PrismaClient } = pkgPrisma;
 const prisma = new PrismaClient();
 
 // Get all payments with filtering and pagination

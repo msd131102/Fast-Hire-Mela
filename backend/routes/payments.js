@@ -1,5 +1,6 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import pkgPrisma from '@prisma/client';
+const { PrismaClient } = pkgPrisma;
 import { authenticateToken } from '../middleware/auth.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';

@@ -1,5 +1,6 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import pkgPrisma from '@prisma/client';
+const { PrismaClient } = pkgPrisma;
 
 const prisma = new PrismaClient();
 const router = express.Router();

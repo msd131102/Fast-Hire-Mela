@@ -3,7 +3,8 @@ const { Pool } = pkg;
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { PrismaClient } from '@prisma/client';
+import pkgPrisma from '@prisma/client';
+const { PrismaClient } = pkgPrisma;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

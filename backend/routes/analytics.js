@@ -1,5 +1,6 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import pkgPrisma from '@prisma/client';
+const { PrismaClient } = pkgPrisma;
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const prisma = new PrismaClient();
