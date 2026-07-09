@@ -481,7 +481,7 @@ CREATE TRIGGER update_pages_updated_at BEFORE UPDATE ON pages FOR EACH ROW EXECU
 
 -- View for active jobs with company and category details
 DROP VIEW IF EXISTS active_jobs_view CASCADE;
-CREATE OR REPLACE VIEW active_jobs_view AS
+CREATE OR REPLACE VIEW active_jobs_view WITH (security_invoker = on) AS
 SELECT 
     j.id,
     j.title,
@@ -531,7 +531,7 @@ WHERE j.is_active = true AND (j.expires_at IS NULL OR j.expires_at > CURRENT_TIM
 
 -- View for user statistics
 DROP VIEW IF EXISTS user_stats_view CASCADE;
-CREATE OR REPLACE VIEW user_stats_view AS
+CREATE OR REPLACE VIEW user_stats_view WITH (security_invoker = on) AS
 SELECT 
     COUNT(*) as total_users,
     (SELECT COUNT(*) FROM premium_subscriptions WHERE is_active = true AND expires_at > CURRENT_TIMESTAMP) as active_premium_users,
@@ -542,7 +542,7 @@ WHERE is_active = true;
 
 -- View for job statistics
 DROP VIEW IF EXISTS job_stats_view CASCADE;
-CREATE OR REPLACE VIEW job_stats_view AS
+CREATE OR REPLACE VIEW job_stats_view WITH (security_invoker = on) AS
 SELECT 
     COUNT(*) as total_jobs,
     COUNT(CASE WHEN is_active = true THEN 1 END) as active_jobs,
