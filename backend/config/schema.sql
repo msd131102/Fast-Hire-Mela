@@ -779,15 +779,19 @@ CREATE TABLE IF NOT EXISTS seo_analytics (
     analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insert default SEO settings
-INSERT INTO seo_settings (setting_type, page_type, meta_title, meta_description, is_active) VALUES
-('global', NULL, 'FastHireMela - Find Your Dream Job in India', 'FastHireMela is India''s leading job portal. Find thousands of jobs in IT, Marketing, Sales, Design, Finance and more. Apply now and get hired!', true),
-('homepage', NULL, 'FastHireMela - Latest Jobs in India | Apply Now', 'Discover the latest job opportunities in India on FastHireMela. Browse jobs by category, location, and company. Your dream job is just a click away!', true),
-('jobs', 'job_listing', 'Latest Jobs in {category} | FastHireMela', 'Find the latest {category} jobs in India. Browse through {count} job openings from top companies. Apply now on FastHireMela!', true),
-('jobs', 'job_detail', '{job_title} at {company} - {location} | FastHireMela', 'Apply for {job_title} position at {company} in {location}. {experience_level} role with {salary_range}. Posted {posted_date}. Apply now!', true),
-('companies', 'company_listing', 'Top Companies Hiring in India | FastHireMela', 'Browse and apply to jobs from top companies in India. Find your dream job at leading companies across various industries.', true),
-('companies', 'company_detail', 'Jobs at {company} | Careers & Opportunities', 'Explore career opportunities at {company}. View current job openings, company culture, benefits, and apply for positions that match your skills.', true)
-ON CONFLICT (setting_type, page_type) DO NOTHING;
+-- Insert default SEO settings only if the table is empty
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM seo_settings LIMIT 1) THEN
+        INSERT INTO seo_settings (setting_type, page_type, meta_title, meta_description, is_active) VALUES
+        ('global', NULL, 'FastHireMela - Find Your Dream Job in India', 'FastHireMela is India''s leading job portal. Find thousands of jobs in IT, Marketing, Sales, Design, Finance and more. Apply now and get hired!', true),
+        ('homepage', NULL, 'FastHireMela - Latest Jobs in India | Apply Now', 'Discover the latest job opportunities in India on FastHireMela. Browse jobs by category, location, and company. Your dream job is just a click away!', true),
+        ('jobs', 'job_listing', 'Latest Jobs in {category} | FastHireMela', 'Find the latest {category} jobs in India. Browse through {count} job openings from top companies. Apply now on FastHireMela!', true),
+        ('jobs', 'job_detail', '{job_title} at {company} - {location} | FastHireMela', 'Apply for {job_title} position at {company} in {location}. {experience_level} role with {salary_range}. Posted {posted_date}. Apply now!', true),
+        ('companies', 'company_listing', 'Top Companies Hiring in India | FastHireMela', 'Browse and apply to jobs from top companies in India. Find your dream job at leading companies across various industries.', true),
+        ('companies', 'company_detail', 'Jobs at {company} | Careers & Opportunities', 'Explore career opportunities at {company}. View current job openings, company culture, benefits, and apply for positions that match your skills.', true);
+    END IF;
+END $$;
 
 -- Insert default sitemap configurations
 INSERT INTO sitemap_config (name, url_pattern, priority, change_frequency) VALUES
