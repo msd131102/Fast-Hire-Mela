@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
     // Build WHERE conditions for admin
     if (search) {
       paramCount++;
-      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR j.company_name ILIKE $${paramCount})`);
+      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR  ILIKE $${paramCount})`);
       queryParams.push(`%${search}%`);
     }
 
@@ -65,8 +65,8 @@ router.get('/', async (req, res) => {
         j.id,
         j.title,
         j.slug,
-        j.company_name,
-        j.company_logo,
+        
+        
         j.location,
         j.salary_min,
         j.salary_max,
@@ -90,7 +90,7 @@ router.get('/', async (req, res) => {
           WHEN j.expires_at IS NOT NULL AND j.expires_at <= CURRENT_TIMESTAMP THEN 'expired'
           ELSE 'pending'
         END as status,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.logo_url as company_logo_url,
@@ -102,7 +102,7 @@ router.get('/', async (req, res) => {
       LEFT JOIN categories c ON j.category_id = c.id
       LEFT JOIN companies co ON j.company_id = co.id
       ${whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''}
-      ORDER BY j.${sortField} ${sortDirection}
+      ORDER BY ${sortField === 'company_name' ? 'co.name' : 'j.' + sortField} ${sortDirection}
       LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}
     `;
 
@@ -155,7 +155,7 @@ router.get('/:id', async (req, res) => {
     const jobQuery = `
       SELECT 
         j.*,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.name as company_details_name,

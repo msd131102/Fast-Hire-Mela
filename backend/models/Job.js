@@ -49,7 +49,7 @@ export class Job {
   static async findById(id) {
     try {
       const result = await query(`
-        SELECT j.*, c.name as category_name, co.name as company_name,
+        SELECT j.*, c.name as category_name, co.name as company_name, co.logo_url as company_logo, co.name as company_name,
                co.logo_url as company_logo, co.website as company_website
         FROM jobs j
         LEFT JOIN categories c ON j.category_id = c.id
@@ -101,7 +101,7 @@ export class Job {
       queryParams.push(limit, offset);
 
       const result = await query(`
-        SELECT j.*, c.name as category_name, co.name as company_name,
+        SELECT j.*, c.name as category_name, co.name as company_name, co.logo_url as company_logo, co.name as company_name,
                co.logo_url as company_logo
         FROM jobs j
         LEFT JOIN categories c ON j.category_id = c.id
@@ -205,7 +205,7 @@ export class Job {
   static async getFeatured(limit = 10) {
     try {
       const result = await query(`
-        SELECT j.*, c.name as category_name, co.name as company_name,
+        SELECT j.*, c.name as category_name, co.name as company_name, co.logo_url as company_logo, co.name as company_name,
                co.logo_url as company_logo
         FROM jobs j
         LEFT JOIN categories c ON j.category_id = c.id
@@ -258,7 +258,7 @@ export class Job {
       queryParams.push(limit, offset);
 
       const result = await query(`
-        SELECT j.*, c.name as category_name, co.name as company_name,
+        SELECT j.*, c.name as category_name, co.name as company_name, co.logo_url as company_logo, co.name as company_name,
                co.logo_url as company_logo
         FROM jobs j
         LEFT JOIN categories c ON j.category_id = c.id
@@ -362,7 +362,7 @@ export class Job {
   static async findFeatured(limit = 10, isPremium = false) {
     try {
       const result = await query(`
-        SELECT j.*, c.name as category_name, co.name as company_name,
+        SELECT j.*, c.name as category_name, co.name as company_name, co.logo_url as company_logo, co.name as company_name,
                co.logo_url as company_logo
         FROM jobs j
         LEFT JOIN categories c ON j.category_id = c.id
@@ -383,7 +383,7 @@ export class Job {
   static async findLatest(limit = 10, isPremium = false) {
     try {
       const result = await query(`
-        SELECT j.*, c.name as category_name, co.name as company_name,
+        SELECT j.*, c.name as category_name, co.name as company_name, co.logo_url as company_logo, co.name as company_name,
                co.logo_url as company_logo
         FROM jobs j
         LEFT JOIN categories c ON j.category_id = c.id
@@ -404,7 +404,7 @@ export class Job {
   static async findSimilar(jobId, categoryId, location, isPremium = false) {
     try {
       const result = await query(`
-        SELECT j.*, c.name as category_name, co.name as company_name,
+        SELECT j.*, c.name as category_name, co.name as company_name, co.logo_url as company_logo, co.name as company_name,
                co.logo_url as company_logo
         FROM jobs j
         LEFT JOIN categories c ON j.category_id = c.id

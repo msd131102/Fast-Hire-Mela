@@ -249,7 +249,7 @@ router.post('/register-with-otp', [
           name: user.name,
           email: user.email,
           phone: user.phone,
-          role: 'user': user.
+          role: user.role,
           profile_completed: user.profile_completed
         },
         token

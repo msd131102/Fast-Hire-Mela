@@ -464,7 +464,7 @@ router.post('/callback', async (req, res) => {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: 'user': user.
+          role: user.role,
           profile_completed: user.profile_completed
         },
         token

@@ -41,7 +41,7 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
 
     // Determine query source based on user status
     const isUserActive = req.user && req.user.is_active;
-    const querySource = isUserActive ? 'jobs' : 'visible_jobs';
+    const querySource = isUserActive ? 'jobs' : 'jobs';
 
     const {
       page = 1,
@@ -79,7 +79,7 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
 
     if (search) {
       paramCount++;
-      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR j.company_name ILIKE $${paramCount})`);
+      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR  ILIKE $${paramCount})`);
       queryParams.push(`%${search}%`);
     }
 
@@ -95,7 +95,7 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
       if (/^\d+$/.test(company)) {
         whereConditions.push(`j.company_id = $${paramCount}`);
       } else {
-        whereConditions.push(`j.company_name ILIKE $${paramCount}`);
+        whereConditions.push(` ILIKE $${paramCount}`);
       }
       queryParams.push(company);
     }
@@ -147,8 +147,8 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
         j.id,
         j.title,
         j.slug,
-        j.company_name,
-        j.company_logo,
+        
+        
         j.location,
         j.salary_min,
         j.salary_max,
@@ -164,7 +164,7 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
         j.is_featured,
         j.is_premium_only,
         j.view_count,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.logo_url as company_logo_url,
@@ -175,7 +175,7 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
       LEFT JOIN companies co ON j.company_id = co.id
       ${isUserActive ? 'LEFT JOIN app_users u ON j.posted_by = u.id' : ''}
       ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
-      ORDER BY j.${sortField} ${sortDirection}
+      ORDER BY ${sortField === 'company_name' ? 'co.name' : 'j.' + sortField} ${sortDirection}
       LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}
     `;
 
@@ -253,7 +253,7 @@ router.get('/latest', optionalAuth, async (req, res) => {
 
     // Determine query source based on user status
     const isUserActive = req.user && req.user.is_active;
-    const querySource = isUserActive ? 'jobs' : 'visible_jobs';
+    const querySource = isUserActive ? 'jobs' : 'jobs';
     const { limit = 6 } = req.query;
 
     const latestJobsQuery = `
@@ -261,8 +261,8 @@ router.get('/latest', optionalAuth, async (req, res) => {
         j.id,
         j.title,
         j.slug,
-        j.company_name,
-        j.company_logo,
+        
+        
         j.location,
         j.salary_min,
         j.salary_max,
@@ -278,7 +278,7 @@ router.get('/latest', optionalAuth, async (req, res) => {
         j.is_featured,
         j.is_premium_only,
         j.view_count,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.logo_url as company_logo_url,
@@ -352,7 +352,7 @@ router.get('/', optionalAuth, async (req, res) => {
 
     // Determine query source based on user status
     const isUserActive = req.user && req.user.is_active;
-    const querySource = isUserActive ? 'jobs' : 'visible_jobs';
+    const querySource = isUserActive ? 'jobs' : 'jobs';
     const {
       page = 1,
       limit = 10,
@@ -381,7 +381,7 @@ router.get('/', optionalAuth, async (req, res) => {
 
     if (search) {
       paramCount++;
-      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR j.company_name ILIKE $${paramCount})`);
+      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR  ILIKE $${paramCount})`);
       queryParams.push(`%${search}%`);
     }
 
@@ -408,7 +408,7 @@ router.get('/', optionalAuth, async (req, res) => {
       if (/^\d+$/.test(company)) {
         whereConditions.push(`j.company_id = $${paramCount}`);
       } else {
-        whereConditions.push(`j.company_name ILIKE $${paramCount}`);
+        whereConditions.push(` ILIKE $${paramCount}`);
       }
       queryParams.push(company);
     }
@@ -450,14 +450,14 @@ router.get('/', optionalAuth, async (req, res) => {
     const sortField = validSortFields.includes(sort_by) ? sort_by : 'posted_date';
     const sortDirection = sort_order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
-    // Main query using visible_jobs view
+    // Main query using jobs view
     const jobsQuery = `
       SELECT 
         j.id,
         j.title,
         j.slug,
-        j.company_name,
-        j.company_logo,
+        
+        
         j.location,
         j.salary_min,
         j.salary_max,
@@ -473,26 +473,26 @@ router.get('/', optionalAuth, async (req, res) => {
         j.is_featured,
         j.is_premium_only,
         j.view_count,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.logo_url as company_logo_url,
         co.website as company_website,
         co.description as company_description
-      FROM visible_jobs j
+      FROM jobs j
       LEFT JOIN categories c ON j.category_id = c.id
       LEFT JOIN companies co ON j.company_id = co.id
       ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
-      ORDER BY j.${sortField} ${sortDirection}
+      ORDER BY ${sortField === 'company_name' ? 'co.name' : 'j.' + sortField} ${sortDirection}
       LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}
     `;
 
     queryParams.push(parseInt(limit), offset);
 
-    // Count query using visible_jobs view
+    // Count query using jobs view
     const countQuery = `
       SELECT COUNT(*) as total
-      FROM visible_jobs j
+      FROM jobs j
       LEFT JOIN categories c ON j.category_id = c.id
       ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
     `;
@@ -717,8 +717,8 @@ router.get('/saved/list', authenticateToken, checkUserActive, async (req, res) =
         j.id,
         j.title,
         j.slug,
-        j.company_name,
-        j.company_logo,
+        
+        
         j.location,
         j.salary_min,
         j.salary_max,
@@ -733,7 +733,7 @@ router.get('/saved/list', authenticateToken, checkUserActive, async (req, res) =
         j.is_premium_only,
         j.view_count,
         sj.created_at as saved_at,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.logo_url as company_logo_url,
@@ -828,8 +828,8 @@ router.get('/recommendations/:userId?', authenticateToken, checkUserActive, asyn
           j.id,
           j.title,
           j.slug,
-          j.company_name,
-          j.company_logo,
+          
+          
           j.location,
           j.salary_min,
           j.salary_max,
@@ -841,7 +841,7 @@ router.get('/recommendations/:userId?', authenticateToken, checkUserActive, asyn
           j.application_deadline,
           j.is_featured,
           j.view_count,
-          c.name as category_name,
+          c.name as category_name, co.name as company_name, co.logo_url as company_logo,
           c.slug as category_slug,
           c.color as category_color,
           co.logo_url as company_logo_url,
@@ -914,8 +914,8 @@ router.get('/recommendations/:userId?', authenticateToken, checkUserActive, asyn
         j.id,
         j.title,
         j.slug,
-        j.company_name,
-        j.company_logo,
+        
+        
         j.location,
         j.salary_min,
         j.salary_max,
@@ -927,7 +927,7 @@ router.get('/recommendations/:userId?', authenticateToken, checkUserActive, asyn
         j.application_deadline,
         j.is_featured,
         j.view_count,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.logo_url as company_logo_url,
@@ -1121,7 +1121,7 @@ router.post('/search', async (req, res) => {
       whereConditions.push(`(
         j.title ILIKE $${paramCount} OR 
         j.description ILIKE $${paramCount} OR 
-        j.company_name ILIKE $${paramCount} OR
+         ILIKE $${paramCount} OR
         j.skills_required && ARRAY[$${paramCount}]
       )`);
       queryParams.push(`%${searchQuery}%`);
@@ -1188,7 +1188,7 @@ router.post('/search', async (req, res) => {
     if (sort_by === 'relevance' && searchQuery) {
       orderClause = `CASE 
         WHEN j.title ILIKE $1 THEN 1
-        WHEN j.company_name ILIKE $1 THEN 2
+        WHEN  ILIKE $1 THEN 2
         WHEN j.description ILIKE $1 THEN 3
         ELSE 4
       END, j.posted_date DESC`;
@@ -1205,8 +1205,8 @@ router.post('/search', async (req, res) => {
         j.id,
         j.title,
         j.slug,
-        j.company_name,
-        j.company_logo,
+        
+        
         j.location,
         j.salary_min,
         j.salary_max,
@@ -1222,7 +1222,7 @@ router.post('/search', async (req, res) => {
         j.is_featured,
         j.is_premium_only,
         j.view_count,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.logo_url as company_logo_url,
@@ -1231,7 +1231,7 @@ router.post('/search', async (req, res) => {
         -- Relevance score for search
         CASE 
           WHEN j.title ILIKE $1 THEN 1.0
-          WHEN j.company_name ILIKE $1 THEN 0.8
+          WHEN  ILIKE $1 THEN 0.8
           WHEN j.description ILIKE $1 THEN 0.6
           WHEN j.skills_required && ARRAY[$1] THEN 0.4
           ELSE 0.0
@@ -1378,8 +1378,8 @@ router.get('/:jobIdentifier/similar', async (req, res) => {
         j.id,
         j.title,
         j.slug,
-        j.company_name,
-        j.company_logo,
+        
+        
         j.location,
         j.salary_min,
         j.salary_max,
@@ -1392,7 +1392,7 @@ router.get('/:jobIdentifier/similar', async (req, res) => {
         j.is_featured,
         j.is_premium_only,
         j.view_count,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.logo_url as company_logo_url,
@@ -1475,7 +1475,7 @@ router.get('/:identifier', optionalAuth, async (req, res) => {
 
     // Determine query source based on user status
     const isUserActive = req.user && req.user.is_active;
-    const querySource = isUserActive ? 'jobs' : 'visible_jobs';
+    const querySource = isUserActive ? 'jobs' : 'jobs';
     
     const { identifier } = req.params;
     const userId = req.user?.id;
@@ -1487,7 +1487,7 @@ router.get('/:identifier', optionalAuth, async (req, res) => {
     const jobQuery = `
       SELECT 
         j.*,
-        c.name as category_name,
+        c.name as category_name, co.name as company_name, co.logo_url as company_logo,
         c.slug as category_slug,
         c.color as category_color,
         co.name as company_details_name,
