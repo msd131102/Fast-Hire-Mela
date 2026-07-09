@@ -362,7 +362,7 @@ CREATE INDEX IF NOT EXISTS idx_jobs_skills ON jobs USING gin(skills_required);
 
 -- Users table indexes
 CREATE INDEX IF NOT EXISTS idx_app_users_email ON app_users(email);
-CREATE INDEX IF NOT EXISTS idx_app_users_is_premium ON app_users(is_premium);
+
 CREATE INDEX IF NOT EXISTS idx_app_users_is_active ON app_users(is_active);
 CREATE INDEX IF NOT EXISTS idx_app_users_email_active ON app_users(email, is_active);
 
@@ -513,7 +513,7 @@ WHERE j.is_active = true AND (j.expires_at IS NULL OR j.expires_at > CURRENT_TIM
 CREATE OR REPLACE VIEW user_stats_view AS
 SELECT 
     COUNT(*) as total_users,
-    COUNT(CASE WHEN is_premium = true AND premium_expiry > CURRENT_TIMESTAMP THEN 1 END) as active_premium_users,
+    (SELECT COUNT(*) FROM premium_subscriptions WHERE is_active = true AND expires_at > CURRENT_TIMESTAMP) as active_premium_users,
     COUNT(CASE WHEN email_verified = true THEN 1 END) as verified_users,
     COUNT(CASE WHEN created_at >= CURRENT_DATE - INTERVAL '30 days' THEN 1 END) as new_users_last_30_days
 FROM app_users 
@@ -651,10 +651,11 @@ BEGIN
         max_applications := 10;
     END IF;
     
-    -- Check if user is premium (unlimited applications)
-    SELECT is_premium INTO max_applications
-    FROM app_users 
-    WHERE id = p_user_id AND is_premium = true AND premium_expiry > CURRENT_TIMESTAMP;
+    -- Check if user has an active premium subscription
+    PERFORM 1
+    FROM premium_subscriptions
+    WHERE user_id = p_user_id AND is_active = true AND expires_at > CURRENT_TIMESTAMP
+    LIMIT 1;
     
     IF FOUND THEN
         RETURN TRUE; -- Premium users have unlimited applications
