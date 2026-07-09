@@ -432,6 +432,7 @@ CREATE INDEX IF NOT EXISTS idx_pages_title ON pages USING gin(to_tsvector('engli
 -- =============================================
 
 -- Function to update updated_at timestamp
+DROP FUNCTION IF EXISTS update_updated_at_column() CASCADE;
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -476,6 +477,7 @@ CREATE TRIGGER update_pages_updated_at BEFORE UPDATE ON pages FOR EACH ROW EXECU
 -- =============================================
 
 -- View for active jobs with company and category details
+DROP VIEW IF EXISTS active_jobs_view CASCADE;
 CREATE OR REPLACE VIEW active_jobs_view AS
 SELECT 
     j.id,
@@ -527,6 +529,7 @@ LEFT JOIN companies co ON j.company_id = co.id
 WHERE j.is_active = true AND (j.expires_at IS NULL OR j.expires_at > CURRENT_TIMESTAMP);
 
 -- View for user statistics
+DROP VIEW IF EXISTS user_stats_view CASCADE;
 CREATE OR REPLACE VIEW user_stats_view AS
 SELECT 
     COUNT(*) as total_users,
@@ -537,6 +540,7 @@ FROM app_users
 WHERE is_active = true;
 
 -- View for job statistics
+DROP VIEW IF EXISTS job_stats_view CASCADE;
 CREATE OR REPLACE VIEW job_stats_view AS
 SELECT 
     COUNT(*) as total_jobs,
@@ -568,6 +572,7 @@ ON CONFLICT (email) DO NOTHING;
 -- =============================================
 
 -- Function to get job recommendations based on user profile
+DROP FUNCTION IF EXISTS get_job_recommendations(INTEGER, INTEGER) CASCADE;
 CREATE OR REPLACE FUNCTION get_job_recommendations(p_user_id INTEGER, p_limit INTEGER DEFAULT 10)
 RETURNS TABLE(job_id INTEGER, title VARCHAR, company_name VARCHAR, location VARCHAR, salary_min DECIMAL, salary_max DECIMAL, match_score NUMERIC) AS $$
 BEGIN
@@ -622,6 +627,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Function to clean up old analytics data (older than 90 days)
+DROP FUNCTION IF EXISTS cleanup_old_analytics() CASCADE;
 CREATE OR REPLACE FUNCTION cleanup_old_analytics()
 RETURNS INTEGER AS $$
 DECLARE
@@ -636,6 +642,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Function to update job view counts
+DROP FUNCTION IF EXISTS update_job_view_count(INTEGER) CASCADE;
 CREATE OR REPLACE FUNCTION update_job_view_count(p_job_id INTEGER)
 RETURNS VOID AS $$
 BEGIN
@@ -646,6 +653,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Function to check if user has reached daily application limit
+DROP FUNCTION IF EXISTS check_daily_application_limit(INTEGER) CASCADE;
 CREATE OR REPLACE FUNCTION check_daily_application_limit(p_user_id INTEGER)
 RETURNS BOOLEAN AS $$
 DECLARE
