@@ -70,11 +70,16 @@ CREATE TABLE IF NOT EXISTS premium_plans (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insert default premium plans
-INSERT INTO premium_plans (name, description, price, duration_days, features, is_popular) VALUES
-('Basic', 'Access to basic premium features', 299.00, 30, '{"unlimited_applications": true, "resume_builder": false, "priority_support": false}', false),
-('Professional', 'Most popular plan for job seekers', 599.00, 30, '{"unlimited_applications": true, "resume_builder": true, "priority_support": true, "ai_job_matching": false}', true),
-('Premium', 'Complete package with all features', 999.00, 30, '{"unlimited_applications": true, "resume_builder": true, "priority_support": true, "ai_job_matching": true, "career_coaching": true}', false);
+-- Insert default premium plans only if the table is empty
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM premium_plans LIMIT 1) THEN
+        INSERT INTO premium_plans (name, description, price, duration_days, features, is_popular) VALUES
+        ('Basic', 'Access to basic premium features', 299.00, 30, '{"unlimited_applications": true, "resume_builder": false, "priority_support": false}', false),
+        ('Professional', 'Most popular plan for job seekers', 599.00, 30, '{"unlimited_applications": true, "resume_builder": true, "priority_support": true, "ai_job_matching": false}', true),
+        ('Premium', 'Complete package with all features', 999.00, 30, '{"unlimited_applications": true, "resume_builder": true, "priority_support": true, "ai_job_matching": true, "career_coaching": true}', false);
+    END IF;
+END $$;
 
 -- =============================================
 -- ADMIN USERS TABLE
