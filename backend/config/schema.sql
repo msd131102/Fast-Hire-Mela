@@ -145,9 +145,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     title VARCHAR(200) NOT NULL,
     slug VARCHAR(200) NOT NULL UNIQUE,
     description TEXT NOT NULL,
-    company_name VARCHAR(200) NOT NULL,
     company_id INTEGER REFERENCES companies(id) ON DELETE SET NULL,
-    company_logo VARCHAR(500),
     location VARCHAR(200) NOT NULL,
     salary_min DECIMAL(10,2),
     salary_max DECIMAL(10,2),
@@ -484,9 +482,7 @@ SELECT
     j.title,
     j.slug,
     j.description,
-    j.company_name,
     j.company_id,
-    j.company_logo,
     j.location,
     j.salary_min,
     j.salary_max,
@@ -515,8 +511,8 @@ SELECT
     c.name as category_name,
     c.slug as category_slug,
     c.color as category_color,
-    co.name as company_details_name,
-    co.logo_url as company_logo_url,
+    co.name as company_name,
+    co.logo_url as company_logo,
     co.website as company_website,
     co.description as company_description,
     co.industry as company_industry,
@@ -588,7 +584,7 @@ BEGIN
         SELECT 
             j.id,
             j.title,
-            j.company_name,
+            co.name as company_name,
             j.location,
             j.salary_min,
             j.salary_max,
@@ -604,7 +600,9 @@ BEGIN
                 WHEN j.is_featured = true THEN 0.2
                 ELSE 0
             END as score
-        FROM jobs j, user_profile up
+        FROM jobs j
+        LEFT JOIN companies co ON j.company_id = co.id
+        CROSS JOIN user_profile up
         WHERE j.is_active = true 
         AND (j.expires_at IS NULL OR j.expires_at > CURRENT_TIMESTAMP)
         AND j.id NOT IN (
