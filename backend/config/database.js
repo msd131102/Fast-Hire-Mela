@@ -3,12 +3,15 @@ const { Pool } = pkg;
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { PrismaClient } from '@prisma/client';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load .env from backend directory
 dotenv.config({ path: join(__dirname, '..', '.env') });
+
+export const prisma = new PrismaClient();
 
 // Database connection pool optimized for 2000+ concurrent users
 const pool = new Pool({
@@ -80,77 +83,54 @@ pool.on('acquire', () => {
   console.log('🤝 Database connection acquired from pool');
 });
 
-// Helper function to execute queries with retry logic
-export const query = async (text, params, maxRetries = 3) => {
+// Helper function to execute queries using Prisma
+export const query = async (text, params = []) => {
   const start = Date.now();
-  let lastError;
-  
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      const res = await pool.query(text, params);
-      const duration = Date.now() - start;
-      
-      // Only log slow queries in production for performance monitoring
-      if (process.env.NODE_ENV === 'production' && duration > 100) {
-        console.log('📊 Slow query detected', { text, duration, rows: res.rowCount });
-      }
-      
-      // Log successful retry if applicable
-      if (attempt > 1) {
-        console.log(`✅ Query succeeded on attempt ${attempt}`);
-      }
-      
-      return res;
-    } catch (error) {
-      lastError = error;
-      
-      // Log retry attempt with error details
-      console.error(`❌ Query attempt ${attempt} failed:`, {
-        error: error.message,
-        code: error.code,
-        severity: error.severity,
-        detail: error.detail
-      });
-      
-      // Check if error is retryable (network-related)
-      const isRetryable = error.code === 'ENETUNREACH' || 
-                         error.code === 'ECONNRESET' || 
-                         error.code === 'ETIMEDOUT' ||
-                         error.code === 'ECONNREFUSED' ||
-                         error.severity === '08' || // Connection exceptions
-                         error.severity === '53';   // Insufficient resources
-      
-      // Don't retry on non-retryable errors
-      if (!isRetryable || attempt === maxRetries) {
-        console.error('❌ Query failed permanently:', error);
-        throw error;
-      }
-      
-      // Exponential backoff: wait 1s, 2s, 4s between retries
-      const backoffDelay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
-      console.log(`🔄 Retrying query in ${backoffDelay}ms... (attempt ${attempt}/${maxRetries})`);
-      await new Promise(resolve => setTimeout(resolve, backoffDelay));
+  try {
+    // Execute raw query using Prisma
+    // Note: params must be spread since $queryRawUnsafe accepts them as varargs
+    const rows = await prisma.$queryRawUnsafe(text, ...params);
+    const duration = Date.now() - start;
+    
+    if (process.env.NODE_ENV === 'production' && duration > 100) {
+      console.log('📊 Slow query detected', { text, duration, rows: Array.isArray(rows) ? rows.length : 0 });
     }
+    
+    // Return pg-compatible result object
+    return {
+      rows: Array.isArray(rows) ? rows : [],
+      rowCount: Array.isArray(rows) ? rows.length : 0
+    };
+  } catch (error) {
+    console.error(`❌ Query failed:`, {
+      error: error.message,
+      code: error.code
+    });
+    throw error;
   }
-  
-  // This should never be reached, but just in case
-  throw lastError;
 };
 
-// Helper function to execute transactions
+// Helper function to execute transactions using Prisma
 export const transaction = async (callback) => {
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    const result = await callback(client);
-    await client.query('COMMIT');
-    return result;
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally {
-    client.release();
-  }
+  // Prisma interactive transactions
+  return await prisma.$transaction(async (tx) => {
+    // Provide a mocked client that implements the expected query method for backward compatibility
+    const mockClient = {
+      query: async (text, params = []) => {
+        const rows = await tx.$queryRawUnsafe(text, ...params);
+        return {
+          rows: Array.isArray(rows) ? rows : [],
+          rowCount: Array.isArray(rows) ? rows.length : 0
+        };
+      },
+      release: () => {}
+    };
+    
+    return await callback(mockClient);
+  }, {
+    maxWait: 15000,
+    timeout: 30000
+  });
 };
 
 // Initialize database tables - using comprehensive schema
@@ -268,6 +248,7 @@ export const testConnection = async () => {
 // Close all connections
 export const closePool = async () => {
   await pool.end();
+  await prisma.$disconnect();
   console.log('🔒 Database connection pool closed');
 };
 

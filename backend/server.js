@@ -223,7 +223,7 @@ const startServer = async () => {
 async function checkUserPremium(userId) {
   try {
     const result = await query(
-      'SELECT is_premium, premium_expiry FROM app_users WHERE id = $1',
+      'SELECT  FROM app_users WHERE id = $1',
       [userId]
     );
     

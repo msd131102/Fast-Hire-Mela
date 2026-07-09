@@ -328,7 +328,12 @@ const Settings = () => {
                       { key: 'email_notifications', label: 'General Email Notifications', desc: 'Updates about your applications and profile views' },
                       { key: 'job_alerts', label: 'Smart Job Alerts', desc: 'Personalized notifications for matching opportunities' },
                       { key: 'newsletter_subscription', label: 'Industry Insights Newsletter', desc: 'Weekly digest of top trends and hiring news' }
-                    ].map(setting => (
+                    ].map(setting => {
+                      // Read from notification_preferences object, defaulting to true if not set
+                      const isChecked = profileData.notification_preferences ? 
+                        profileData.notification_preferences[setting.key] !== false : true;
+                        
+                      return (
                       <label key={setting.key} className="group flex items-center justify-between p-6 border border-border rounded-2xl hover:border-primary-500 hover:bg-primary-500/10 transition-all cursor-pointer">
                         <div className="max-w-[80%]">
                           <div className="font-bold text-text group-hover:text-primary-400 transition-colors">{setting.label}</div>
@@ -337,16 +342,45 @@ const Settings = () => {
                         <div className="relative inline-flex items-center cursor-pointer">
                             <input
                             type="checkbox"
-                            checked={profileData[setting.key]}
-                            onChange={(e) => {
-                                setProfileData(prev => ({ ...prev, [setting.key]: e.target.checked }));
-                                handleSettingsUpdate(setting.key);
+                            checked={isChecked}
+                            onChange={async (e) => {
+                                const newChecked = e.target.checked;
+                                const newPrefs = {
+                                  ...profileData.notification_preferences,
+                                  [setting.key]: newChecked
+                                };
+                                setProfileData(prev => ({ 
+                                  ...prev, 
+                                  notification_preferences: newPrefs 
+                                }));
+                                
+                                // Update backend via userAPI immediately
+                                setLoading(true);
+                                try {
+                                  const response = await userAPI.updateProfile({
+                                    notification_preferences: newPrefs
+                                  });
+                                  if (response.success) {
+                                    toast.success(`${setting.label} updated successfully!`);
+                                  } else {
+                                    toast.error(response.message || 'Failed to update setting');
+                                    // Revert on fail
+                                    setProfileData(prev => ({
+                                      ...prev,
+                                      notification_preferences: profileData.notification_preferences
+                                    }));
+                                  }
+                                } catch (error) {
+                                  toast.error('Failed to update setting');
+                                } finally {
+                                  setLoading(false);
+                                }
                             }}
                             className="w-6 h-6 rounded-lg border-border text-primary-500 focus:ring-primary-500 transition-all"
                             />
                         </div>
                       </label>
-                    ))}
+                    )})}
                   </div>
                 </motion.div>
               )}

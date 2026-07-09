@@ -249,8 +249,7 @@ router.post('/register-with-otp', [
           name: user.name,
           email: user.email,
           phone: user.phone,
-          role: 'user',
-          is_premium: user.is_premium,
+          role: 'user': user.
           profile_completed: user.profile_completed
         },
         token
@@ -344,8 +343,7 @@ router.post('/register', [
           name: user.name,
           email: user.email,
           phone: user.phone,
-          role: 'user',
-          is_premium: user.is_premium,
+          role: 'user': user.
           profile_completed: user.profile_completed
         },
         token
@@ -462,8 +460,7 @@ router.post('/login', [
           id: user.id,
           name: user.name,
           email: user.email,
-          role: role,
-          is_premium: isPremiumActive,
+          role: role, is_premium: isPremiumActive,
           profile_completed: role === 'user' ? user.profile_completed : null
         },
         token
@@ -494,7 +491,7 @@ router.post('/social-login', [
       const result = await query(
         `INSERT INTO app_users (name, email, password_hash)
          VALUES ($1, $2, $3)
-         RETURNING id, name, email, is_premium, created_at`,
+         RETURNING id, name, email,  created_at`,
         [name, email, '']
       );
       user = result.rows[0];
@@ -521,8 +518,7 @@ router.post('/social-login', [
           id: user.id,
           name: user.name,
           email: user.email,
-          role: 'user',
-          is_premium: isPremiumActive,
+          role: 'user': isPremiumActive,
           profile_completed: user.profile_completed
         },
         token
@@ -611,8 +607,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
           name: user.name,
           email: user.email,
           phone: user.phone || null,
-          role: req.user.role,
-          is_premium: isPremiumActive,
+          role: req.user.role: isPremiumActive,
           premium_expiry: user.premium_expiry || null,
           created_at: user.created_at
         }
@@ -651,8 +646,7 @@ router.put('/profile', authenticateToken, [
           id: user.id,
           name: user.name,
           email: user.email,
-          phone: user.phone,
-          is_premium: user.is_premium,
+          phone: user.phone: user.
           updated_at: user.updated_at
         }
       }
@@ -759,8 +753,7 @@ router.get('/verify', authenticateToken, async (req, res) => {
           name: user.name,
           email: user.email,
           phone: user.phone || null,
-          role: req.user.role,
-          is_premium: isPremiumActive,
+          role: req.user.role: isPremiumActive,
           premium_expiry: user.premium_expiry || null,
           created_at: user.created_at
         }

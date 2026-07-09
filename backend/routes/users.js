@@ -257,7 +257,7 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
               skills, resume_url, portfolio_url, preferred_job_types,
               preferred_locations, preferred_salary_min, preferred_salary_max,
               salary_currency, is_open_to_work, profile_visibility, profile_picture,
-              is_premium, premium_expiry, is_active, created_at, updated_at 
+               is_active, created_at, updated_at 
        FROM app_users 
        WHERE id = $1`,
       [userId]
@@ -331,8 +331,6 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        is_premium: user.is_premium,
-        premium_expiry: user.premium_expiry,
         is_active: user.is_active,
         created_at: user.created_at
       },
@@ -376,7 +374,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
               skills, resume_url, portfolio_url, profile_picture, preferred_job_types,
               preferred_locations, preferred_salary_min, preferred_salary_max,
               salary_currency, is_open_to_work, profile_visibility,
-              is_premium, premium_expiry, is_active, created_at, updated_at 
+               is_active, created_at, updated_at 
        FROM app_users 
        WHERE id = $1`,
       [userId]
@@ -424,8 +422,6 @@ router.get('/profile', authenticateToken, async (req, res) => {
           salary_currency: user.salary_currency,
           is_open_to_work: user.is_open_to_work,
           profile_visibility: user.profile_visibility,
-          is_premium: user.is_premium,
-          premium_expiry: user.premium_expiry,
           is_active: user.is_active,
           created_at: user.created_at,
           updated_at: user.updated_at
@@ -478,7 +474,7 @@ router.put('/profile', [
       linkedin_url, github_url, experience_years, current_job_title, current_company,
       industry, education_level, skills, portfolio_url, profile_picture, preferred_job_types,
       preferred_locations, preferred_salary_min, preferred_salary_max, salary_currency,
-      is_open_to_work, profile_visibility
+      is_open_to_work, profile_visibility, notification_preferences
     } = req.body;
     const { query } = await import('../config/database.js');
 
@@ -492,7 +488,7 @@ router.put('/profile', [
       linkedin_url, github_url, experience_years, current_job_title, current_company,
       industry, education_level, skills, portfolio_url, profile_picture, preferred_job_types,
       preferred_locations, preferred_salary_min, preferred_salary_max, salary_currency,
-      is_open_to_work, profile_visibility
+      is_open_to_work, profile_visibility, notification_preferences
     };
 
     // Filter out profile_url as it doesn't exist in database
@@ -532,7 +528,7 @@ router.put('/profile', [
               skills, resume_url, portfolio_url, preferred_job_types,
               preferred_locations, preferred_salary_min, preferred_salary_max,
               salary_currency, is_open_to_work, profile_visibility, profile_picture,
-              is_premium, premium_expiry, is_active, updated_at
+              notification_preferences, is_active, updated_at
     `;
 
     const result = await query(updateQuery, updateValues);
@@ -580,8 +576,7 @@ router.put('/profile', [
           salary_currency: updatedUser.salary_currency,
           is_open_to_work: updatedUser.is_open_to_work,
           profile_visibility: updatedUser.profile_visibility,
-          is_premium: updatedUser.is_premium,
-          premium_expiry: updatedUser.premium_expiry,
+          notification_preferences: updatedUser.notification_preferences,
           is_active: updatedUser.is_active,
           updated_at: updatedUser.updated_at
         }
@@ -1241,7 +1236,7 @@ router.post('/', [
   body('is_active').optional().isBoolean().withMessage('is_active must be a boolean')
 ], validateRequest, async (req, res) => {
   try {
-    const { name, email, password, phone, is_premium, premium_expiry, is_active } = req.body;
+    const { name, email, password, phone,  is_active } = req.body;
     const { query } = await import('../config/database.js');
 
     // Check if user already exists
@@ -1263,10 +1258,10 @@ router.post('/', [
 
     // Create user
     const newUser = await query(
-      `INSERT INTO app_users (name, email, password_hash, phone, is_premium, premium_expiry, is_active) 
+      `INSERT INTO app_users (name, email, password_hash, phone,  is_active) 
        VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING id, name, email, phone, is_premium, premium_expiry, is_active, created_at`,
-      [name, email, hashedPassword, phone || null, is_premium || false, premium_expiry || null, is_active !== false]
+       RETURNING id, name, email, phone,  is_active, created_at`,
+      [name, email, hashedPassword, phone || null || false, premium_expiry || null, is_active !== false]
     );
 
     const user = newUser.rows[0];
@@ -1280,8 +1275,6 @@ router.post('/', [
           name: user.name,
           email: user.email,
           phone: user.phone,
-          is_premium: user.is_premium,
-          premium_expiry: user.premium_expiry,
           is_active: user.is_active,
           created_at: user.created_at
         }
@@ -1329,7 +1322,7 @@ router.get('/', requireAdmin, async (req, res) => {
 
     const usersResult = await query(`
       SELECT 
-        id, name, email, phone, is_premium, premium_expiry, 
+        id, name, email, phone,  
         is_active, CASE WHEN is_active = true THEN 'active' ELSE 'inactive' END as status,
         created_at, updated_at
       FROM app_users 
@@ -1372,7 +1365,7 @@ router.get('/:id', requireAdmin, async (req, res) => {
 
     const userResult = await query(`
       SELECT 
-        id, name, email, phone, is_premium, premium_expiry, 
+        id, name, email, phone,  
         is_active, CASE WHEN is_active = true THEN 'active' ELSE 'inactive' END as status,
         created_at, updated_at
       FROM app_users 
@@ -1424,7 +1417,7 @@ router.put('/:id', [
 ], validateRequest, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, phone, is_premium, premium_expiry, is_active } = req.body;
+    const { name, phone,  is_active } = req.body;
     const { query } = await import('../config/database.js');
 
     // Check if user exists
@@ -1484,7 +1477,7 @@ router.put('/:id', [
       UPDATE app_users 
       SET ${updateFields.join(', ')}
       WHERE id = $${paramCount}
-      RETURNING id, name, email, phone, is_premium, premium_expiry, is_active, updated_at
+      RETURNING id, name, email, phone,  is_active, updated_at
     `;
 
     const result = await query(updateQuery, updateValues);

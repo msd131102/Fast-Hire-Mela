@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { query } from '../config/database.js';
+import { prisma } from '../config/database.js';
 
 /**
  * User Model - Handles all user-related database operations
@@ -107,8 +107,9 @@ export class User {
    */
   static async findByEmail(email) {
     try {
-      const result = await query('SELECT * FROM app_users WHERE email = $1', [email]);
-      return result.rows[0] || null;
+      return await prisma.app_users.findUnique({
+        where: { email }
+      });
     } catch (error) {
       console.error('Error finding user by email:', error);
       throw new Error('Failed to find user by email');
@@ -122,8 +123,9 @@ export class User {
    */
   static async findById(id) {
     try {
-      const result = await query('SELECT * FROM app_users WHERE id = $1', [id]);
-      return result.rows[0] || null;
+      return await prisma.app_users.findUnique({
+        where: { id: parseInt(id) }
+      });
     } catch (error) {
       console.error('Error finding user by ID:', error);
       throw new Error('Failed to find user by ID');
@@ -133,28 +135,31 @@ export class User {
   /**
    * Create new user
    * @param {Object} userData - User data
-   * @param {string} userData.name - User name
-   * @param {string} userData.email - User email
-   * @param {string} userData.password - Plain password
-   * @param {string} userData.phone - User phone (optional)
    * @returns {Promise<Object>} Created user object
    */
   static async create(userData) {
     try {
       const { name, email, password, phone } = userData;
-      
-      // Hash password with strong salt rounds
       const saltRounds = 12;
       const passwordHash = await bcrypt.hash(password, saltRounds);
       
-      const result = await query(
-        `INSERT INTO app_users (name, email, password_hash, phone) 
-         VALUES ($1, $2, $3, $4) 
-         RETURNING id, name, email, phone, is_premium, premium_expiry, is_active, email_verified, created_at`,
-        [name, email, passwordHash, phone]
-      );
-      
-      return result.rows[0];
+      return await prisma.app_users.create({
+        data: {
+          name,
+          email,
+          password_hash: passwordHash,
+          phone
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          is_active: true,
+          email_verified: true,
+          created_at: true
+        }
+      });
     } catch (error) {
       console.error('Error creating user:', error);
       throw new Error('Failed to create user');
@@ -356,7 +361,7 @@ export class User {
         `UPDATE app_users 
          SET is_premium = true, premium_expiry = $1, updated_at = CURRENT_TIMESTAMP 
          WHERE id = $2 
-         RETURNING id, name, email, is_premium, premium_expiry`,
+         RETURNING id, name, email`,
         [expiryDate, id]
       );
       return result.rows[0];
@@ -418,7 +423,7 @@ export class User {
   static async getAll(limit = 50, offset = 0) {
     try {
       const result = await query(
-        `SELECT id, name, email, phone, is_premium, premium_expiry, is_active, email_verified, created_at 
+        `SELECT id, name, email, phone,  is_active, email_verified, created_at 
          FROM app_users 
          ORDER BY created_at DESC 
          LIMIT $1 OFFSET $2`,
@@ -440,7 +445,7 @@ export class User {
   static async search(searchTerm, limit = 20) {
     try {
       const result = await query(
-        `SELECT id, name, email, phone, is_premium, premium_expiry, is_active, created_at 
+        `SELECT id, name, email, phone,  is_active, created_at 
          FROM app_users 
          WHERE (name ILIKE $1 OR email ILIKE $1) AND is_active = true 
          ORDER BY name ASC 
@@ -463,7 +468,7 @@ export class User {
     try {
       const result = await query(
         `SELECT 
-          id, name, email, phone, is_premium, premium_expiry, is_active, email_verified, created_at, updated_at,
+          id, name, email, phone,  is_active, email_verified, created_at, updated_at,
           first_name, last_name, city, state, country, postal_code, address, bio, website_url,
           linkedin_url, github_url, experience_years, current_job_title, current_company, industry,
           education_level, skills, resume_url, portfolio_url, profile_url, profile_picture, preferred_job_types,
@@ -550,7 +555,7 @@ export class User {
   static async getByType(userType, limit = 50, offset = 0) {
     try {
       const result = await query(
-        `SELECT id, name, email, phone, is_premium, premium_expiry, is_active, email_verified, created_at 
+        `SELECT id, name, email, phone,  is_active, email_verified, created_at 
          FROM app_users 
          WHERE user_type = $1 AND is_active = true 
          ORDER BY created_at DESC 
@@ -572,7 +577,7 @@ export class User {
   static async isPremium(id) {
     try {
       const result = await query(
-        `SELECT is_premium, premium_expiry 
+        `SELECT  
          FROM app_users 
          WHERE id = $1 AND is_active = true`,
         [id]
@@ -580,7 +585,7 @@ export class User {
       
       if (result.rows.length === 0) return false;
       
-      const { is_premium, premium_expiry } = result.rows[0];
+      const {  } = result.rows[0];
       
       if (!is_premium) return false;
       

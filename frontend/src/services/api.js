@@ -226,7 +226,6 @@ export const analyticsAPI = {
 // Settings API
 export const settingsAPI = {
   getSettings: () => api.get('/settings/user'),
-  updateSettings: (settingsData) => api.put('/settings/user', settingsData),
   getNotifications: () => api.get('/settings/notifications'),
   updateNotifications: (notificationSettings) => api.put('/settings/notifications', notificationSettings),
   getGeneral: () => api.get('/settings/general'),

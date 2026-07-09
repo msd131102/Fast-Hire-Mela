@@ -128,8 +128,7 @@ router.get('/github', async (req, res) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: 'user',
-      is_premium: user.is_premium,
+      role: 'user': user.
       profile_completed: user.profile_completed
     }))}`;
 
@@ -327,8 +326,7 @@ router.get('/linkedin', async (req, res) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: 'user',
-      is_premium: user.is_premium,
+      role: 'user': user.
       profile_completed: user.profile_completed
     }))}`;
 
