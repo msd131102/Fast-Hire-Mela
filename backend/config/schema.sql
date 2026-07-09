@@ -100,9 +100,7 @@ CREATE TABLE IF NOT EXISTS app_users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
-    is_premium BOOLEAN DEFAULT false,
-    premium_plan_id INTEGER REFERENCES premium_plans(id) ON DELETE SET NULL,
-    premium_expiry TIMESTAMP,
+
     is_active BOOLEAN DEFAULT true,
     email_verified BOOLEAN DEFAULT false,
     phone_verified BOOLEAN DEFAULT false,
@@ -208,18 +206,6 @@ CREATE TABLE IF NOT EXISTS job_applications (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- =============================================
--- JOB VIEWS TABLE (For detailed analytics)
--- =============================================
-CREATE TABLE IF NOT EXISTS job_views (
-    id SERIAL PRIMARY KEY,
-    job_id INTEGER REFERENCES jobs(id) ON DELETE CASCADE,
-    user_id INTEGER REFERENCES app_users(id) ON DELETE SET NULL,
-    ip_address INET,
-    user_agent TEXT,
-    referrer VARCHAR(500),
-    viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 -- =============================================
 -- NEWSLETTER SUBSCRIPTIONS TABLE
@@ -285,22 +271,6 @@ CREATE TABLE IF NOT EXISTS payment_transactions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- =============================================
--- PAYMENTS TABLE (Legacy - for compatibility)
--- =============================================
-CREATE TABLE IF NOT EXISTS payments (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES app_users(id) ON DELETE CASCADE,
-    plan_id INTEGER REFERENCES premium_plans(id) ON DELETE CASCADE,
-    razorpay_order_id VARCHAR(100),
-    razorpay_payment_id VARCHAR(100),
-    razorpay_signature VARCHAR(500),
-    amount DECIMAL(10,2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'INR',
-    status VARCHAR(20) DEFAULT 'created' CHECK (status IN ('created', 'completed', 'failed', 'refunded')),
-    paid_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 -- =============================================
 -- ANALYTICS TABLE
@@ -329,55 +299,8 @@ CREATE TABLE IF NOT EXISTS contact_messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- =============================================
--- ACTIVITY LOG TABLE
--- =============================================
-CREATE TABLE IF NOT EXISTS activity (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES app_users(id) ON DELETE SET NULL,
-    action VARCHAR(100) NOT NULL, -- 'login', 'job_view', 'job_apply', 'profile_update', etc.
-    entity_type VARCHAR(50), -- 'job', 'company', 'profile', etc.
-    entity_id INTEGER, -- ID of the entity
-    ip_address INET,
-    user_agent TEXT,
-    metadata JSONB, -- Additional activity data
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
--- =============================================
--- SESSIONS TABLE
--- =============================================
-CREATE TABLE IF NOT EXISTS sessions (
-    id SERIAL PRIMARY KEY,
-    session_id VARCHAR(255) NOT NULL UNIQUE,
-    user_id INTEGER REFERENCES app_users(id) ON DELETE CASCADE,
-    ip_address INET,
-    user_agent TEXT,
-    is_active BOOLEAN DEFAULT true,
-    expires_at TIMESTAMP NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
--- =============================================
--- CONTACTS TABLE (Enhanced contact management)
--- =============================================
-CREATE TABLE IF NOT EXISTS contacts (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    company VARCHAR(200),
-    subject VARCHAR(200) NOT NULL,
-    message TEXT NOT NULL,
-    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'resolved', 'closed')),
-    priority VARCHAR(10) DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
-    is_read BOOLEAN DEFAULT false,
-    notes TEXT,
-    assigned_to INTEGER REFERENCES admins(id) ON DELETE SET NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 -- =============================================
 -- PAGES TABLE
@@ -450,9 +373,9 @@ CREATE INDEX IF NOT EXISTS idx_job_applications_status ON job_applications(appli
 CREATE INDEX IF NOT EXISTS idx_job_applications_applied_at ON job_applications(applied_at);
 
 -- Job views indexes
-CREATE INDEX IF NOT EXISTS idx_job_views_job_id ON job_views(job_id);
-CREATE INDEX IF NOT EXISTS idx_job_views_user_id ON job_views(user_id);
-CREATE INDEX IF NOT EXISTS idx_job_views_viewed_at ON job_views(viewed_at);
+
+
+
 
 -- Analytics indexes
 CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics(event_type);
@@ -471,8 +394,8 @@ CREATE INDEX IF NOT EXISTS idx_job_alerts_category_id ON job_alerts(category_id)
 -- Payment indexes
 CREATE INDEX IF NOT EXISTS idx_payment_transactions_user_id ON payment_transactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_payment_transactions_status ON payment_transactions(status);
-CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id);
-CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
+
+
 
 -- Pages indexes
 CREATE INDEX IF NOT EXISTS idx_pages_slug ON pages(slug);
@@ -483,26 +406,26 @@ CREATE INDEX IF NOT EXISTS idx_pages_created_at ON pages(created_at);
 CREATE INDEX IF NOT EXISTS idx_pages_title ON pages USING gin(to_tsvector('english', title));
 
 -- Contacts indexes
-CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email);
-CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status);
-CREATE INDEX IF NOT EXISTS idx_contacts_priority ON contacts(priority);
-CREATE INDEX IF NOT EXISTS idx_contacts_is_read ON contacts(is_read);
-CREATE INDEX IF NOT EXISTS idx_contacts_assigned_to ON contacts(assigned_to);
-CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at);
+
+
+
+
+
+
 
 -- Activity indexes
-CREATE INDEX IF NOT EXISTS idx_activity_user_id ON activity(user_id);
-CREATE INDEX IF NOT EXISTS idx_activity_action ON activity(action);
-CREATE INDEX IF NOT EXISTS idx_activity_entity_type ON activity(entity_type);
-CREATE INDEX IF NOT EXISTS idx_activity_entity_id ON activity(entity_id);
-CREATE INDEX IF NOT EXISTS idx_activity_created_at ON activity(created_at);
+
+
+
+
+
 
 -- Sessions indexes
-CREATE INDEX IF NOT EXISTS idx_sessions_session_id ON sessions(session_id);
-CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
-CREATE INDEX IF NOT EXISTS idx_sessions_is_active ON sessions(is_active);
-CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
-CREATE INDEX IF NOT EXISTS idx_sessions_created_at ON sessions(created_at);
+
+
+
+
+
 
 -- =============================================
 -- TRIGGERS FOR UPDATED_AT COLUMNS
