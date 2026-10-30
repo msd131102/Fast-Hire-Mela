@@ -540,19 +540,53 @@ router.post('/', [
       is_active = true
     } = req.body;
 
-    // Resolve company_id or create company if company_name provided
+    // Resolve company_id: verify existence or create if needed
     let finalCompanyId = company_id && company_id.toString().trim() !== '' ? parseInt(company_id) : null;
     let finalCompanyName = (company_name || '').trim();
 
-    if (!finalCompanyId && finalCompanyName) {
-      const compCheck = await query('SELECT id FROM companies WHERE LOWER(name) = LOWER($1)', [finalCompanyName]);
-      if (compCheck.rows.length > 0) {
-        finalCompanyId = compCheck.rows[0].id;
-      } else {
-        const compSlug = finalCompanyName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+    // If company_id is provided, verify it actually exists in the database
+    if (finalCompanyId) {
+      const existingComp = await query('SELECT id FROM companies WHERE id = $1', [finalCompanyId]);
+      if (existingComp.rows.length === 0) {
+        // Provided company_id does not exist!
+        finalCompanyId = null;
+      }
+    }
+
+    // If no valid company_id but we have a name or logo, find or create the company
+    if (!finalCompanyId) {
+      if (!finalCompanyName && finalCompanyId === null && company_id) {
+        // If user typed a custom company name in company_id field or logo exists
+        finalCompanyName = 'Company ' + company_id;
+      }
+
+      if (finalCompanyName) {
+        const compCheck = await query('SELECT id FROM companies WHERE LOWER(name) = LOWER($1)', [finalCompanyName]);
+        if (compCheck.rows.length > 0) {
+          finalCompanyId = compCheck.rows[0].id;
+        } else {
+          // Sync sequence first to prevent duplicate key
+          try {
+            await query("SELECT setval('companies_id_seq', COALESCE((SELECT MAX(id) FROM companies), 0) + 1, false)");
+          } catch(seqErr) {}
+
+          const compSlug = finalCompanyName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+          const newComp = await query(
+            'INSERT INTO companies (name, slug, logo_url, is_active) VALUES ($1, $2, $3, true) RETURNING id',
+            [finalCompanyName, compSlug, company_logo || null]
+          );
+          finalCompanyId = newComp.rows[0].id;
+        }
+      } else if (company_logo) {
+        // Name not provided but logo provided
+        const defaultName = title.split(' ')[0] + ' Employer';
+        const compSlug = defaultName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+        try {
+          await query("SELECT setval('companies_id_seq', COALESCE((SELECT MAX(id) FROM companies), 0) + 1, false)");
+        } catch(seqErr) {}
         const newComp = await query(
           'INSERT INTO companies (name, slug, logo_url, is_active) VALUES ($1, $2, $3, true) RETURNING id',
-          [finalCompanyName, compSlug, company_logo || null]
+          [defaultName, compSlug, company_logo]
         );
         finalCompanyId = newComp.rows[0].id;
       }
