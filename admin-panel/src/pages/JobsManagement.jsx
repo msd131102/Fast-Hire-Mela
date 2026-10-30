@@ -802,6 +802,8 @@ const JobForm = ({ initialData, onSubmit, onCancel }) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [companiesList, setCompaniesList] = useState([]);
+  const [companiesLoading, setCompaniesLoading] = useState(true);
 
   // Initialize form data when initialData changes
   useEffect(() => {
@@ -879,7 +881,24 @@ const JobForm = ({ initialData, onSubmit, onCancel }) => {
       }
     };
 
+    const fetchCompanies = async () => {
+      try {
+        const response = await fetch('/api/admin/companies');
+        const data = await response.json();
+        if (data && data.data && data.data.companies) {
+          setCompaniesList(data.data.companies);
+        } else if (Array.isArray(data.data)) {
+          setCompaniesList(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching companies:', err);
+      } finally {
+        setCompaniesLoading(false);
+      }
+    };
+
     fetchCategories();
+    fetchCompanies();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -919,16 +938,30 @@ const JobForm = ({ initialData, onSubmit, onCancel }) => {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Company ID
+            Company
           </label>
-          <input
-            type="number"
+          <select
             name="company_id"
             value={formData.company_id}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Optional - Leave empty if not associated with a company"
-          />
+            onChange={(e) => {
+              const selectedId = e.target.value;
+              const selectedComp = companiesList.find(c => String(c.id) === String(selectedId));
+              setFormData(prev => ({
+                ...prev,
+                company_id: selectedId,
+                company_name: selectedComp ? selectedComp.name : prev.company_name,
+                company_logo: selectedComp && selectedComp.logo_url ? selectedComp.logo_url : prev.company_logo
+              }));
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+          >
+            <option value="">-- Select Company (or enter custom logo below) --</option>
+            {companiesList.map(comp => (
+              <option key={comp.id} value={comp.id}>
+                {comp.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -954,18 +987,19 @@ const JobForm = ({ initialData, onSubmit, onCancel }) => {
             )}
           </div>
           {formData.company_logo && (
-            <div className="mt-2">
+            <div className="mt-2 flex items-center gap-3">
               <img 
                 src={formData.company_logo} 
                 alt="Company Logo" 
-                className="h-16 w-auto max-w-xs object-contain border rounded border-gray-200"
+                className="h-12 w-12 object-contain border rounded-xl border-gray-200 bg-white p-1"
                 onError={(e) => {
                   e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'block';
+                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
                 }}
               />
-              <div className="text-sm text-red-600 mt-1" style={{display: 'none'}}>
-                Invalid image URL or failed to load image
+              <span className="text-xs text-gray-500">Logo preview</span>
+              <div className="text-xs text-red-600" style={{display: 'none'}}>
+                Invalid image URL
               </div>
             </div>
           )}
