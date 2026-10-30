@@ -2,9 +2,21 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 
-// Create axios instance with base configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const ADMIN_API_BASE_URL = import.meta.env.VITE_ADMIN_API_URL || 'http://localhost:5000/api/admin';
+// Smart dynamic base URL detection:
+// When running in browser on localhost or 127.0.0.1 -> automatically use local backend
+// When running in production/cloud -> use Koyeb server API URL
+const isLocal = typeof window !== 'undefined' && 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const DEFAULT_SERVER_URL = 'https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api';
+
+const API_BASE_URL = isLocal 
+  ? 'http://localhost:5000/api' 
+  : (import.meta.env.VITE_API_URL || DEFAULT_SERVER_URL);
+
+const ADMIN_API_BASE_URL = isLocal 
+  ? 'http://localhost:5000/api/admin' 
+  : (import.meta.env.VITE_ADMIN_API_URL || `${DEFAULT_SERVER_URL}/admin`);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
