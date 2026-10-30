@@ -327,7 +327,7 @@ const Home = () => {
                       </span>
                     </div>
 
-                    <CardTitle className="text-sm md:text-xl font-game font-bold text-text group-hover:text-primary-500 transition-colors line-clamp-2 mb-3">
+                    <CardTitle className="text-sm md:text-xl font-sans font-bold text-text group-hover:text-primary-500 transition-colors line-clamp-2 mb-3">
                       {job.title}
                     </CardTitle>
 

@@ -58,11 +58,11 @@ export default {
         }
       },
       fontFamily: {
-        pixel: ['Silkscreen', 'cursive'],
-        game: ['Jersey 10', 'cursive'],
-        sans: ['Outfit', 'sans-serif'],
-        ui: ['Outfit', 'sans-serif'],
-        display: ['Silkscreen', 'cursive'],
+        pixel: ['"Press Start 2P"', 'Silkscreen', 'monospace'],
+        game: ['Poppins', 'sans-serif'],
+        sans: ['Poppins', 'Outfit', 'sans-serif'],
+        ui: ['Poppins', 'Outfit', 'sans-serif'],
+        display: ['"Press Start 2P"', 'Silkscreen', 'monospace'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
