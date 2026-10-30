@@ -577,7 +577,7 @@ router.post('/', [
         skills_required, responsibilities, category_id, application_deadline,
         expires_at, is_featured, is_premium_only, is_active, posted_date, apply_link
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, CURRENT_TIMESTAMP, $20
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, CURRENT_TIMESTAMP, $21
       )
       RETURNING *
     `;
