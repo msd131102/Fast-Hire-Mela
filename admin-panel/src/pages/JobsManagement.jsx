@@ -28,6 +28,66 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+
+// Flexible parser helper for sheets with or without headers, or leading blank lines
+function parseSheetFlexible(worksheet) {
+  const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+  if (!rawRows || rawRows.length === 0) return [];
+
+  const standardHeaders = [
+    'id', 'title', 'slug', 'description', 'company_name', 'company_id',
+    'company_logo', 'location', 'salary_min', 'salary_max', 'salary_currency',
+    'salary_type', 'experience_min', 'experience_max', 'experience_level',
+    'job_type', 'skills_required', 'responsibilities', 'eligibility',
+    'education_required', 'apply_link', 'category_id', 'is_active',
+    'is_featured', 'is_premium_only', 'application_deadline', 'posted_date',
+    'expires_at', 'view_count', 'click_count', 'created_at', 'updated_at',
+    'work_mode', 'posted_by'
+  ];
+
+  // Find first row with data
+  let headerRowIndex = -1;
+  for (let i = 0; i < rawRows.length; i++) {
+    const row = rawRows[i];
+    if (row && row.some(cell => String(cell).trim() !== '')) {
+      headerRowIndex = i;
+      break;
+    }
+  }
+
+  if (headerRowIndex === -1) return [];
+
+  const firstRow = rawRows[headerRowIndex];
+  const isHeaderRow = firstRow.some(cell => {
+    const s = String(cell).toLowerCase().trim();
+    return s === 'title' || s === 'job_title' || s === 'job title' || s === 'company_name';
+  });
+
+  let headers = [];
+  let dataRows = [];
+
+  if (isHeaderRow) {
+    headers = firstRow.map(c => String(c).trim().toLowerCase());
+    dataRows = rawRows.slice(headerRowIndex + 1);
+  } else {
+    headers = standardHeaders;
+    dataRows = rawRows.slice(headerRowIndex);
+  }
+
+  const results = [];
+  for (const row of dataRows) {
+    if (!row || !row.some(cell => String(cell).trim() !== '')) continue;
+    const obj = {};
+    for (let c = 0; c < headers.length; c++) {
+      const key = headers[c] || ('col_' + c);
+      obj[key] = row[c] !== undefined ? row[c] : null;
+    }
+    results.push(obj);
+  }
+
+  return results;
+}
+
 const JobsManagement = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,7 +135,7 @@ const JobsManagement = () => {
         const wb = XLSX.read(bstr, { type: 'binary' });
         const wsname = wb.SheetNames[0];
         const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        const data = parseSheetFlexible(ws);
         setImportPreview(data.slice(0, 5)); // preview first 5 rows
       } catch (err) {
         console.error('Error previewing file:', err);
