@@ -318,7 +318,6 @@ router.get('/', async (req, res) => {
     }
 
     if (status) {
-      paramCount++;
       if (status === 'active') {
         whereConditions.push(`j.is_active = true AND (j.expires_at IS NULL OR j.expires_at > CURRENT_TIMESTAMP)`);
       } else if (status === 'inactive') {
