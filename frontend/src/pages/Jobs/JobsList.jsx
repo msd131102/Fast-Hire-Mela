@@ -81,9 +81,14 @@ const JobCard = ({ job, index, onSaveToggle, isSaved }) => {
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-white p-2 rounded-2xl border border-border shadow-sm flex-shrink-0">
                 <img
-                   src={job.company_logo || '/api/placeholder/40/40'}
+                  src={job.company_logo || "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/960px-Flag_of_India.svg.png?20240827082344"}
                   alt={job.company_name}
                   className="w-9 h-9 sm:w-12 sm:h-12 object-contain"
+                  onError={(e) => {
+                    if (e.target.src !== "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/960px-Flag_of_India.svg.png?20240827082344") {
+                      e.target.src = "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/960px-Flag_of_India.svg.png?20240827082344";
+                    }
+                  }}
                 />
               </div>
               <button
