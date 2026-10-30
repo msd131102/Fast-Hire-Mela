@@ -301,7 +301,7 @@ router.get('/', async (req, res) => {
       search,
       status,
       type,
-      sort_by = 'posted_date',
+      sort_by = 'created_at',
       sort_order = 'DESC'
     } = req.query;
 
@@ -336,7 +336,7 @@ router.get('/', async (req, res) => {
     }
 
     // Validate sort_by parameter
-    const validSortFields = ['posted_date', 'title', 'salary_min', 'view_count', 'company_name', 'is_active'];
+    const validSortFields = ['created_at', 'posted_date', 'id', 'title', 'salary_min', 'view_count', 'company_name', 'is_active'];
     const sortField = validSortFields.includes(sort_by) ? sort_by : 'posted_date';
     const sortDirection = sort_order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
