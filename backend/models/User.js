@@ -107,9 +107,8 @@ export class User {
    */
   static async findByEmail(email) {
     try {
-      return await prisma.app_users.findUnique({
-        where: { email }
-      });
+      const result = await query("SELECT * FROM app_users WHERE email = $1", [email]);
+      return result.rows[0] || null;
     } catch (error) {
       console.error('Error finding user by email:', error);
       throw new Error('Failed to find user by email');
@@ -123,9 +122,8 @@ export class User {
    */
   static async findById(id) {
     try {
-      return await prisma.app_users.findUnique({
-        where: { id: parseInt(id) }
-      });
+      const result = await query("SELECT * FROM app_users WHERE id = $1", [id]);
+      return result.rows[0] || null;
     } catch (error) {
       console.error('Error finding user by ID:', error);
       throw new Error('Failed to find user by ID');
@@ -143,23 +141,8 @@ export class User {
       const saltRounds = 12;
       const passwordHash = await bcrypt.hash(password, saltRounds);
       
-      return await prisma.app_users.create({
-        data: {
-          name,
-          email,
-          password_hash: passwordHash,
-          phone
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          phone: true,
-          is_active: true,
-          email_verified: true,
-          created_at: true
-        }
-      });
+      const result = await query("INSERT INTO app_users (name, email, password_hash, phone) VALUES ($1, $2, $3, $4) RETURNING id, name, email, phone, is_active, email_verified, created_at", [name, email, passwordHash, phone]);
+      return result.rows[0];
     } catch (error) {
       console.error('Error creating user:', error);
       throw new Error('Failed to create user');
