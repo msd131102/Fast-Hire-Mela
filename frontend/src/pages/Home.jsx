@@ -77,7 +77,7 @@ const Home = () => {
 
       <div className="min-h-screen bg-background text-text">
         {/* ================= HERO SECTION (Handcrafted Adventure) ================= */}
-        <section className="relative min-h-[90vh] overflow-hidden flex items-center justify-center py-20 lg:py-0">
+        <section className="relative min-h-[90vh] flex items-center justify-center py-20 lg:py-0 z-30">
 
           {/* Pixel Art Background */}
           <div className="absolute inset-0 z-0">
@@ -186,8 +186,8 @@ const Home = () => {
                       </div>
 
                       <div className="max-h-80 overflow-y-auto divide-y divide-border/40">
-                        {searchResults?.data?.jobs && searchResults.data.jobs.length > 0 ? (
-                          searchResults.data.jobs.map((job) => (
+                        {(searchResults?.data?.jobs || searchResults?.jobs || [])?.length > 0 ? (
+                          (searchResults?.data?.jobs || searchResults?.jobs || []).map((job) => (
                             <Link
                               key={job.id}
                               to={`/jobs/${job.slug || job.id}`}
@@ -240,7 +240,7 @@ const Home = () => {
                         ) : null}
                       </div>
 
-                      {searchResults?.data?.jobs && searchResults.data.jobs.length > 0 && (
+                      {(searchResults?.data?.jobs || searchResults?.jobs || [])?.length > 0 && (
                         <div className="p-2.5 bg-muted/5 border-t border-border/60 text-center">
                           <button
                             type="button"
@@ -265,7 +265,7 @@ const Home = () => {
         </section>
 
         {/* ================= CATEGORIES (Grid on Mobile) ================= */}
-        <section className="py-12 -mt-10 relative z-20">
+        <section className="py-12 -mt-10 relative z-10">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
               {categories?.data?.categories?.filter(cat => Number(cat.job_count) > 0)?.map((cat) => (
