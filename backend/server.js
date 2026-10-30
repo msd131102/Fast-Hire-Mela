@@ -72,6 +72,9 @@ app.use(helmet({
 
 app.use(cors({
   origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000',
     'https://fasthiremelafrontend.netlify.app', 
     'https://empirical-lucinda-shiva1311-40c75dd1.koyeb.app/api',
     'https://www.fasthiremela.online',
@@ -254,7 +257,7 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-// Start the server
+// Start the server application
 startServer();
 
 export default app;

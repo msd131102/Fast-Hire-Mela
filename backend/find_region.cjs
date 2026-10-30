@@ -10,7 +10,7 @@ const regions = [
 ];
 
 async function checkRegion(region) {
-  const connectionString = `postgresql://postgres.qtiwyriyuonuahulnkrb:Shiva1311@aws-0-${region}.pooler.supabase.com:6543/postgres?sslmode=require`;
+  const connectionString = `postgresql://postgres.qtiwyriyuonuahulnkrb:Shiva1311@aws-1-${region}.pooler.supabase.com:6543/postgres?sslmode=require`;
   const pool = new Pool({ connectionString, connectionTimeoutMillis: 5000 });
   
   try {
