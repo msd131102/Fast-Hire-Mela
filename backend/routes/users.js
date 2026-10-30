@@ -1417,7 +1417,7 @@ router.put('/:id', [
 ], validateRequest, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, phone,  is_active } = req.body;
+    const { name, phone, is_premium, premium_expiry, is_active } = req.body;
     const { query } = await import('../config/database.js');
 
     // Check if user exists
@@ -1493,7 +1493,8 @@ router.put('/:id', [
     console.error('Update admin user error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: error.message || 'Internal server error',
+      error: error.message
     });
   }
 });
