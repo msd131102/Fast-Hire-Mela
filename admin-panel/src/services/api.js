@@ -127,6 +127,9 @@ export const jobsAPI = {
   updateJob: (id, data) => adminApi.put(`/jobs/${id}`, data),
   deleteJob: (id) => adminApi.delete(`/jobs/${id}`),
   bulkDelete: (ids) => adminApi.delete('/jobs/bulk', { data: { ids } }),
+  bulkImport: (formData) => adminApi.post('/jobs/bulk-import', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   updateStatus: (id, status) => adminApi.patch(`/jobs/${id}/status`, { status }),
   getJobStats: () => adminApi.get('/jobs/stats/overview'),
   searchJobs: (query) => adminApi.get('/jobs/search', { params: { q: query } }),

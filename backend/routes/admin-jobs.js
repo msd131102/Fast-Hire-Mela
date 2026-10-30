@@ -2,11 +2,224 @@ import express from 'express';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 import { query } from '../config/database.js';
 import { body, validationResult } from 'express-validator';
+import multer from 'multer';
+import * as XLSX from 'xlsx';
+import { generateJobSlug, generateUniqueSlug } from '../utils/slugGenerator.js';
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 } // 15MB limit
+});
 
 const router = express.Router();
 
 // Apply authentication and admin middleware to all routes
 router.use(authenticateToken, requireAdmin);
+
+// =============================================
+// BULK IMPORT JOBS FROM EXCEL / CSV
+// =============================================
+router.post('/bulk-import', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file && (!req.body.jobs || !Array.isArray(req.body.jobs))) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file or jobs array uploaded'
+      });
+    }
+
+    let rows = [];
+
+    if (req.file) {
+      const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      rows = XLSX.utils.sheet_to_json(worksheet, { defval: null });
+    } else if (Array.isArray(req.body.jobs)) {
+      rows = req.body.jobs;
+    }
+
+    if (!rows || rows.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Uploaded file is empty or has no readable rows'
+      });
+    }
+
+    let importedCount = 0;
+    const errors = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const rowIndex = i + 2; // Accounting for 1-indexed Excel + header row
+
+      try {
+        const title = row.title || row.Title || row.job_title;
+        if (!title || String(title).trim() === '') {
+          errors.push(`Row ${rowIndex}: Title is required`);
+          continue;
+        }
+
+        const description = row.description || row.Description || 'No description provided';
+        const location = row.location || row.Location || 'India';
+        const applyLink = row.apply_link || row.ApplyLink || row.apply_url || row.ApplyUrl || 'https://fasthiremela.online';
+        
+        // Handle Company
+        let companyId = row.company_id ? parseInt(row.company_id) : null;
+        const companyName = row.company_name || row.CompanyName || row.company || null;
+        const companyLogo = row.company_logo || row.CompanyLogo || row.company_logo_url || null;
+
+        if (!companyId && companyName && companyName.trim() !== '') {
+          // Check if company exists by name
+          const compCheck = await query('SELECT id FROM companies WHERE name ILIKE $1 LIMIT 1', [companyName.trim()]);
+          if (compCheck.rows.length > 0) {
+            companyId = compCheck.rows[0].id;
+          } else {
+            // Auto create company
+            const compSlug = companyName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+            const newComp = await query(
+              'INSERT INTO companies (name, slug, logo_url, is_active) VALUES ($1, $2, $3, true) RETURNING id',
+              [companyName.trim(), compSlug, companyLogo]
+            );
+            companyId = newComp.rows[0].id;
+          }
+        }
+
+        // Handle Category
+        let categoryId = row.category_id ? parseInt(row.category_id) : null;
+        const categoryName = row.category_name || row.Category || null;
+        if (!categoryId && categoryName && categoryName.trim() !== '') {
+          const catCheck = await query('SELECT id FROM categories WHERE name ILIKE $1 LIMIT 1', [categoryName.trim()]);
+          if (catCheck.rows.length > 0) {
+            categoryId = catCheck.rows[0].id;
+          }
+        }
+
+        // Handle Slug
+        let slug = row.slug ? String(row.slug).trim() : null;
+        if (!slug) {
+          const baseSlug = generateJobSlug(title, companyName || '');
+          slug = await generateUniqueSlug(baseSlug, async (s) => {
+            const check = await query('SELECT id FROM jobs WHERE slug = $1', [s]);
+            return check.rows.length > 0;
+          });
+        } else {
+          // If provided slug already exists, make it unique
+          const check = await query('SELECT id FROM jobs WHERE slug = $1', [slug]);
+          if (check.rows.length > 0) {
+            slug = slug + '-' + Date.now() + '-' + i;
+          }
+        }
+
+        // Numeric fields
+        const salaryMin = row.salary_min ? parseFloat(row.salary_min) : null;
+        const salaryMax = row.salary_max ? parseFloat(row.salary_max) : null;
+        const salaryCurrency = row.salary_currency || 'INR';
+        const salaryType = row.salary_type || 'annual';
+        const experienceMin = row.experience_min ? parseInt(row.experience_min) : null;
+        const experienceMax = row.experience_max ? parseInt(row.experience_max) : null;
+
+        // Enum mappings & defaults
+        let experienceLevel = (row.experience_level || 'entry').toLowerCase().trim();
+        const validExp = ['fresher', 'entry', 'mid', 'senior', 'lead', 'executive'];
+        if (!validExp.includes(experienceLevel)) experienceLevel = 'entry';
+
+        let jobType = (row.job_type || 'full-time').toLowerCase().trim().replace(/\s+/g, '-');
+        const validTypes = ['full-time', 'part-time', 'contract', 'internship', 'remote', 'hybrid'];
+        if (!validTypes.includes(jobType)) jobType = 'full-time';
+
+        // Arrays (skills, responsibilities)
+        const parseArray = (val) => {
+          if (!val) return null;
+          if (Array.isArray(val)) return val;
+          const str = String(val).trim();
+          if (str.startsWith('[') && str.endsWith(']')) {
+            try {
+              const parsed = JSON.parse(str);
+              if (Array.isArray(parsed)) return parsed.map(s => String(s).trim()).filter(Boolean);
+            } catch (e) {
+              // fallback
+            }
+          }
+          return str.split(',').map(s => s.trim().replace(/^[\[\"']+|[\"\]']+$/g, '')).filter(Boolean);
+        };
+
+        const skillsRequired = parseArray(row.skills_required);
+        const responsibilities = parseArray(row.responsibilities);
+
+        // Booleans
+        const parseBool = (val, def = true) => {
+          if (val === undefined || val === null || val === '') return def;
+          const s = String(val).toLowerCase().trim();
+          return s === 'true' || s === '1' || s === 'yes' || s === 't';
+        };
+
+        const isActive = parseBool(row.is_active, true);
+        const isFeatured = parseBool(row.is_featured, false);
+        const isPremiumOnly = parseBool(row.is_premium_only, false);
+
+        // Dates
+        const deadline = row.application_deadline ? new Date(row.application_deadline) : null;
+        const postedDate = row.posted_date ? new Date(row.posted_date) : new Date();
+        const expiresAt = row.expires_at ? new Date(row.expires_at) : null;
+
+        const eligibility = row.eligibility || null;
+        const educationRequired = row.education_required || null;
+        const workMode = row.work_mode || (jobType === 'remote' ? 'remote' : 'onsite');
+
+        // Insert into jobs table
+        await query(`
+          INSERT INTO jobs (
+            title, slug, description, company_id, location,
+            salary_min, salary_max, salary_currency, salary_type,
+            experience_min, experience_max, experience_level, job_type,
+            skills_required, responsibilities, eligibility, education_required,
+            apply_link, category_id, is_active, is_featured, is_premium_only,
+            application_deadline, posted_date, expires_at, work_mode
+          ) VALUES (
+            $1, $2, $3, $4, $5,
+            $6, $7, $8, $9,
+            $10, $11, $12, $13,
+            $14, $15, $16, $17,
+            $18, $19, $20, $21, $22,
+            $23, $24, $25, $26
+          )
+        `, [
+          title, slug, description, companyId, location,
+          salaryMin, salaryMax, salaryCurrency, salaryType,
+          experienceMin, experienceMax, experienceLevel, jobType,
+          skillsRequired, responsibilities, eligibility, educationRequired,
+          applyLink, categoryId, isActive, isFeatured, isPremiumOnly,
+          deadline, postedDate, expiresAt, workMode
+        ]);
+
+        importedCount++;
+      } catch (rowErr) {
+        console.error(`Error importing row ${rowIndex}:`, rowErr);
+        errors.push(`Row ${rowIndex} ("${rows[i].title || 'Unknown'}"): ${rowErr.message}`);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Successfully imported ${importedCount} job(s)`,
+      data: {
+        totalRows: rows.length,
+        importedCount,
+        failedCount: errors.length,
+        errors: errors.slice(0, 10)
+      }
+    });
+
+  } catch (error) {
+    console.error('Bulk import error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process bulk import',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
 
 // =============================================
 // GET ALL JOBS FOR ADMIN MANAGEMENT
@@ -31,7 +244,7 @@ router.get('/', async (req, res) => {
     // Build WHERE conditions for admin
     if (search) {
       paramCount++;
-      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR  ILIKE $${paramCount})`);
+      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR co.name ILIKE $${paramCount})`);
       queryParams.push(`%${search}%`);
     }
 

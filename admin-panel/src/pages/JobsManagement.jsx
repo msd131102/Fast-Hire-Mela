@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -39,6 +40,10 @@ const JobsManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importFile, setImportFile] = useState(null);
+  const [importPreview, setImportPreview] = useState([]);
+  const [importing, setImporting] = useState(false);
 
   // Read URL parameters on component mount
   useEffect(() => {
@@ -57,6 +62,92 @@ const JobsManagement = () => {
   useEffect(() => {
     fetchJobs();
   }, [currentPage, searchTerm, statusFilter, typeFilter]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setImportFile(file);
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const bstr = evt.target.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        setImportPreview(data.slice(0, 5)); // preview first 5 rows
+      } catch (err) {
+        console.error('Error previewing file:', err);
+        toast.error('Failed to parse file preview');
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const handleStartImport = async () => {
+    if (!importFile) {
+      toast.error('Please select an Excel (.xlsx, .xls) or CSV file');
+      return;
+    }
+
+    try {
+      setImporting(true);
+      const formData = new FormData();
+      formData.append('file', importFile);
+
+      const response = await jobsAPI.bulkImport(formData);
+      if (response.data?.success) {
+        toast.success(response.data.message || 'Jobs imported successfully!');
+        setShowImportModal(false);
+        setImportFile(null);
+        setImportPreview([]);
+        fetchJobs(); // Refresh jobs table
+      } else {
+        toast.error(response.data?.message || 'Import completed with warnings');
+      }
+    } catch (err) {
+      console.error('Import error:', err);
+      toast.error(err.response?.data?.message || 'Failed to import jobs');
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const downloadSampleTemplate = () => {
+    const sampleHeaders = [
+      {
+        title: "Software Engineer",
+        description: "Looking for an energetic full-stack developer with experience in React and Node.js.",
+        company_name: "Tech Corp",
+        company_logo: "https://example.com/logo.png",
+        location: "Bengaluru, India",
+        salary_min: 600000,
+        salary_max: 1200000,
+        salary_currency: "INR",
+        salary_type: "annual",
+        experience_min: 1,
+        experience_max: 3,
+        experience_level: "entry",
+        job_type: "full-time",
+        skills_required: '["React", "Node.js", "PostgreSQL"]',
+        responsibilities: '["Develop UI components", "Collaborate with backend teams"]',
+        eligibility: "B.Tech / B.E or equivalent degree",
+        education_required: "Any Graduate",
+        apply_link: "https://company.com/apply",
+        is_active: "True",
+        is_featured: "True",
+        is_premium_only: "False",
+        application_deadline: "2026-12-31",
+        work_mode: "hybrid"
+      }
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(sampleHeaders);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Jobs_Template");
+    XLSX.writeFile(wb, "jobs_import_template.xlsx");
+  };
 
   const fetchJobs = async () => {
     try {
