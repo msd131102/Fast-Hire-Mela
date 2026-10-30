@@ -242,10 +242,21 @@ const JobsManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">Jobs Management</h1>
           <p className="text-gray-600">Manage all job postings on the platform</p>
         </div>
-        <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Add New Job
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowImportModal(true)}
+            className="flex items-center gap-2 border-indigo-300 text-indigo-700 bg-white hover:bg-indigo-50 shadow-sm"
+          >
+            <Upload className="h-4 w-4" />
+            Import Excel / CSV
+          </Button>
+          <Button onClick={() => setShowAddModal(true)} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Add New Job
+          </Button>
+        </div>
       </div>
 
       {/* Filters and Search */}
@@ -598,6 +609,112 @@ const JobsManagement = () => {
             setEditingJob(null);
           }}
         />
+      </Modal>
+
+      {/* Bulk Excel / CSV Import Modal */}
+      <Modal
+        isOpen={showImportModal}
+        onClose={() => {
+          if (!importing) {
+            setShowImportModal(false);
+            setImportFile(null);
+            setImportPreview([]);
+          }
+        }}
+        title="Auto Import Jobs from Excel / CSV"
+        size="lg"
+      >
+        <div className="space-y-5">
+          <div className="p-4 bg-indigo-50/70 border border-indigo-100 rounded-xl text-sm text-indigo-900 flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div>
+              <p className="font-semibold">Upload your job listings in bulk</p>
+              <p className="text-xs text-indigo-700 mt-0.5">Supports .xlsx, .xls, and .csv files with auto-linking of companies and skills.</p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={downloadSampleTemplate}
+              className="border-indigo-300 text-indigo-700 bg-white hover:bg-indigo-50 shrink-0"
+            >
+              <Download className="h-3.5 w-3.5 mr-1.5" />
+              Download Template
+            </Button>
+          </div>
+
+          <div className="border-2 border-dashed border-gray-300 hover:border-indigo-500 rounded-2xl p-6 text-center transition-colors bg-gray-50/50">
+            <input
+              type="file"
+              id="excel-file-input"
+              accept=".xlsx, .xls, .csv"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <label htmlFor="excel-file-input" className="cursor-pointer flex flex-col items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-3">
+                <Upload className="h-6 w-6" />
+              </div>
+              <p className="text-sm font-medium text-gray-700">
+                {importFile ? (
+                  <span className="text-indigo-600 font-semibold">{importFile.name} ({(importFile.size / 1024).toFixed(1)} KB)</span>
+                ) : (
+                  <span>Click to browse or drag and drop your Excel or CSV file</span>
+                )}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">.xlsx, .xls or .csv up to 15MB</p>
+            </label>
+          </div>
+
+          {/* Preview of first rows */}
+          {importPreview.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  File Preview (First {importPreview.length} items)
+                </span>
+                <span className="text-xs text-gray-500">
+                  Ready to import
+                </span>
+              </div>
+              <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-xl divide-y divide-gray-100 text-xs">
+                {importPreview.map((item, idx) => (
+                  <div key={idx} className="p-2.5 hover:bg-gray-50 flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-gray-900 truncate">{item.title || item.Title || 'Untitled Job'}</p>
+                      <p className="text-gray-500 text-[11px] truncate">{item.company_name || item.CompanyName || 'No Company'} • {item.location || 'India'}</p>
+                    </div>
+                    <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-medium shrink-0">
+                      {item.job_type || 'full-time'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3 pt-3 border-t">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowImportModal(false);
+                setImportFile(null);
+                setImportPreview([]);
+              }}
+              disabled={importing}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleStartImport}
+              disabled={!importFile || importing}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white min-w-[130px]"
+            >
+              {importing ? 'Importing...' : 'Start Auto Import'}
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
