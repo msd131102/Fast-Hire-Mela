@@ -484,7 +484,7 @@ router.get('/', optionalAuth, async (req, res) => {
       LEFT JOIN categories c ON j.category_id = c.id
       LEFT JOIN companies co ON j.company_id = co.id
       ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
-      ORDER BY ${sortField === 'company_name' ? 'co.name' : 'j.' + sortField} ${sortDirection}
+      ORDER BY ${search ? `CASE WHEN j.title ILIKE $1 THEN 100 WHEN co.name ILIKE $1 THEN 80 ELSE 10 END DESC, j.posted_date DESC` : (sortField === 'company_name' ? 'co.name' : 'j.' + sortField) + ' ' + sortDirection}
       LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}
     `;
 
