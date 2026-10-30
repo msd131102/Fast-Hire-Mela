@@ -59,10 +59,10 @@ export default {
       },
       fontFamily: {
         pixel: ['Silkscreen', 'cursive'],
-        game: ['"Jersey 10"', 'cursive'],
-        sans: ['"Jersey 10"', 'cursive'],
+        game: ['Jersey 10', 'cursive'],
+        sans: ['Outfit', 'sans-serif'],
         ui: ['Outfit', 'sans-serif'],
-        display: ['"Silkscreen"', 'cursive'],
+        display: ['Silkscreen', 'cursive'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

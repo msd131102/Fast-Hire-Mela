@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Silkscreen:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Outfit:wght@400;500;600;700;800&family=Silkscreen:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -30,7 +30,7 @@
   
   body {
     @apply bg-background text-text antialiased overflow-x-hidden;
-    font-family: 'Jersey 10', cursive;
+    font-family: 'Outfit', sans-serif;
     cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path fill='%236366f1' stroke='white' stroke-width='2' d='M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L5.5 3.21z'/></svg>") 0 0, auto;
   }
   
@@ -40,6 +40,22 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Silkscreen', cursive;
+  }
+
+  button, input, textarea, select {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .pixel-text {
+    font-family: 'Silkscreen', cursive;
+  }
+
+  .game-text {
+    font-family: 'Jersey 10', cursive;
+  }
+
+  .ui-text {
+    font-family: 'Outfit', sans-serif;
   }
 }
 

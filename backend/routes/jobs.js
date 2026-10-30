@@ -79,7 +79,7 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
 
     if (search) {
       paramCount++;
-      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR  ILIKE $${paramCount})`);
+      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR co.name ILIKE $${paramCount})`);
       queryParams.push(`%${search}%`);
     }
 
@@ -95,7 +95,7 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
       if (/^\d+$/.test(company)) {
         whereConditions.push(`j.company_id = $${paramCount}`);
       } else {
-        whereConditions.push(` ILIKE $${paramCount}`);
+        whereConditions.push(`co.name ILIKE $${paramCount}`);
       }
       queryParams.push(company);
     }
@@ -186,6 +186,7 @@ router.get('/category/:category', optionalAuth, async (req, res) => {
       SELECT COUNT(*) as total
       FROM ${querySource} j
       LEFT JOIN categories c ON j.category_id = c.id
+      LEFT JOIN companies co ON j.company_id = co.id
       ${isUserActive ? 'LEFT JOIN app_users u ON j.posted_by = u.id' : ''}
       ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
     `;
@@ -381,7 +382,7 @@ router.get('/', optionalAuth, async (req, res) => {
 
     if (search) {
       paramCount++;
-      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR  ILIKE $${paramCount})`);
+      whereConditions.push(`(j.title ILIKE $${paramCount} OR j.description ILIKE $${paramCount} OR co.name ILIKE $${paramCount})`);
       queryParams.push(`%${search}%`);
     }
 
@@ -408,7 +409,7 @@ router.get('/', optionalAuth, async (req, res) => {
       if (/^\d+$/.test(company)) {
         whereConditions.push(`j.company_id = $${paramCount}`);
       } else {
-        whereConditions.push(` ILIKE $${paramCount}`);
+        whereConditions.push(`co.name ILIKE $${paramCount}`);
       }
       queryParams.push(company);
     }
@@ -494,6 +495,7 @@ router.get('/', optionalAuth, async (req, res) => {
       SELECT COUNT(*) as total
       FROM jobs j
       LEFT JOIN categories c ON j.category_id = c.id
+      LEFT JOIN companies co ON j.company_id = co.id
       ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
     `;
 
@@ -1121,7 +1123,7 @@ router.post('/search', async (req, res) => {
       whereConditions.push(`(
         j.title ILIKE $${paramCount} OR 
         j.description ILIKE $${paramCount} OR 
-         ILIKE $${paramCount} OR
+        co.name ILIKE $${paramCount} OR
         j.skills_required && ARRAY[$${paramCount}]
       )`);
       queryParams.push(`%${searchQuery}%`);
@@ -1188,7 +1190,7 @@ router.post('/search', async (req, res) => {
     if (sort_by === 'relevance' && searchQuery) {
       orderClause = `CASE 
         WHEN j.title ILIKE $1 THEN 1
-        WHEN  ILIKE $1 THEN 2
+        WHEN co.name ILIKE $1 THEN 2
         WHEN j.description ILIKE $1 THEN 3
         ELSE 4
       END, j.posted_date DESC`;
@@ -1231,7 +1233,7 @@ router.post('/search', async (req, res) => {
         -- Relevance score for search
         CASE 
           WHEN j.title ILIKE $1 THEN 1.0
-          WHEN  ILIKE $1 THEN 0.8
+          WHEN co.name ILIKE $1 THEN 0.8
           WHEN j.description ILIKE $1 THEN 0.6
           WHEN j.skills_required && ARRAY[$1] THEN 0.4
           ELSE 0.0
@@ -1252,6 +1254,7 @@ router.post('/search', async (req, res) => {
       SELECT COUNT(*) as total
       FROM jobs j
       LEFT JOIN categories c ON j.category_id = c.id
+      LEFT JOIN companies co ON j.company_id = co.id
       LEFT JOIN app_users u ON j.posted_by = u.id
       WHERE ${whereConditions.join(' AND ')}
     `;

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import * as Icons from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -20,7 +20,28 @@ const CategoryIcon = ({ name, className }) => {
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const searchDropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  // Live direct search query
+  const { data: searchResults, isFetching: isSearching } = useQuery({
+    queryKey: ['liveSearch', searchQuery],
+    queryFn: () => getJobs({ search: searchQuery.trim(), limit: 5 }),
+    enabled: searchQuery.trim().length >= 2,
+    staleTime: 1000 * 30,
+  });
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchDropdownRef.current && !searchDropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const seoConfig = {
     title: 'Jobs in India - Latest Openings | FastHireMela',
@@ -100,7 +121,7 @@ const Home = () => {
               </p>
 
               {/* Search Bar */}
-              <div className="relative max-w-4xl mx-auto">
+              <div className="relative max-w-4xl mx-auto" ref={searchDropdownRef}>
                 <div className="bg-surface/90 backdrop-blur-md border border-border p-3 rounded-[2rem] shadow-adventure">
                   <form onSubmit={handleSearch} className="flex flex-col md:flex-row items-center gap-3">
                     
@@ -108,7 +129,19 @@ const Home = () => {
                       <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted w-5 h-5 group-focus-within:text-primary-500 transition-colors" />
                       <input
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          if (e.target.value.trim().length >= 2) {
+                            setIsDropdownOpen(true);
+                          } else {
+                            setIsDropdownOpen(false);
+                          }
+                        }}
+                        onFocus={() => {
+                          if (searchQuery.trim().length >= 2) {
+                            setIsDropdownOpen(true);
+                          }
+                        }}
                         placeholder="Search quest or guild..."
                         className="w-full h-14 pl-12 pr-4 bg-transparent text-text placeholder-muted font-medium text-lg outline-none rounded-2xl"
                       />
@@ -124,11 +157,107 @@ const Home = () => {
                       />
                     </div>
 
-                    <Button type="submit" variant="primary" size="lg" className="w-full md:w-auto h-14 text-lg px-8 rounded-2xl">
+                    <Button type="submit" variant="primary" size="lg" className="w-full md:w-auto h-14 text-lg px-8 rounded-2xl font-ui">
                       Search
                     </Button>
                   </form>
                 </div>
+
+                {/* Direct Live Search Dropdown */}
+                <AnimatePresence>
+                  {isDropdownOpen && searchQuery.trim().length >= 2 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-0 right-0 top-full mt-2 z-50 bg-surface/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl overflow-hidden text-left"
+                    >
+                      <div className="p-3 border-b border-border/60 bg-muted/10 flex items-center justify-between text-xs font-semibold text-muted">
+                        <span className="font-pixel tracking-wider text-primary-500 uppercase">
+                          MATCHING QUESTS
+                        </span>
+                        {isSearching && (
+                          <span className="flex items-center gap-1.5 text-primary-500">
+                            <Icons.Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            Scouting...
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="max-h-80 overflow-y-auto divide-y divide-border/40">
+                        {searchResults?.data?.jobs && searchResults.data.jobs.length > 0 ? (
+                          searchResults.data.jobs.map((job) => (
+                            <Link
+                              key={job.id}
+                              to={`/jobs/${job.slug || job.id}`}
+                              onClick={() => setIsDropdownOpen(false)}
+                              className="p-3.5 hover:bg-primary-50/50 dark:hover:bg-primary-950/20 flex items-center justify-between gap-3 transition-colors group cursor-pointer"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-10 h-10 rounded-xl bg-primary-100/50 dark:bg-primary-900/30 flex items-center justify-center shrink-0 border border-primary-200/50 group-hover:scale-105 transition-transform">
+                                  {job.company_logo_url ? (
+                                    <img
+                                      src={job.company_logo_url}
+                                      alt={job.company_name}
+                                      className="w-7 h-7 object-contain rounded"
+                                    />
+                                  ) : (
+                                    <Icons.Briefcase className="w-5 h-5 text-primary-500" />
+                                  )}
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="font-ui font-semibold text-sm text-text truncate group-hover:text-primary-600 transition-colors">
+                                    {job.title}
+                                  </h4>
+                                  <p className="text-xs text-muted truncate flex items-center gap-2 mt-0.5 font-ui">
+                                    <span>{job.company_name || 'Guild'}</span>
+                                    {job.location && (
+                                      <>
+                                        <span className="inline-block w-1 h-1 rounded-full bg-muted/60" />
+                                        <span>{job.location}</span>
+                                      </>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                {job.job_type && (
+                                  <span className="text-[10px] font-pixel px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 border border-primary-200">
+                                    {job.job_type.replace('_', ' ')}
+                                  </span>
+                                )}
+                                <Icons.ArrowRight className="w-4 h-4 text-muted group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+                              </div>
+                            </Link>
+                          ))
+                        ) : !isSearching ? (
+                          <div className="p-6 text-center text-muted font-ui text-sm">
+                            <Icons.SearchX className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                            No matching quests found for "{searchQuery}"
+                          </div>
+                        ) : null}
+                      </div>
+
+                      {searchResults?.data?.jobs && searchResults.data.jobs.length > 0 && (
+                        <div className="p-2.5 bg-muted/5 border-t border-border/60 text-center">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              setIsDropdownOpen(false);
+                              handleSearch(e);
+                            }}
+                            className="text-xs font-ui font-medium text-primary-600 hover:text-primary-700 flex items-center justify-center gap-1.5 mx-auto"
+                          >
+                            <span>View all results for "{searchQuery}"</span>
+                            <Icons.ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
             </div>
@@ -139,7 +268,7 @@ const Home = () => {
         <section className="py-12 -mt-10 relative z-20">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-              {categories?.data?.categories?.map((cat) => (
+              {categories?.data?.categories?.filter(cat => Number(cat.job_count) > 0)?.map((cat) => (
                 <div
                   key={cat.id}
                   onClick={() => (window.location.href = `/jobs?category=${cat.id}`)}
