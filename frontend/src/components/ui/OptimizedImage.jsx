@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+const DEFAULT_COMPANY_LOGO = "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/960px-Flag_of_India.svg.png?20240827082344";
+
 const OptimizedImage = ({ 
   src, 
   alt, 
@@ -10,17 +12,19 @@ const OptimizedImage = ({
   sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
   priority = false 
 }) => {
+  const [currentSrc, setCurrentSrc] = useState(src || DEFAULT_COMPANY_LOGO);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [fallbackAttempted, setFallbackAttempted] = useState(false);
 
   // Reset state when src changes
   useEffect(() => {
+    setCurrentSrc(src || DEFAULT_COMPANY_LOGO);
     setIsLoaded(false);
-    setHasError(false);
+    setFallbackAttempted(false);
   }, [src]);
 
   const constructImageUrl = (imageSrc) => {
-    if (!imageSrc) return null;
+    if (!imageSrc) return DEFAULT_COMPANY_LOGO;
     if (imageSrc.startsWith('http')) return imageSrc;
     
     if (imageSrc.startsWith('/uploads/')) {
@@ -31,31 +35,14 @@ const OptimizedImage = ({
     return imageSrc.startsWith('/') ? imageSrc : `/${imageSrc}`;
   };
 
-  const generateSrcSet = (fullSrc) => {
-    if (!fullSrc || hasError || fullSrc.startsWith('http')) return '';
-    
-    const extensions = ['.jpg', '.jpeg', '.png'];
-    const hasImageExtension = extensions.some(ext => fullSrc.toLowerCase().includes(ext));
-    
-    if (!hasImageExtension) return fullSrc;
-    
-    const baseName = fullSrc.replace(/\.[^/.]+$/, '');
-    return `${baseName}.webp 1x, ${baseName}@2x.webp 2x`;
+  const finalSrc = constructImageUrl(currentSrc);
+
+  const handleError = () => {
+    if (!fallbackAttempted && finalSrc !== DEFAULT_COMPANY_LOGO) {
+      setFallbackAttempted(true);
+      setCurrentSrc(DEFAULT_COMPANY_LOGO);
+    }
   };
-
-  const finalSrc = constructImageUrl(src);
-
-  if (hasError || !finalSrc) {
-    return (
-      <div 
-        className={`bg-slate-50 flex flex-col items-center justify-center border border-slate-100 rounded-xl ${className}`}
-        style={{ width: width || '100%', height: height || '100%' }}
-      >
-        <div className="w-1/3 h-1/3 bg-slate-200 rounded-full animate-pulse mb-1" />
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">No Brand</span>
-      </div>
-    );
-  }
 
   return (
     <div 
@@ -73,34 +60,26 @@ const OptimizedImage = ({
         </div>
       )}
       
-      <picture className="w-full h-full flex items-center justify-center">
-        <source
-          type="image/webp"
-          srcSet={generateSrcSet(finalSrc)}
-          sizes={sizes}
-        />
-        
-        <img
-          src={finalSrc}
-          alt={alt || 'Company Logo'}
-          width={width}
-          height={height}
-          loading={priority ? 'eager' : loading}
-          decoding="async"
-          onLoad={() => setIsLoaded(true)}
-          onError={() => setHasError(true)}
-          className={`
-            duration-300 ease-in-out transition-all
-            ${isLoaded ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-95 blur-sm'}
-            ${className}
-          `}
-          style={{ 
-            objectFit: 'contain',
-            maxWidth: '100%',
-            maxHeight: '100%'
-          }}
-        />
-      </picture>
+      <img
+        src={finalSrc}
+        alt={alt || 'Company Logo'}
+        width={width}
+        height={height}
+        loading={priority ? 'eager' : loading}
+        decoding="async"
+        onLoad={() => setIsLoaded(true)}
+        onError={handleError}
+        className={`
+          duration-300 ease-in-out transition-all
+          ${isLoaded ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-95 blur-sm'}
+          ${className}
+        `}
+        style={{ 
+          objectFit: 'contain',
+          maxWidth: '100%',
+          maxHeight: '100%'
+        }}
+      />
     </div>
   );
 };
