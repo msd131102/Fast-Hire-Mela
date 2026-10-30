@@ -540,21 +540,22 @@ router.post('/', [
       is_active = true
     } = req.body;
 
-    // Get company name if company_id is provided but company_name is not
-    let finalCompanyName = company_name;
-    if (!finalCompanyName && company_id) {
-      const companyResult = await query('SELECT name FROM companies WHERE id = $1', [company_id]);
-      if (companyResult.rows.length > 0) {
-        finalCompanyName = companyResult.rows[0].name;
+    // Resolve company_id or create company if company_name provided
+    let finalCompanyId = company_id && company_id.toString().trim() !== '' ? parseInt(company_id) : null;
+    let finalCompanyName = (company_name || '').trim();
+
+    if (!finalCompanyId && finalCompanyName) {
+      const compCheck = await query('SELECT id FROM companies WHERE LOWER(name) = LOWER($1)', [finalCompanyName]);
+      if (compCheck.rows.length > 0) {
+        finalCompanyId = compCheck.rows[0].id;
       } else {
-        // If company_id is provided but company doesn't exist, use a default name
-        finalCompanyName = 'Unknown Company';
+        const compSlug = finalCompanyName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+        const newComp = await query(
+          'INSERT INTO companies (name, slug, logo_url, is_active) VALUES ($1, $2, $3, true) RETURNING id',
+          [finalCompanyName, compSlug, company_logo || null]
+        );
+        finalCompanyId = newComp.rows[0].id;
       }
-    }
-    
-    // Ensure company_name is never null
-    if (!finalCompanyName || finalCompanyName.trim() === '') {
-      finalCompanyName = 'Unknown Company';
     }
 
     // Generate apply_link if not provided
@@ -570,13 +571,13 @@ router.post('/', [
 
     const insertQuery = `
       INSERT INTO jobs (
-        title, slug, description, company_name, company_logo, location,
+        title, slug, description, company_id, location,
         salary_min, salary_max, salary_currency, salary_type,
         experience_min, experience_max, experience_level, job_type,
-        skills_required, responsibilities, category_id, company_id, application_deadline,
+        skills_required, responsibilities, category_id, application_deadline,
         expires_at, is_featured, is_premium_only, is_active, posted_date, apply_link
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, CURRENT_TIMESTAMP, $24
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, CURRENT_TIMESTAMP, $20
       )
       RETURNING *
     `;
@@ -631,15 +632,13 @@ router.post('/', [
     const experienceMin = experience_min && experience_min.trim() !== '' ? parseInt(experience_min) : null;
     const experienceMax = experience_max && experience_max.trim() !== '' ? parseInt(experience_max) : null;
     
-    // Handle company_id - convert to number or null
-    const companyId = company_id && company_id.trim() !== '' ? parseInt(company_id) : null;
     const categoryId = parseInt(category_id);
 
     const result = await query(insertQuery, [
-      title, slug, description, finalCompanyName, company_logo, location,
+      title, slug, description, finalCompanyId, location,
       salaryMin, salaryMax, salary_currency, salary_type,
       experienceMin, experienceMax, experience_level, job_type,
-      skillsArray, responsibilitiesArray, categoryId, companyId,
+      skillsArray, responsibilitiesArray, categoryId,
       application_deadline, expires_at, is_featured, is_premium_only, is_active, applyLink
     ]);
 
@@ -700,6 +699,10 @@ router.put('/:id', [
       }
     }
     
+    // Remove non-existent columns from jobs update
+    delete filteredFields.company_name;
+    delete filteredFields.company_logo;
+
     const updateKeys = Object.keys(filteredFields);
     const updateValues = Object.values(filteredFields);
     
