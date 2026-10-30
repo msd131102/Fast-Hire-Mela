@@ -218,10 +218,19 @@ router.post('/bulk-import', upload.single('file'), async (req, res) => {
         const isFeatured = parseBool(row.is_featured, false);
         const isPremiumOnly = parseBool(row.is_premium_only, false);
 
-        // Dates
-        const deadline = row.application_deadline ? new Date(row.application_deadline) : null;
-        const postedDate = row.posted_date ? new Date(row.posted_date) : new Date();
-        const expiresAt = row.expires_at ? new Date(row.expires_at) : null;
+        // Safe date parsing supporting Excel serial dates (numbers like 46010) and date strings
+        const parseDate = (val) => {
+          if (!val) return null;
+          if (typeof val === 'number') {
+            return new Date(Math.round((val - 25569) * 86400 * 1000));
+          }
+          const d = new Date(val);
+          return isNaN(d.getTime()) ? null : d;
+        };
+
+        const deadline = parseDate(row.application_deadline);
+        const postedDate = parseDate(row.posted_date) || new Date();
+        const expiresAt = parseDate(row.expires_at);
 
         const eligibility = row.eligibility || null;
         const educationRequired = row.education_required || null;
