@@ -155,9 +155,9 @@ const JobDetails = () => {
             {/* HERO SECTION */}
             <section className="px-6 lg:px-0 space-y-8">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-3xl bg-white border border-border p-3 shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-white border border-border p-2.5 shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
                   <OptimizedImage 
-                     src={job.company_logo || '/api/placeholder/40/40'} 
+                    src={job.company_logo || '/api/placeholder/40/40'} 
                     alt={`${job.company_name} logo`} 
                     className="w-full h-full object-contain" 
                     width={64}
